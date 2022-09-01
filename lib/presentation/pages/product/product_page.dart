@@ -99,6 +99,16 @@ class _ProductPageState extends State<ProductPage> {
   List<DataColumn> dataColumns(ProductData data) => <DataColumn>[
         DataColumn(
           label: const Text(
+            'Code',
+            style: TextStyle(fontStyle: FontStyle.italic),
+          ),
+          onSort: (colIdx, asc) {
+            BlocProvider.of<ProductsCubit>(context)
+                .sortProducts((product) => product.productCode, colIdx, asc);
+          },
+        ),
+        DataColumn(
+          label: const Text(
             'Name',
             style: TextStyle(fontStyle: FontStyle.italic),
           ),

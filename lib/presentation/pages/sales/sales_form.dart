@@ -1,3 +1,5 @@
+import 'package:edar_app/data/model/category.dart';
+import 'package:edar_app/data/model/supplier.dart';
 import 'package:flutter/material.dart';
 
 import '../../../data/model/invoice_item_model.dart';
@@ -35,9 +37,26 @@ class _SalesFormState extends State<SalesForm> {
     // Product product = Product();
     // product.productId = 1;
     // product.productName = "bowl";
-    // invoiceItem.product = product;
-    // invoiceItem.sellPrice = 2.00;
-    // invoiceItem.quantity = 1;
+
+    Product product = Product(
+      productCode: "code",
+      productName: "name",
+      productDescription: "productDescription",
+      productPrice: 12.99,
+      productQuantity: 12.99,
+      productUnit: "productUnit",
+      supplier: Supplier(
+          supplierName: "name",
+          supplierContactNumber: "sds",
+          supplierAddress: "ass"),
+      category: Category(
+        categoryCode: "code",
+        categoryName: "name",
+      ),
+    );
+    invoiceItem.product = product;
+    invoiceItem.sellPrice = 2.00;
+    invoiceItem.quantity = 1;
 
     invoiceItems.add(invoiceItem);
 

@@ -10,6 +10,7 @@ mixin ProductsFieldMixin on ValidationMixin {
   //streams and validations
 
   late var _productNameController;
+  late var _productCodeController;
   late var _productDescriptionController;
   late var _productPriceController;
   late var _productQuantityController;
@@ -20,6 +21,7 @@ mixin ProductsFieldMixin on ValidationMixin {
   init() {
     print("init");
     _productNameController = BehaviorSubject<String>();
+    _productCodeController = BehaviorSubject<String>();
     _productDescriptionController = BehaviorSubject<String>();
     _productPriceController = BehaviorSubject<double>();
     _productQuantityController = BehaviorSubject<double>();
@@ -35,6 +37,16 @@ mixin ProductsFieldMixin on ValidationMixin {
     } else {
       _productNameController.sink
           .addError("Please enter text with length greater than 4");
+    }
+  }
+
+  Stream<String> get productCodeStream => _productCodeController.stream;
+  updateProductCode(String fieldValue) {
+    if (validTextLength(fieldValue, 3)) {
+      _productCodeController.sink.add(fieldValue);
+    } else {
+      _productCodeController.sink
+          .addError("Please enter text with length greater than 3");
     }
   }
 
@@ -103,7 +115,8 @@ mixin ProductsFieldMixin on ValidationMixin {
     // }
   }
 
-  Stream<bool> get buttonValid => Rx.combineLatest7(
+  Stream<bool> get buttonValid => Rx.combineLatest8(
+      productCodeStream,
       productNameStream,
       productDescriptionStream,
       productQuantityStream,
@@ -111,10 +124,11 @@ mixin ProductsFieldMixin on ValidationMixin {
       productPriceStream,
       productSupplierStream,
       productCategoryStream,
-      (a, b, c, d, e, f, g) => true);
+      (a, b, c, d, e, f, g, h) => true);
 
   Product getProduct(int? productId) {
     return Product(
+        productCode: _productCodeController.value,
         productName: _productNameController.value,
         productDescription: _productDescriptionController.value,
         productPrice: _productPriceController.value,

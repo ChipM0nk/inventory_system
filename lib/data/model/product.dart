@@ -10,6 +10,7 @@ class Product {
   @JsonKey(name: "id")
   @JsonKey(name: "productId")
   int? productId;
+  final String productCode;
   final String productName;
   final String productDescription;
   final double productPrice;
@@ -20,6 +21,7 @@ class Product {
 
   Product(
       {this.productId,
+      required this.productCode,
       required this.productName,
       required this.productDescription,
       required this.productPrice,

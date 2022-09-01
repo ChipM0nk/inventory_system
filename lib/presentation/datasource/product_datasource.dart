@@ -33,6 +33,10 @@ class ProductData extends DataTableSource {
       selected: false,
       cells: <DataCell>[
         DataCell(
+          Text(dataItem.productCode),
+          onTap: () => onItemClick(dataItem),
+        ),
+        DataCell(
           Text(dataItem.productName),
           onTap: () => onItemClick(dataItem),
         ),

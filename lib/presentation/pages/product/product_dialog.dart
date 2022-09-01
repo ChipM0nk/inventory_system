@@ -40,167 +40,163 @@ class ProductDialog extends StatelessWidget {
           child: Center(
             child: Container(
               width: 600,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(
                 children: [
-                  Container(
-                    width: 300,
-                    child: Column(
-                      children: <Widget>[
-                        Column(
-                          children: [
-                            StreamBuilder(
-                              stream: BlocProvider.of<ProductsCubit>(context)
-                                  .productNameStream,
-                              builder: (context, snapshot) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 24, right: 24, top: 24),
-                                  child: Column(
-                                    children: [
-                                      CustomTextField(
-                                          labelText: "Enter Product Name",
-                                          context: context,
-                                          hintText: "GM",
-                                          initialValue: product != null
-                                              ? product!.productName.toString()
-                                              : null,
-                                          onChanged: (text) {
-                                            BlocProvider.of<ProductsCubit>(
-                                                    context)
-                                                .updateProductName(text);
-                                            return text;
-                                          }),
-                                      snapshot.hasError
-                                          ? ErrorText(
-                                              errorText:
-                                                  snapshot.error.toString())
-                                          : const SizedBox(
-                                              height: 29,
-                                            )
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                            StreamBuilder(
-                              stream: BlocProvider.of<ProductsCubit>(context)
-                                  .productDescriptionStream,
-                              builder: (context, snapshot) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 24, right: 24, top: 24),
-                                  child: Column(
-                                    children: [
-                                      CustomTextField(
-                                          labelText:
-                                              "Enter Product Description",
-                                          context: context,
-                                          hintText: "Sto Tomas",
-                                          initialValue: product != null
-                                              ? product!.productDescription
-                                                  .toString()
-                                              : null,
-                                          onChanged: (text) {
-                                            BlocProvider.of<ProductsCubit>(
-                                                    context)
-                                                .updateProductDecription(text);
-                                            return text;
-                                          }),
-                                      snapshot.hasError
-                                          ? ErrorText(
-                                              errorText:
-                                                  snapshot.error.toString())
-                                          : const SizedBox(
-                                              height: 29,
-                                            )
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                            StreamBuilder(
-                              stream: BlocProvider.of<ProductsCubit>(context)
-                                  .productPriceStream,
-                              builder: (context, snapshot) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 24, right: 24, top: 24),
-                                  child: Column(
-                                    children: [
-                                      CustomTextField(
-                                          labelText: "Enter Product Price",
-                                          context: context,
-                                          hintText: "09219999999",
-                                          initialValue: product != null
-                                              ? product!.productPrice.toString()
-                                              : null,
-                                          onChanged: (text) {
-                                            BlocProvider.of<ProductsCubit>(
-                                                    context)
-                                                .updateProductPrice(text);
-                                            return text;
-                                          }),
-                                      snapshot.hasError
-                                          ? ErrorText(
-                                              errorText:
-                                                  snapshot.error.toString())
-                                          : const SizedBox(
-                                              height: 29,
-                                            )
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                            StreamBuilder(
-                              stream: BlocProvider.of<ProductsCubit>(context)
-                                  .productQuantityStream,
-                              builder: (context, snapshot) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 24, right: 24, top: 24),
-                                  child: Column(
-                                    children: [
-                                      CustomTextField(
-                                          labelText: "Enter Product Quantity",
-                                          context: context,
-                                          hintText: "09219999999",
-                                          initialValue: product != null
-                                              ? product!.productQuantity
-                                                  .toString()
-                                              : null,
-                                          onChanged: (text) {
-                                            BlocProvider.of<ProductsCubit>(
-                                                    context)
-                                                .updateProductQuantity(text);
-                                            return text;
-                                          }),
-                                      snapshot.hasError
-                                          ? ErrorText(
-                                              errorText:
-                                                  snapshot.error.toString())
-                                          : const SizedBox(
-                                              height: 29,
-                                            )
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 300,
+                        child: StreamBuilder(
+                          stream: BlocProvider.of<ProductsCubit>(context)
+                              .productCodeStream,
+                          builder: (context, snapshot) {
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 24, right: 24, top: 24),
+                              child: Column(
+                                children: [
+                                  CustomTextField(
+                                      labelText: "Enter Product Code",
+                                      context: context,
+                                      hintText: "GM",
+                                      initialValue: product != null
+                                          ? product!.productCode.toString()
+                                          : null,
+                                      onChanged: (text) {
+                                        BlocProvider.of<ProductsCubit>(context)
+                                            .updateProductCode(text);
+                                        return text;
+                                      }),
+                                  snapshot.hasError
+                                      ? ErrorText(
+                                          errorText: snapshot.error.toString())
+                                      : const SizedBox(
+                                          height: 29,
+                                        )
+                                ],
+                              ),
+                            );
+                          },
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  Container(
-                    width: 300,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        StreamBuilder(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 300,
+                        child: StreamBuilder(
+                          stream: BlocProvider.of<ProductsCubit>(context)
+                              .productNameStream,
+                          builder: (context, snapshot) {
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 24, right: 24, top: 24),
+                              child: Column(
+                                children: [
+                                  CustomTextField(
+                                      labelText: "Enter Product Name",
+                                      context: context,
+                                      hintText: "GM",
+                                      initialValue: product != null
+                                          ? product!.productName.toString()
+                                          : null,
+                                      onChanged: (text) {
+                                        BlocProvider.of<ProductsCubit>(context)
+                                            .updateProductName(text);
+                                        return text;
+                                      }),
+                                  snapshot.hasError
+                                      ? ErrorText(
+                                          errorText: snapshot.error.toString())
+                                      : const SizedBox(
+                                          height: 29,
+                                        )
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        width: 300,
+                        child: StreamBuilder(
+                          stream: BlocProvider.of<ProductsCubit>(context)
+                              .productPriceStream,
+                          builder: (context, snapshot) {
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 24, right: 24, top: 24),
+                              child: Column(
+                                children: [
+                                  CustomTextField(
+                                      labelText: "Enter Product Price",
+                                      context: context,
+                                      hintText: "09219999999",
+                                      initialValue: product != null
+                                          ? product!.productPrice.toString()
+                                          : null,
+                                      onChanged: (text) {
+                                        BlocProvider.of<ProductsCubit>(context)
+                                            .updateProductPrice(text);
+                                        return text;
+                                      }),
+                                  snapshot.hasError
+                                      ? ErrorText(
+                                          errorText: snapshot.error.toString())
+                                      : const SizedBox(
+                                          height: 29,
+                                        )
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 300,
+                        child: StreamBuilder(
+                          stream: BlocProvider.of<ProductsCubit>(context)
+                              .productQuantityStream,
+                          builder: (context, snapshot) {
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 24, right: 24, top: 24),
+                              child: Column(
+                                children: [
+                                  CustomTextField(
+                                      labelText: "Enter Product Quantity",
+                                      context: context,
+                                      hintText: "09219999999",
+                                      initialValue: product != null
+                                          ? product!.productQuantity.toString()
+                                          : null,
+                                      onChanged: (text) {
+                                        BlocProvider.of<ProductsCubit>(context)
+                                            .updateProductQuantity(text);
+                                        return text;
+                                      }),
+                                  snapshot.hasError
+                                      ? ErrorText(
+                                          errorText: snapshot.error.toString())
+                                      : const SizedBox(
+                                          height: 29,
+                                        )
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        width: 300,
+                        child: StreamBuilder(
                           stream: BlocProvider.of<ProductsCubit>(context)
                               .productUnitStream,
                           builder: (context, snapshot) {
@@ -232,7 +228,14 @@ class ProductDialog extends StatelessWidget {
                             );
                           },
                         ),
-                        StreamBuilder(
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 300,
+                        child: StreamBuilder(
                           stream: BlocProvider.of<ProductsCubit>(context)
                               .productCategoryStream,
                           builder: (context, snapshot) {
@@ -296,7 +299,10 @@ class ProductDialog extends StatelessWidget {
                             );
                           },
                         ),
-                        StreamBuilder(
+                      ),
+                      SizedBox(
+                        width: 300,
+                        child: StreamBuilder(
                           stream: BlocProvider.of<ProductsCubit>(context)
                               .productSupplierStream,
                           builder: (context, snapshot) {
@@ -359,9 +365,44 @@ class ProductDialog extends StatelessWidget {
                             );
                           },
                         ),
-                      ],
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    width: 1000,
+                    child: StreamBuilder(
+                      stream: BlocProvider.of<ProductsCubit>(context)
+                          .productDescriptionStream,
+                      builder: (context, snapshot) {
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                              left: 24, right: 24, top: 24),
+                          child: Column(
+                            children: [
+                              CustomTextField(
+                                  labelText: "Enter Product Description",
+                                  context: context,
+                                  hintText: "Sto Tomas",
+                                  initialValue: product != null
+                                      ? product!.productDescription.toString()
+                                      : null,
+                                  onChanged: (text) {
+                                    BlocProvider.of<ProductsCubit>(context)
+                                        .updateProductDecription(text);
+                                    return text;
+                                  }),
+                              snapshot.hasError
+                                  ? ErrorText(
+                                      errorText: snapshot.error.toString())
+                                  : const SizedBox(
+                                      height: 29,
+                                    )
+                            ],
+                          ),
+                        );
+                      },
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

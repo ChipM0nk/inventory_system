@@ -111,6 +111,7 @@ class ProductsCubit extends Cubit<ProductsState>
   }
 
   loadProducts(Product product) {
+    updateProductCode(product.productCode);
     updateProductName(product.productName);
     updateProductDecription(product.productDescription);
     updateProductPrice(product.productPrice.toString());
