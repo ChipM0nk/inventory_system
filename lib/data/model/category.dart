@@ -1,16 +1,18 @@
 // ignore: depend_on_referenced_packages
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'category.g.dart';
 
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
+@immutable
 class Category {
   @JsonKey(name: "id")
   @JsonKey(name: "categoryId")
-  int? categoryId;
+  final int? categoryId;
   final String categoryCode;
   final String categoryName;
 
-  Category({
+  const Category({
     this.categoryId,
     required this.categoryCode,
     required this.categoryName,

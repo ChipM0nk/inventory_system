@@ -1,4 +1,4 @@
-import 'package:edar_app/cubit/auth_cubit.dart';
+import 'package:edar_app/cubit/auth/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

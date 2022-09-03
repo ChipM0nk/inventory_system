@@ -1,7 +1,9 @@
 import 'package:edar_app/cubit/categories/categories_cubit.dart';
 import 'package:edar_app/data/model/category.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_text_field.dart';
+import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
 import 'package:edar_app/presentation/widgets/fields/error_text.dart';
+import 'package:edar_app/presentation/widgets/fields/form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,6 +24,53 @@ class CategoryDialog extends StatelessWidget {
       categoryId = category!.categoryId;
     }
 
+    var categoryCode = StreamBuilder(
+      stream: BlocProvider.of<CategoriesCubit>(context).categoryCodeStream,
+      builder: (context, snapshot) {
+        return Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+          child: Column(
+            children: [
+              CustomTextFormField(
+                  labelText: "Category Code",
+                  hintText: "BWLS",
+                  initialValue: category != null
+                      ? category!.categoryCode.toString()
+                      : null,
+                  onChanged: (text) {
+                    BlocProvider.of<CategoriesCubit>(context)
+                        .updateCategoryCode(text);
+                  }),
+              ErrorMessage(snapshot: snapshot)
+            ],
+          ),
+        );
+      },
+    );
+
+    var categoryName = StreamBuilder(
+      stream: BlocProvider.of<CategoriesCubit>(context).categoryNameStream,
+      builder: (context, snapshot) {
+        return Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+          child: Column(
+            children: [
+              CustomTextFormField(
+                  labelText: "Category Name",
+                  hintText: "Toilet Bowls",
+                  initialValue: category != null
+                      ? category!.categoryName.toString()
+                      : null,
+                  onChanged: (text) {
+                    BlocProvider.of<CategoriesCubit>(context)
+                        .updateCategoryName(text);
+                  }),
+              ErrorMessage(snapshot: snapshot)
+            ],
+          ),
+        );
+      },
+    );
     return AlertDialog(
       scrollable: true,
       title: Text(title),
@@ -37,70 +86,8 @@ class CategoryDialog extends StatelessWidget {
               children: <Widget>[
                 Column(
                   children: [
-                    StreamBuilder(
-                      stream: BlocProvider.of<CategoriesCubit>(context)
-                          .categoryCodeStream,
-                      builder: (context, snapshot) {
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                              left: 24, right: 24, top: 24),
-                          child: Column(
-                            children: [
-                              CustomTextField(
-                                  labelText: "Enter Category Code",
-                                  context: context,
-                                  hintText: "BWLS",
-                                  initialValue: category != null
-                                      ? category!.categoryCode.toString()
-                                      : null,
-                                  onChanged: (text) {
-                                    BlocProvider.of<CategoriesCubit>(context)
-                                        .updateCategoryCode(text);
-                                    return text;
-                                  }),
-                              snapshot.hasError
-                                  ? ErrorText(
-                                      errorText: snapshot.error.toString())
-                                  : const SizedBox(
-                                      height: 29,
-                                    )
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                    StreamBuilder(
-                      stream: BlocProvider.of<CategoriesCubit>(context)
-                          .categoryNameStream,
-                      builder: (context, snapshot) {
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                              left: 24, right: 24, top: 24),
-                          child: Column(
-                            children: [
-                              CustomTextField(
-                                  labelText: "Enter Category Name",
-                                  context: context,
-                                  hintText: "Toilet Bowls",
-                                  initialValue: category != null
-                                      ? category!.categoryName.toString()
-                                      : null,
-                                  onChanged: (text) {
-                                    BlocProvider.of<CategoriesCubit>(context)
-                                        .updateCategoryName(text);
-                                    return text;
-                                  }),
-                              snapshot.hasError
-                                  ? ErrorText(
-                                      errorText: snapshot.error.toString())
-                                  : const SizedBox(
-                                      height: 29,
-                                    )
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                    categoryCode,
+                    categoryName,
                   ],
                 ),
               ],

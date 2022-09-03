@@ -1,5 +1,7 @@
+import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
 import 'package:edar_app/cubit/products/products_cubit.dart';
 import 'package:edar_app/cubit/suppliers/suppliers_cubit.dart';
+import 'package:edar_app/data/repository/invoice_repository.dart';
 import 'package:edar_app/data/repository/product_repository.dart';
 import 'package:edar_app/data/repository/supplier_repository.dart';
 import 'package:edar_app/routing/route_names.dart';
@@ -31,13 +33,17 @@ class BlocProviders {
 
   static List<BlocProvider> _getSalesFormBlockProvider() {
     //TODO Change later
-    CategoryRepository categoryRepository =
-        CategoryRepository(networkService: NetworkService());
-    CategoriesCubit categoriesCubit =
-        CategoriesCubit(categoryRepository: categoryRepository);
-
+    InvoiceRepository invoiceRepository =
+        InvoiceRepository(networkService: NetworkService());
+    InvoiceCubit invoiceCubit =
+        InvoiceCubit(invoiceRepository: invoiceRepository);
+    ProductRepository productRepository =
+        ProductRepository(networkService: NetworkService());
+    ProductsCubit productCubit =
+        ProductsCubit(productRepository: productRepository);
     return [
-      BlocProvider<CategoriesCubit>(create: (context) => categoriesCubit)
+      BlocProvider<InvoiceCubit>(create: (context) => invoiceCubit),
+      BlocProvider<ProductsCubit>(create: (context) => productCubit),
     ];
     // return MultiBlocProvider(providers: providers, child: child) BlocProvider<CategoriesCubit>(create: (context) => categoriesCubit);
   }

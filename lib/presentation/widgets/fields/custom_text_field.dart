@@ -42,7 +42,7 @@ class CustomTextField extends StatelessWidget {
 
   TextStyle getHintTextStyle(context, hint) {
     return TextStyle(
-        fontSize: 18,
+        fontSize: 12,
         color: hint ? Colors.grey.shade400 : Colors.black,
         fontWeight: FontWeight.w900);
   }
@@ -50,7 +50,7 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 0),
+      padding: const EdgeInsets.all(10.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -78,18 +78,19 @@ class CustomTextField extends StatelessWidget {
             initialValue: initialValue,
             style: getHintTextStyle(context, false),
             decoration: InputDecoration(
-                errorStyle: const TextStyle(fontStyle: FontStyle.italic),
-                isDense: true,
-                counterText: "",
-                contentPadding: const EdgeInsets.only(bottom: 8),
-                hintStyle: getHintTextStyle(context, true),
-                focusedBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(width: 2),
-                ),
-                enabledBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(width: 2),
-                ),
-                hintText: hintText),
+              errorStyle: const TextStyle(fontStyle: FontStyle.italic),
+              isDense: true,
+              counterText: "",
+              contentPadding: const EdgeInsets.only(bottom: 8),
+              hintStyle: getHintTextStyle(context, true),
+              focusedBorder: const UnderlineInputBorder(
+                borderSide: BorderSide(width: 2),
+              ),
+              enabledBorder: const UnderlineInputBorder(
+                borderSide: BorderSide(width: 2),
+              ),
+              hintText: hintText,
+            ),
           ),
         ],
       ),

@@ -1,12 +1,11 @@
-import 'package:edar_app/cubit/auth_cubit.dart';
+import 'package:edar_app/cubit/auth/auth_cubit.dart';
+import 'package:edar_app/locator.dart';
 import 'package:edar_app/presentation/widgets/navbar/custom_menu_list.dart';
 import 'package:edar_app/presentation/widgets/navbar/header.dart';
+import 'package:edar_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:side_navigation/side_navigation.dart';
-
-import '../../../locator.dart';
-import '../../../services/navigation_service.dart';
 
 class HomePage extends StatefulWidget {
   final Widget child;

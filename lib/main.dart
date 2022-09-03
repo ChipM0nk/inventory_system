@@ -1,4 +1,4 @@
-import 'package:edar_app/cubit/auth_cubit.dart';
+import 'package:edar_app/cubit/auth/auth_cubit.dart';
 import 'package:edar_app/locator.dart';
 import 'package:edar_app/presentation/pages/home/home_page.dart';
 

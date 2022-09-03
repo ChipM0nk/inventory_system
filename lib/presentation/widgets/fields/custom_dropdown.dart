@@ -30,8 +30,9 @@ class CustomDropdown<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      width: 200,
       child: Padding(
-        padding: const EdgeInsets.only(top: 0),
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

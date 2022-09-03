@@ -110,6 +110,19 @@ class ProductsCubit extends Cubit<ProductsState>
     }
   }
 
+  void selectedProduct(Product? product) {
+    final currentState = state;
+    if (currentState is ProductsLoaded) {
+      final products = currentState.products;
+      emit(ProductsLoaded(
+        products: products,
+        sortAscending: true,
+        selectedProduct:
+            products.firstWhere((prod) => prod.productId == product!.productId),
+      ));
+    }
+  }
+
   loadProducts(Product product) {
     updateProductCode(product.productCode);
     updateProductName(product.productName);

@@ -1,7 +1,9 @@
 import 'package:edar_app/cubit/suppliers/suppliers_cubit.dart';
 import 'package:edar_app/data/model/supplier.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_text_field.dart';
+import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
 import 'package:edar_app/presentation/widgets/fields/error_text.dart';
+import 'package:edar_app/presentation/widgets/fields/form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,6 +24,76 @@ class SupplierDialog extends StatelessWidget {
       supplierId = supplier!.supplierId;
     }
 
+    var supplierNameField = StreamBuilder(
+      stream: BlocProvider.of<SuppliersCubit>(context).supplierNameStream,
+      builder: (context, snapshot) {
+        return Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+          child: Column(
+            children: [
+              CustomTextFormField(
+                  labelText: "Supplier Name",
+                  hintText: "GM",
+                  initialValue: supplier != null
+                      ? supplier!.supplierName.toString()
+                      : null,
+                  onChanged: (text) {
+                    BlocProvider.of<SuppliersCubit>(context)
+                        .updateSupplierName(text);
+                  }),
+              ErrorMessage(snapshot: snapshot)
+            ],
+          ),
+        );
+      },
+    );
+    var supplierAddressField = StreamBuilder(
+      stream: BlocProvider.of<SuppliersCubit>(context).supplierAddressStream,
+      builder: (context, snapshot) {
+        return Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+          child: Column(
+            children: [
+              CustomTextFormField(
+                  labelText: "Supplier Address",
+                  hintText: "Sto Tomas",
+                  initialValue: supplier != null
+                      ? supplier!.supplierAddress.toString()
+                      : null,
+                  onChanged: (text) {
+                    BlocProvider.of<SuppliersCubit>(context)
+                        .updateSupplierAddress(text);
+                  }),
+              ErrorMessage(snapshot: snapshot)
+            ],
+          ),
+        );
+      },
+    );
+    var supplierContactField = StreamBuilder(
+      stream: BlocProvider.of<SuppliersCubit>(context).supplierContactNumStream,
+      builder: (context, snapshot) {
+        return Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+          child: Column(
+            children: [
+              CustomTextFormField(
+                  labelText: "Supplier Contact Number",
+                  hintText: "09219999999",
+                  initialValue: supplier != null
+                      ? supplier!.supplierContactNumber.toString()
+                      : null,
+                  onChanged: (text) {
+                    BlocProvider.of<SuppliersCubit>(context)
+                        .updateSupplierContactNumber(text);
+                  }),
+              ErrorMessage(snapshot: snapshot)
+            ],
+          ),
+        );
+      },
+    );
+
     return AlertDialog(
       scrollable: true,
       title: Text(title),
@@ -37,102 +109,9 @@ class SupplierDialog extends StatelessWidget {
               children: <Widget>[
                 Column(
                   children: [
-                    StreamBuilder(
-                      stream: BlocProvider.of<SuppliersCubit>(context)
-                          .supplierNameStream,
-                      builder: (context, snapshot) {
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                              left: 24, right: 24, top: 24),
-                          child: Column(
-                            children: [
-                              CustomTextField(
-                                  labelText: "Enter Supplier Name",
-                                  context: context,
-                                  hintText: "GM",
-                                  initialValue: supplier != null
-                                      ? supplier!.supplierName.toString()
-                                      : null,
-                                  onChanged: (text) {
-                                    BlocProvider.of<SuppliersCubit>(context)
-                                        .updateSupplierName(text);
-                                    return text;
-                                  }),
-                              snapshot.hasError
-                                  ? ErrorText(
-                                      errorText: snapshot.error.toString())
-                                  : const SizedBox(
-                                      height: 29,
-                                    )
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                    StreamBuilder(
-                      stream: BlocProvider.of<SuppliersCubit>(context)
-                          .supplierAddressStream,
-                      builder: (context, snapshot) {
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                              left: 24, right: 24, top: 24),
-                          child: Column(
-                            children: [
-                              CustomTextField(
-                                  labelText: "Enter Supplier Address",
-                                  context: context,
-                                  hintText: "Sto Tomas",
-                                  initialValue: supplier != null
-                                      ? supplier!.supplierAddress.toString()
-                                      : null,
-                                  onChanged: (text) {
-                                    BlocProvider.of<SuppliersCubit>(context)
-                                        .updateSupplierAddress(text);
-                                    return text;
-                                  }),
-                              snapshot.hasError
-                                  ? ErrorText(
-                                      errorText: snapshot.error.toString())
-                                  : const SizedBox(
-                                      height: 29,
-                                    )
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                    StreamBuilder(
-                      stream: BlocProvider.of<SuppliersCubit>(context)
-                          .supplierContactNumStream,
-                      builder: (context, snapshot) {
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                              left: 24, right: 24, top: 24),
-                          child: Column(
-                            children: [
-                              CustomTextField(
-                                  labelText: "Enter Supplier Contact Number",
-                                  context: context,
-                                  hintText: "09219999999",
-                                  initialValue: supplier != null
-                                      ? supplier!.supplierAddress.toString()
-                                      : null,
-                                  onChanged: (text) {
-                                    BlocProvider.of<SuppliersCubit>(context)
-                                        .updateSupplierContactNumber(text);
-                                    return text;
-                                  }),
-                              snapshot.hasError
-                                  ? ErrorText(
-                                      errorText: snapshot.error.toString())
-                                  : const SizedBox(
-                                      height: 29,
-                                    )
-                            ],
-                          ),
-                        );
-                      },
-                    )
+                    supplierNameField,
+                    supplierAddressField,
+                    supplierContactField
                   ],
                 ),
               ],
@@ -143,7 +122,7 @@ class SupplierDialog extends StatelessWidget {
           stream: BlocProvider.of<SuppliersCubit>(context).buttonValid,
           builder: (context, snapshot) {
             return Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(10),
               child: Row(
                 children: [
                   Expanded(

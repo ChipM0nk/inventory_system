@@ -6,15 +6,18 @@ class ProductsInitial extends ProductsState {}
 
 class ProductsLoaded extends ProductsState {
   final List<Product> products;
-  List<Product>? filteredData;
-  int? sortIndex;
+  final List<Product>? filteredData;
+  final int? sortIndex;
   final bool sortAscending;
+  final Product? selectedProduct;
 
-  ProductsLoaded(
-      {required this.products,
-      this.filteredData,
-      this.sortIndex,
-      required this.sortAscending});
+  ProductsLoaded({
+    required this.products,
+    this.filteredData,
+    this.sortIndex,
+    required this.sortAscending,
+    this.selectedProduct,
+  });
 }
 
 //Add

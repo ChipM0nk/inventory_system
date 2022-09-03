@@ -1,5 +1,4 @@
 import 'package:edar_app/cubit/categories/categories_cubit.dart';
-import 'package:edar_app/cubit/auth_cubit.dart';
 import 'package:edar_app/data/model/category.dart';
 import 'package:edar_app/presentation/datasource/category_datasource.dart';
 import 'package:edar_app/presentation/pages/category/category_dialog.dart';

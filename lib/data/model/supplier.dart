@@ -1,16 +1,18 @@
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'supplier.g.dart';
 
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
+@immutable
 class Supplier {
   @JsonKey(name: "id")
   @JsonKey(name: "supplierId")
-  int? supplierId;
+  final int? supplierId;
   final String supplierName;
   final String supplierAddress;
   final String supplierContactNumber;
 
-  Supplier(
+  const Supplier(
       {this.supplierId,
       required this.supplierName,
       required this.supplierAddress,

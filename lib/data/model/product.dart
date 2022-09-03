@@ -2,14 +2,16 @@
 
 import 'package:edar_app/data/model/category.dart';
 import 'package:edar_app/data/model/supplier.dart';
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'product.g.dart';
 
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
+@immutable
 class Product {
   @JsonKey(name: "id")
   @JsonKey(name: "productId")
-  int? productId;
+  final int? productId;
   final String productCode;
   final String productName;
   final String productDescription;
@@ -19,7 +21,7 @@ class Product {
   final Supplier supplier;
   final Category category;
 
-  Product(
+  const Product(
       {this.productId,
       required this.productCode,
       required this.productName,

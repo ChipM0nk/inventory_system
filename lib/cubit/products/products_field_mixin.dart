@@ -94,25 +94,13 @@ mixin ProductsFieldMixin on ValidationMixin {
   Stream<Supplier> get productSupplierStream =>
       _productSupplierController.stream;
   updateProductSupplier(Supplier supplier) {
-    // if (validTextLength(fieldValue, 2)) {
-    //TODO: Validate supplier from the list
     _productSupplierController.sink.add(supplier);
-    // } else {
-    //   _productSupplierController.sink
-    //       .addError("Please enter text with length greater than 2");
-    // }
   }
 
   Stream<Category> get productCategoryStream =>
       _productCategoryController.stream;
   updateProductCategory(Category category) {
-    // if (validTextLength(fieldValue, 4)) {
-    //TODO: Validate supplier from the list
     _productCategoryController.sink.add(category);
-    // } else {
-    //   _productCategoryController.sink
-    //       .addError("Please enter text with length greater than 4");
-    // }
   }
 
   Stream<bool> get buttonValid => Rx.combineLatest8(
@@ -128,13 +116,15 @@ mixin ProductsFieldMixin on ValidationMixin {
 
   Product getProduct(int? productId) {
     return Product(
-        productCode: _productCodeController.value,
-        productName: _productNameController.value,
-        productDescription: _productDescriptionController.value,
-        productPrice: _productPriceController.value,
-        productQuantity: _productQuantityController.value,
-        productUnit: _productUnitController.value,
-        supplier: _productSupplierController.value,
-        category: _productCategoryController.value);
+      productId: productId,
+      productCode: _productCodeController.value,
+      productName: _productNameController.value,
+      productDescription: _productDescriptionController.value,
+      productPrice: _productPriceController.value,
+      productQuantity: _productQuantityController.value,
+      productUnit: _productUnitController.value,
+      supplier: _productSupplierController.value,
+      category: _productCategoryController.value,
+    );
   }
 }

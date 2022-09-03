@@ -1,11 +1,15 @@
+import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
 import 'package:edar_app/data/model/category.dart';
+import 'package:edar_app/data/model/invoice.dart';
 import 'package:edar_app/data/model/supplier.dart';
+import 'package:edar_app/presentation/widgets/fields/error_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/model/invoice_item_model.dart';
 import '../../../data/model/product.dart';
-import '../../utils/validators.dart';
-import '../../widgets/form_field.dart';
+import '../../../utils/validators.dart';
+import '../../widgets/fields/form_field.dart';
 import 'add_item_dialog.dart';
 
 class SalesForm extends StatefulWidget {
@@ -38,7 +42,7 @@ class _SalesFormState extends State<SalesForm> {
     // product.productId = 1;
     // product.productName = "bowl";
 
-    Product product = Product(
+    Product product = const Product(
       productCode: "code",
       productName: "name",
       productDescription: "productDescription",
@@ -71,6 +75,7 @@ class _SalesFormState extends State<SalesForm> {
 
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<InvoiceCubit>(context).init();
     return Form(
         child: Container(
       child: Column(
@@ -83,29 +88,46 @@ class _SalesFormState extends State<SalesForm> {
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
+                    StreamBuilder<String>(
+                        stream: BlocProvider.of<InvoiceCubit>(context)
+                            .invoiceNumberStream,
+                        builder: (context, snapshot) {
+                          return Column(
+                            children: [
+                              CustomTextFormField(
+                                  onChanged: (text) {
+                                    BlocProvider.of<InvoiceCubit>(context)
+                                        .updateInvoiceNumber(text);
+                                  },
+                                  labelText: 'Invoice No'),
+                              snapshot.hasError
+                                  ? ErrorText(
+                                      errorText: snapshot.error.toString())
+                                  : const SizedBox(
+                                      height: 10,
+                                    )
+                            ],
+                          );
+                        }),
                     CustomTextFormField(
                         validator: (value) => Validators.stringNotEmpty(value),
-                        fieldName: 'Invoice No',
-                        controller: invoiceNo),
-                    CustomTextFormField(
-                        validator: (value) => Validators.stringNotEmpty(value),
-                        fieldName: "Customer Name",
+                        labelText: "Customer Name",
                         controller: customerName),
                     CustomTextFormField(
                         validator: (value) => Validators.stringNotEmpty(value),
-                        fieldName: "Customer Address",
+                        labelText: "Customer Address",
                         controller: customerAddress),
                     CustomTextFormField(
                         validator: (value) => Validators.stringNotEmpty(value),
-                        fieldName: "Contact No.",
+                        labelText: "Contact No.",
                         controller: contactNumber),
                     CustomTextFormField(
                         validator: (value) => Validators.stringNotEmpty(value),
-                        fieldName: "Sales Person",
+                        labelText: "Sales Person",
                         controller: salesPerson),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 50,
                 ),
                 Column(
@@ -113,27 +135,27 @@ class _SalesFormState extends State<SalesForm> {
                   children: <Widget>[
                     CustomTextFormField(
                         validator: (value) => Validators.stringNotEmpty(value),
-                        fieldName: "Invoice No.",
+                        labelText: "Invoice No.",
                         controller: invoiceNo),
                     CustomTextFormField(
                         validator: (value) => Validators.stringNotEmpty(value),
-                        fieldName: "Customer Name",
+                        labelText: "Customer Name",
                         controller: customerName),
                     CustomTextFormField(
                         validator: (value) => Validators.stringNotEmpty(value),
-                        fieldName: "Customer Address",
+                        labelText: "Customer Address",
                         controller: customerAddress),
                     CustomTextFormField(
                         validator: (value) => Validators.stringNotEmpty(value),
-                        fieldName: "Contact No.",
+                        labelText: "Contact No.",
                         controller: contactNumber),
                     CustomTextFormField(
                         validator: (value) => Validators.stringNotEmpty(value),
-                        fieldName: "Sales Person",
+                        labelText: "Sales Person",
                         controller: salesPerson),
                     CustomTextFormField(
                         validator: (value) => Validators.stringNotEmpty(value),
-                        fieldName: "Sales Person",
+                        labelText: "Sales Person",
                         controller: salesPerson),
                   ],
                 )
