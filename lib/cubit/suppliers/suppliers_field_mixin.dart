@@ -7,12 +7,14 @@ mixin SuppliersFieldMixin on ValidationMixin {
 
   late var _supplierNameController;
   late var _supplierAddressController;
+  late var _supplierEmailAddController;
   late var _supplierContactNumController;
 
   init() {
     print("init");
     _supplierNameController = BehaviorSubject<String>();
     _supplierAddressController = BehaviorSubject<String>();
+    _supplierEmailAddController = BehaviorSubject<String>();
     _supplierContactNumController = BehaviorSubject<String>();
   }
 
@@ -36,6 +38,18 @@ mixin SuppliersFieldMixin on ValidationMixin {
     }
   }
 
+  Stream<String> get supplierEmailAddStream =>
+      _supplierEmailAddController.stream;
+  updateSupplierEmailAddress(String fieldValue) {
+    if (validTextLength(fieldValue, 4)) {
+      //create email add validator
+      _supplierEmailAddController.sink.add(fieldValue);
+    } else {
+      _supplierEmailAddController.sink
+          .addError("Please enter text with length greater than 4");
+    }
+  }
+
   Stream<String> get supplierContactNumStream =>
       _supplierContactNumController.stream;
   updateSupplierContactNumber(String fieldValue) {
@@ -47,14 +61,19 @@ mixin SuppliersFieldMixin on ValidationMixin {
     }
   }
 
-  Stream<bool> get buttonValid => Rx.combineLatest3(supplierNameStream,
-      supplierAddressStream, supplierContactNumStream, (a, b, c) => true);
+  Stream<bool> get buttonValid => Rx.combineLatest4(
+      supplierNameStream,
+      supplierAddressStream,
+      supplierEmailAddStream,
+      supplierContactNumStream,
+      (a, b, c, d) => true);
 
   Supplier getSupplier(int? supplierId) {
     return Supplier(
       supplierId: supplierId,
       supplierName: _supplierNameController.value,
       supplierAddress: _supplierAddressController.value,
+      supplierEmailAdd: _supplierEmailAddController.value,
       supplierContactNumber: _supplierContactNumController.value,
     );
   }

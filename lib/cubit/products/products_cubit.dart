@@ -102,10 +102,16 @@ class ProductsCubit extends Cubit<ProductsState>
       if (searchText.isEmpty) {
         emit(ProductsLoaded(products: data, sortAscending: false));
       } else {
-        final filteredData =
-            data.where((cat) => cat.productName.contains(searchText)).toList();
+        final filteredData = data
+            .where((cat) => cat.productName.toLowerCase().contains(
+                  searchText.toLowerCase(),
+                ))
+            .toList();
         emit(ProductsLoaded(
-            filteredData: filteredData, products: data, sortAscending: true));
+          filteredData: filteredData,
+          products: data,
+          sortAscending: true,
+        ));
       }
     }
   }

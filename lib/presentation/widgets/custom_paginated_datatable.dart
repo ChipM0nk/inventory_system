@@ -24,7 +24,7 @@ class CustomPaginatedDataTable extends StatelessWidget {
       child: PaginatedDataTable(
         header: header,
         showCheckboxColumn: false,
-        columnSpacing: 0,
+        columnSpacing: 50,
         horizontalMargin: 10,
         rowsPerPage: rowsPerPage,
         sortColumnIndex: sortIndex,

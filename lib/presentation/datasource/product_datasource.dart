@@ -41,7 +41,12 @@ class ProductData extends DataTableSource {
           onTap: () => onItemClick(dataItem),
         ),
         DataCell(
-          Text(dataItem.productDescription),
+          Tooltip(
+              message: dataItem.productDescription,
+              child: Text(
+                dataItem.productDescription,
+                overflow: TextOverflow.ellipsis,
+              )),
           onTap: () => onItemClick(dataItem),
         ),
         DataCell(

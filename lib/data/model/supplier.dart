@@ -10,12 +10,14 @@ class Supplier {
   final int? supplierId;
   final String supplierName;
   final String supplierAddress;
+  final String supplierEmailAdd;
   final String supplierContactNumber;
 
   const Supplier(
       {this.supplierId,
       required this.supplierName,
       required this.supplierAddress,
+      required this.supplierEmailAdd,
       required this.supplierContactNumber});
 
   // Connect the generated [_$PersonFromJson] function to the `fromJson`

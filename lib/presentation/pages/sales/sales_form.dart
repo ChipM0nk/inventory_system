@@ -2,13 +2,15 @@ import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
 import 'package:edar_app/data/model/category.dart';
 import 'package:edar_app/data/model/invoice.dart';
 import 'package:edar_app/data/model/supplier.dart';
+import 'package:edar_app/presentation/widgets/fields/date_picker.dart';
+import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
 import 'package:edar_app/presentation/widgets/fields/error_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/model/invoice_item_model.dart';
 import '../../../data/model/product.dart';
-import '../../../utils/validators.dart';
+
 import '../../widgets/fields/form_field.dart';
 import 'add_item_dialog.dart';
 
@@ -35,6 +37,7 @@ class _SalesFormState extends State<SalesForm> {
 
   InvoiceItemModel invoiceItem = InvoiceItemModel();
   List<InvoiceItemModel> invoiceItems = [];
+  DateTime selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -52,6 +55,7 @@ class _SalesFormState extends State<SalesForm> {
       supplier: Supplier(
           supplierName: "name",
           supplierContactNumber: "sds",
+          supplierEmailAdd: "dsf@dfds",
           supplierAddress: "ass"),
       category: Category(
         categoryCode: "code",
@@ -76,90 +80,204 @@ class _SalesFormState extends State<SalesForm> {
   @override
   Widget build(BuildContext context) {
     BlocProvider.of<InvoiceCubit>(context).init();
-    return Form(
-        child: Container(
+
+    var invoiceNumber = StreamBuilder<String>(
+        stream: BlocProvider.of<InvoiceCubit>(context).invoiceNumberStream,
+        builder: (context, snapshot) {
+          return Column(
+            children: [
+              CustomTextFormField(
+                  onChanged: (text) {
+                    BlocProvider.of<InvoiceCubit>(context)
+                        .updateInvoiceNumber(text);
+                  },
+                  labelText: 'Invoice No'),
+              snapshot.hasError
+                  ? ErrorText(errorText: snapshot.error.toString())
+                  : const SizedBox(
+                      height: 10,
+                    )
+            ],
+          );
+        });
+
+    var poNumber = StreamBuilder<String>(
+        stream: BlocProvider.of<InvoiceCubit>(context).poNumberStream,
+        builder: (context, snapshot) {
+          return Column(
+            children: [
+              CustomTextFormField(
+                  onChanged: (text) {
+                    BlocProvider.of<InvoiceCubit>(context).updatePoNumber(text);
+                  },
+                  labelText: 'PO Number'),
+              ErrorMessage(snapshot: snapshot)
+            ],
+          );
+        });
+    var customerName = StreamBuilder<String>(
+        stream: BlocProvider.of<InvoiceCubit>(context).customerNameStream,
+        builder: (context, snapshot) {
+          return Column(
+            children: [
+              CustomTextFormField(
+                  onChanged: (text) {
+                    BlocProvider.of<InvoiceCubit>(context)
+                        .updateCustomerName(text);
+                  },
+                  labelText: 'Customer Name'),
+              ErrorMessage(snapshot: snapshot)
+            ],
+          );
+        });
+    var customerContactNumber = StreamBuilder<String>(
+        stream: BlocProvider.of<InvoiceCubit>(context).customerContactStream,
+        builder: (context, snapshot) {
+          return Column(
+            children: [
+              CustomTextFormField(
+                  onChanged: (text) {
+                    BlocProvider.of<InvoiceCubit>(context)
+                        .updateCustomerContact(text);
+                  },
+                  labelText: 'Contact Number'),
+              ErrorMessage(snapshot: snapshot)
+            ],
+          );
+        });
+
+    var customerAddressField = StreamBuilder(
+      stream: BlocProvider.of<InvoiceCubit>(context).customerAddressStream,
+      builder: (context, snapshot) {
+        return Column(
+          children: [
+            CustomTextFormField(
+                labelText: "Customer Address",
+                hintText: "Sto Tomas",
+                textInputType: TextInputType.multiline,
+                width: 450,
+                minLines: 1,
+                onChanged: (text) {
+                  BlocProvider.of<InvoiceCubit>(context)
+                      .updateCustomerAddress(text);
+                }),
+            ErrorMessage(snapshot: snapshot)
+          ],
+        );
+      },
+    );
+    return SizedBox(
+      width: 1800,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+          SizedBox(
+            width: 720,
+            child: Column(
               children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    StreamBuilder<String>(
-                        stream: BlocProvider.of<InvoiceCubit>(context)
-                            .invoiceNumberStream,
-                        builder: (context, snapshot) {
-                          return Column(
-                            children: [
-                              CustomTextFormField(
-                                  onChanged: (text) {
-                                    BlocProvider.of<InvoiceCubit>(context)
-                                        .updateInvoiceNumber(text);
-                                  },
-                                  labelText: 'Invoice No'),
-                              snapshot.hasError
-                                  ? ErrorText(
-                                      errorText: snapshot.error.toString())
-                                  : const SizedBox(
-                                      height: 10,
-                                    )
-                            ],
-                          );
-                        }),
-                    CustomTextFormField(
-                        validator: (value) => Validators.stringNotEmpty(value),
-                        labelText: "Customer Name",
-                        controller: customerName),
-                    CustomTextFormField(
-                        validator: (value) => Validators.stringNotEmpty(value),
-                        labelText: "Customer Address",
-                        controller: customerAddress),
-                    CustomTextFormField(
-                        validator: (value) => Validators.stringNotEmpty(value),
-                        labelText: "Contact No.",
-                        controller: contactNumber),
-                    CustomTextFormField(
-                        validator: (value) => Validators.stringNotEmpty(value),
-                        labelText: "Sales Person",
-                        controller: salesPerson),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    invoiceNumber,
+                    customerName,
+                    customerContactNumber,
                   ],
                 ),
-                const SizedBox(
-                  width: 50,
-                ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    CustomTextFormField(
-                        validator: (value) => Validators.stringNotEmpty(value),
-                        labelText: "Invoice No.",
-                        controller: invoiceNo),
-                    CustomTextFormField(
-                        validator: (value) => Validators.stringNotEmpty(value),
-                        labelText: "Customer Name",
-                        controller: customerName),
-                    CustomTextFormField(
-                        validator: (value) => Validators.stringNotEmpty(value),
-                        labelText: "Customer Address",
-                        controller: customerAddress),
-                    CustomTextFormField(
-                        validator: (value) => Validators.stringNotEmpty(value),
-                        labelText: "Contact No.",
-                        controller: contactNumber),
-                    CustomTextFormField(
-                        validator: (value) => Validators.stringNotEmpty(value),
-                        labelText: "Sales Person",
-                        controller: salesPerson),
-                    CustomTextFormField(
-                        validator: (value) => Validators.stringNotEmpty(value),
-                        labelText: "Sales Person",
-                        controller: salesPerson),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    customerAddressField,
+                    Column(
+                      children: [
+                        CustomDatePicker(
+                          labelText: "Purchase Date",
+                          // selectedDate: selectedDate,
+                          width: 175,
+                          onChanged: (text) {
+                            print("updated: ${text}");
+                          },
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        )
+                      ],
+                    )
+                    // ElevatedButton(
+                    //   onPressed: () => _selectDate(context),
+                    //   child: Text('Select date'),
+                    // ),
                   ],
-                )
-              ]),
+                ),
+                Row(
+                  children: [
+                    customerName,
+                    poNumber,
+                    const SizedBox(
+                      width: 30,
+                    ),
+                  ],
+                ),
+
+                // Column(
+                //   mainAxisSize: MainAxisSize.min,
+                //   children: <Widget>[
+                //     invoiceNumber,
+                //     CustomTextFormField(
+                //         validator: (value) => Validators.stringNotEmpty(value),
+                //         labelText: "Customer Name",
+                //         controller: customerName),
+                //     CustomTextFormField(
+                //         validator: (value) => Validators.stringNotEmpty(value),
+                //         labelText: "Customer Address",
+                //         controller: customerAddress),
+                //     CustomTextFormField(
+                //         validator: (value) => Validators.stringNotEmpty(value),
+                //         labelText: "Contact No.",
+                //         controller: contactNumber),
+                //     CustomTextFormField(
+                //         validator: (value) => Validators.stringNotEmpty(value),
+                //         labelText: "Sales Person",
+                //         controller: salesPerson),
+                //   ],
+                // ),
+                // const SizedBox(
+                //   width: 50,
+                // ),
+                // Column(
+                //   mainAxisSize: MainAxisSize.min,
+                //   children: <Widget>[
+                //     CustomTextFormField(
+                //         validator: (value) => Validators.stringNotEmpty(value),
+                //         labelText: "Invoice No.",
+                //         controller: invoiceNo),
+                //     CustomTextFormField(
+                //         validator: (value) => Validators.stringNotEmpty(value),
+                //         labelText: "Customer Name",
+                //         controller: customerName),
+                //     CustomTextFormField(
+                //         validator: (value) => Validators.stringNotEmpty(value),
+                //         labelText: "Customer Address",
+                //         controller: customerAddress),
+                //     CustomTextFormField(
+                //         validator: (value) => Validators.stringNotEmpty(value),
+                //         labelText: "Contact No.",
+                //         controller: contactNumber),
+                //     CustomTextFormField(
+                //         validator: (value) => Validators.stringNotEmpty(value),
+                //         labelText: "Sales Person",
+                //         controller: salesPerson),
+                //     CustomTextFormField(
+                //         validator: (value) => Validators.stringNotEmpty(value),
+                //         labelText: "Sales Person",
+                //         controller: salesPerson),
+                //   ],
+                // )
+              ],
+            ),
+          ),
           Expanded(
               child: Align(
             alignment: Alignment.topLeft,
@@ -221,6 +339,6 @@ class _SalesFormState extends State<SalesForm> {
           )
         ],
       ),
-    ));
+    );
   }
 }

@@ -133,6 +133,7 @@ class SuppliersCubit extends Cubit<SuppliersState>
   loadSuppliers(Supplier supplier) {
     updateSupplierName(supplier.supplierName);
     updateSupplierAddress(supplier.supplierAddress);
+    updateSupplierEmailAddress(supplier.supplierEmailAdd);
     updateSupplierContactNumber(supplier.supplierContactNumber);
   }
 }

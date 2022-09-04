@@ -6,6 +6,7 @@ Supplier _$SupplierFromJson(Map<String, dynamic> json) => Supplier(
       supplierId: json['id'] as int?,
       supplierName: json['supplierName'] as String,
       supplierAddress: json['supplierAddress'] as String,
+      supplierEmailAdd: json['supplierEmailAdd'] as String,
       supplierContactNumber: json['supplierContactNumber'] as String,
     );
 
@@ -21,6 +22,7 @@ Map<String, dynamic> _$SupplierToJson(Supplier instance) {
   writeNotNull('id', instance.supplierId);
   val['supplierName'] = instance.supplierName;
   val['supplierAddress'] = instance.supplierAddress;
+  val['supplierEmailAdd'] = instance.supplierEmailAdd;
   val['supplierContactNumber'] = instance.supplierContactNumber;
   return val;
 }

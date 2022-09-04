@@ -7,7 +7,6 @@ import 'package:edar_app/data/model/supplier.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_dropdown.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_text_field.dart';
 import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
-import 'package:edar_app/presentation/widgets/fields/error_text.dart';
 import 'package:edar_app/presentation/widgets/fields/form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,27 +29,25 @@ class ProductDialog extends StatelessWidget {
       productId = product!.productId;
     }
 
-    var productCodeField = [
-      StreamBuilder(
-        stream: BlocProvider.of<ProductsCubit>(context).productCodeStream,
-        builder: (context, snapshot) {
-          return Column(
-            children: [
-              CustomTextFormField(
-                  labelText: "Product Code",
-                  hintText: "GM",
-                  initialValue:
-                      product != null ? product!.productCode.toString() : null,
-                  onChanged: (text) {
-                    BlocProvider.of<ProductsCubit>(context)
-                        .updateProductCode(text);
-                  }),
-              ErrorMessage(snapshot: snapshot)
-            ],
-          );
-        },
-      ),
-    ];
+    var productCodeField = StreamBuilder(
+      stream: BlocProvider.of<ProductsCubit>(context).productCodeStream,
+      builder: (context, snapshot) {
+        return Column(
+          children: [
+            CustomTextFormField(
+                labelText: "Product Code",
+                hintText: "GM",
+                initialValue:
+                    product != null ? product!.productCode.toString() : null,
+                onChanged: (text) {
+                  BlocProvider.of<ProductsCubit>(context)
+                      .updateProductCode(text);
+                }),
+            ErrorMessage(snapshot: snapshot)
+          ],
+        );
+      },
+    );
     var productName = StreamBuilder(
       stream: BlocProvider.of<ProductsCubit>(context).productNameStream,
       builder: (context, snapshot) {
@@ -221,31 +218,28 @@ class ProductDialog extends StatelessWidget {
         );
       },
     );
-    var productDescriptionField = SizedBox(
-      width: 450,
-      child: StreamBuilder(
-        stream:
-            BlocProvider.of<ProductsCubit>(context).productDescriptionStream,
-        builder: (context, snapshot) {
-          return Column(
-            children: [
-              CustomTextField(
-                  labelText: "Enter Product Description",
-                  context: context,
-                  hintText: "Sto Tomas",
-                  initialValue: product != null
-                      ? product!.productDescription.toString()
-                      : null,
-                  onChanged: (text) {
-                    BlocProvider.of<ProductsCubit>(context)
-                        .updateProductDecription(text);
-                    return text;
-                  }),
-              ErrorMessage(snapshot: snapshot)
-            ],
-          );
-        },
-      ),
+    var productDescriptionField = StreamBuilder(
+      stream: BlocProvider.of<ProductsCubit>(context).productDescriptionStream,
+      builder: (context, snapshot) {
+        return Column(
+          children: [
+            CustomTextFormField(
+                labelText: "Product Description",
+                hintText: "Sto Tomas",
+                width: 450,
+                height: 60,
+                minLines: 3,
+                initialValue: product != null
+                    ? product!.productDescription.toString()
+                    : null,
+                onChanged: (text) {
+                  BlocProvider.of<ProductsCubit>(context)
+                      .updateProductDecription(text);
+                }),
+            ErrorMessage(snapshot: snapshot)
+          ],
+        );
+      },
     );
     return AlertDialog(
       scrollable: true,
@@ -262,27 +256,44 @@ class ProductDialog extends StatelessWidget {
               child: Column(
                 children: [
                   Row(
-                    children: productCodeField,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        productCodeField,
+                        const SizedBox(
+                          width: 30,
+                        ),
+                        productName,
+                      ]),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [productDescriptionField],
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      productName,
-                      const SizedBox(
-                        width: 30,
-                      ),
                       productPriceField,
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      productQuanity,
                       const SizedBox(
                         width: 30,
                       ),
-                      productUnitField,
+                      productQuanity,
                     ],
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      productUnitField,
+                      const SizedBox(
+                        width: 30,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       categoryField,
                       const SizedBox(
@@ -291,9 +302,6 @@ class ProductDialog extends StatelessWidget {
                       supplierField,
                     ],
                   ),
-                  Row(
-                    children: [productDescriptionField],
-                  )
                 ],
               ),
             ),

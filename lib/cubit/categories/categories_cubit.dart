@@ -128,8 +128,12 @@ class CategoriesCubit extends Cubit<CategoriesState>
       } else {
         final filteredData = data
             .where((cat) =>
-                cat.categoryCode.contains(searchText) ||
-                cat.categoryName.contains(searchText))
+                cat.categoryCode
+                    .toLowerCase()
+                    .contains(searchText.toLowerCase()) ||
+                cat.categoryName
+                    .toLowerCase()
+                    .contains(searchText.toLowerCase()))
             .toList();
         emit(CategoriesLoaded(
             filteredData: filteredData, categories: data, sortAscending: true));

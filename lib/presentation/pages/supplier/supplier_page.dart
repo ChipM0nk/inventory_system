@@ -73,12 +73,13 @@ class _SupplierPageState extends State<SupplierPage> {
               child: SizedBox(
                 width: 600,
                 child: CustomPaginatedDataTable(
-                    header: const Text("Suppliers"),
-                    dataColumns: dataColumns(supplierData),
-                    rowsPerPage: 10,
-                    sortAscending: state.sortAscending,
-                    sortIndex: state.sortIndex,
-                    source: supplierData),
+                  header: const Text("Suppliers"),
+                  dataColumns: dataColumns(supplierData),
+                  rowsPerPage: 10,
+                  sortAscending: state.sortAscending,
+                  sortIndex: state.sortIndex,
+                  source: supplierData,
+                ),
               ),
             ),
           ]);
@@ -98,26 +99,22 @@ class _SupplierPageState extends State<SupplierPage> {
                 (supplier) => supplier.supplierName, colIdx, asc);
           },
         ),
-        DataColumn(
-          label: const Text(
-            'Address',
+        const DataColumn(
+            label: Text(
+          'Contact Number',
+          style: TextStyle(fontStyle: FontStyle.italic),
+        )),
+        const DataColumn(
+          label: Text(
+            'Email Address',
             style: TextStyle(fontStyle: FontStyle.italic),
           ),
-          onSort: (colIdx, asc) {
-            BlocProvider.of<SuppliersCubit>(context).sortSuppliers(
-                (supplier) => supplier.supplierAddress, colIdx, asc);
-          },
         ),
-        DataColumn(
-          label: const Text(
-            'Contact Details',
-            style: TextStyle(fontStyle: FontStyle.italic),
-          ),
-          onSort: (colIdx, asc) {
-            BlocProvider.of<SuppliersCubit>(context).sortSuppliers(
-                (supplier) => supplier.supplierContactNumber, colIdx, asc);
-          },
-        ),
+        const DataColumn(
+            label: Text(
+          'Address',
+          style: TextStyle(fontStyle: FontStyle.italic),
+        )),
         const DataColumn(
           label: Text(''),
         ),

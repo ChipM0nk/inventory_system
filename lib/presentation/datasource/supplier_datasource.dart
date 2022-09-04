@@ -37,11 +37,24 @@ class SupplierData extends DataTableSource {
           onTap: () => onItemClick(dataItem),
         ),
         DataCell(
-          Text(dataItem.supplierAddress),
+          Text(dataItem.supplierContactNumber),
           onTap: () => onItemClick(dataItem),
         ),
         DataCell(
-          Text(dataItem.supplierContactNumber),
+          Text(dataItem.supplierEmailAdd),
+          onTap: () => onItemClick(dataItem),
+        ),
+        DataCell(
+          SizedBox(
+              width: 200,
+              child: Tooltip(
+                message: dataItem.supplierAddress,
+                child: Text(
+                  dataItem.supplierAddress,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              )),
           onTap: () => onItemClick(dataItem),
         ),
         DataCell(
