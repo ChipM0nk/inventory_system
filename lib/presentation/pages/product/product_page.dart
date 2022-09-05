@@ -100,7 +100,8 @@ class _ProductPageState extends State<ProductPage> {
         DataColumn(
           label: const Text(
             'Code',
-            style: TextStyle(fontStyle: FontStyle.italic),
+            style: TextStyle(
+                fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
           onSort: (colIdx, asc) {
             BlocProvider.of<ProductsCubit>(context)
@@ -110,7 +111,8 @@ class _ProductPageState extends State<ProductPage> {
         DataColumn(
           label: const Text(
             'Name',
-            style: TextStyle(fontStyle: FontStyle.italic),
+            style: TextStyle(
+                fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
           onSort: (colIdx, asc) {
             BlocProvider.of<ProductsCubit>(context)
@@ -120,7 +122,8 @@ class _ProductPageState extends State<ProductPage> {
         DataColumn(
           label: const Text(
             'Description',
-            style: TextStyle(fontStyle: FontStyle.italic),
+            style: TextStyle(
+                fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
           onSort: (colIdx, asc) {
             BlocProvider.of<ProductsCubit>(context).sortProducts(
@@ -130,7 +133,8 @@ class _ProductPageState extends State<ProductPage> {
         DataColumn(
           label: const Text(
             'Price',
-            style: TextStyle(fontStyle: FontStyle.italic),
+            style: TextStyle(
+                fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
           onSort: (colIdx, asc) {
             BlocProvider.of<ProductsCubit>(context)
@@ -140,7 +144,8 @@ class _ProductPageState extends State<ProductPage> {
         DataColumn(
           label: const Text(
             'Quantity',
-            style: TextStyle(fontStyle: FontStyle.italic),
+            style: TextStyle(
+                fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
           onSort: (colIdx, asc) {
             BlocProvider.of<ProductsCubit>(context).sortProducts(
@@ -150,7 +155,8 @@ class _ProductPageState extends State<ProductPage> {
         DataColumn(
           label: const Text(
             'Unit',
-            style: TextStyle(fontStyle: FontStyle.italic),
+            style: TextStyle(
+                fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
           onSort: (colIdx, asc) {
             BlocProvider.of<ProductsCubit>(context)
@@ -160,13 +166,15 @@ class _ProductPageState extends State<ProductPage> {
         const DataColumn(
           label: Text(
             'Category',
-            style: TextStyle(fontStyle: FontStyle.italic),
+            style: TextStyle(
+                fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
         ),
         const DataColumn(
           label: Text(
             'Supplier',
-            style: TextStyle(fontStyle: FontStyle.italic),
+            style: TextStyle(
+                fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
         ),
         const DataColumn(

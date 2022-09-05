@@ -12,6 +12,8 @@ class CustomDropdown<T> extends StatelessWidget {
     this.onChanged,
     this.value,
     required this.items,
+    this.height = 30.0,
+    this.width = 200,
   });
 
   final String labelText;
@@ -21,6 +23,8 @@ class CustomDropdown<T> extends StatelessWidget {
   bool autofocus;
   T? value;
   final List<DropdownMenuItem<T>> items;
+  final double height;
+  final double width;
 
   void Function<T>(T? obj)? onChanged;
 
@@ -29,25 +33,37 @@ class CustomDropdown<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 200,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: SizedBox(
+        width: width,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              labelText,
-              style: labelTextStyle,
+            DropdownButtonHideUnderline(
+              child: ButtonTheme(
+                alignedDropdown: true,
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: labelText,
+                    constraints:
+                        BoxConstraints(maxHeight: height, minHeight: height),
+                    contentPadding: EdgeInsets.zero,
+                    border: const OutlineInputBorder(),
+                  ),
+                  child: DropdownButton<T>(
+                    isDense: true,
+                    isExpanded: true,
+                    value: value,
+                    autofocus: autofocus,
+                    onTap: () => onTap,
+                    onChanged: onChanged,
+                    items: items,
+                  ),
+                ),
+              ),
             ),
-            DropdownButton<T>(
-              isExpanded: true,
-              value: value,
-              autofocus: autofocus,
-              onTap: () => onTap,
-              onChanged: onChanged,
-              items: items,
-            ),
+            const SizedBox(height: 16)
           ],
         ),
       ),

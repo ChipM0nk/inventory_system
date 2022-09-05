@@ -272,6 +272,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "intl",
+      "rootUri": "file:///Users/alvinkatigbak/.pub-cache/hosted/pub.dartlang.org/intl-0.17.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "io",
       "rootUri": "file:///Users/alvinkatigbak/.pub-cache/hosted/pub.dartlang.org/io-1.0.3",
       "packageUri": "lib/",
@@ -518,7 +524,7 @@
       "languageVersion": "2.17"
     }
   ],
-  "generated": "2022-09-01T14:02:12.584336Z",
+  "generated": "2022-09-05T04:54:09.762996Z",
   "generator": "pub",
   "generatorVersion": "2.19.0-142.0.dev"
 }

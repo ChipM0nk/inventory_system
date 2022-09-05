@@ -133,10 +133,11 @@ class InvoiceCubit extends Cubit<InvoiceState>
     invoice.contactNo ?? updateCustomerContact(invoice.contactNo!);
     updateSalesPerson(invoice.salesPerson);
     updatePoNumber(invoice.poNumber);
-    updatePurchaseDate(DateTime.parse(invoice.purchaseDate));
+    updatePurchaseDate(invoice.purchaseDate);
     updatePaymentTerm(invoice.paymentTerm);
+    updatePaymentType(invoice.paymentType);
     updateTinNumber(invoice.tinNumber);
-    updateDueDate(DateTime.parse(invoice.dueDate));
+    updateDueDate(invoice.dueDate);
     updateInvoiceItems(invoice.invoiceItems);
   }
 }

@@ -5,7 +5,6 @@ import 'package:edar_app/data/model/category.dart';
 import 'package:edar_app/data/model/product.dart';
 import 'package:edar_app/data/model/supplier.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_dropdown.dart';
-import 'package:edar_app/presentation/widgets/fields/custom_text_field.dart';
 import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
 import 'package:edar_app/presentation/widgets/fields/form_field.dart';
 import 'package:flutter/material.dart';
@@ -128,96 +127,83 @@ class ProductDialog extends StatelessWidget {
         );
       },
     );
-    var categoryField = StreamBuilder(
-      stream: BlocProvider.of<ProductsCubit>(context).productCategoryStream,
-      builder: (context, snapshot) {
-        return Column(
-          children: [
-            BlocBuilder<CategoriesCubit, CategoriesState>(
-              builder: (context, state) {
-                if (state is CategoriesLoaded) {
-                  if (product != null && state.selectedCategory == null) {
-                    BlocProvider.of<CategoriesCubit>(context)
-                        .selectCategory(product!.category);
-                  }
-                  List<DropdownMenuItem<Category>> dropDownItems =
-                      state.categories
-                          .map((e) => DropdownMenuItem<Category>(
-                                value: e,
-                                child: Text(e.categoryName),
-                              ))
-                          .toList();
+    var categoryField = Column(
+      children: [
+        BlocBuilder<CategoriesCubit, CategoriesState>(
+          builder: (context, state) {
+            if (state is CategoriesLoaded) {
+              if (product != null && state.selectedCategory == null) {
+                BlocProvider.of<CategoriesCubit>(context)
+                    .selectCategory(product!.category);
+              }
+              List<DropdownMenuItem<Category>> dropDownItems = state.categories
+                  .map((e) => DropdownMenuItem<Category>(
+                        value: e,
+                        child: Text(e.categoryName),
+                      ))
+                  .toList();
 
-                  void onChange<Category>(cat) {
-                    BlocProvider.of<CategoriesCubit>(context)
-                        .selectCategory(cat);
-                    BlocProvider.of<ProductsCubit>(context)
-                        .updateProductCategory(cat);
-                  }
+              void onChange<Category>(cat) {
+                BlocProvider.of<CategoriesCubit>(context).selectCategory(cat);
+                BlocProvider.of<ProductsCubit>(context)
+                    .updateProductCategory(cat);
+              }
 
-                  return CustomDropdown<Category>(
-                    labelText: "Select Category",
-                    value: state.selectedCategory,
-                    items: dropDownItems,
-                    context: context,
-                    onChanged: onChange,
-                  );
-                }
-                return const SizedBox(
-                  width: 10,
-                );
-              },
-            ),
-            ErrorMessage(snapshot: snapshot)
-          ],
-        );
-      },
+              return CustomDropdown<Category>(
+                labelText: "Select Category",
+                value: state.selectedCategory,
+                items: dropDownItems,
+                context: context,
+                onChanged: onChange,
+              );
+            }
+            return const SizedBox(
+              width: 10,
+            );
+          },
+        ),
+      ],
     );
-    var supplierField = StreamBuilder(
-      stream: BlocProvider.of<ProductsCubit>(context).productSupplierStream,
-      builder: (context, snapshot) {
-        return Column(
-          children: [
-            BlocBuilder<SuppliersCubit, SuppliersState>(
-              builder: (context, state) {
-                if (state is SuppliersLoaded) {
-                  if (product != null && state.selectedSupplier == null) {
-                    BlocProvider.of<SuppliersCubit>(context)
-                        .selectSupplier(product!.supplier);
-                  }
-                  List<DropdownMenuItem<Supplier>> dropDownItems =
-                      state.suppliers
-                          .map((e) => DropdownMenuItem<Supplier>(
-                                value: e,
-                                child: Text(e.supplierName),
-                              ))
-                          .toList();
+    //   },
+    // );
+    //TODO Change this and avoid setting selectedSupplier object.
+    //see sales_form.dart Payment Term
+    var supplierField = Column(
+      children: [
+        BlocBuilder<SuppliersCubit, SuppliersState>(
+          builder: (context, state) {
+            if (state is SuppliersLoaded) {
+              if (product != null && state.selectedSupplier == null) {
+                BlocProvider.of<SuppliersCubit>(context)
+                    .selectSupplier(product!.supplier);
+              }
+              List<DropdownMenuItem<Supplier>> dropDownItems = state.suppliers
+                  .map((e) => DropdownMenuItem<Supplier>(
+                        value: e,
+                        child: Text(e.supplierName),
+                      ))
+                  .toList();
 
-                  void onChange<Supplier>(sup) {
-                    BlocProvider.of<SuppliersCubit>(context)
-                        .selectSupplier(sup);
-                    BlocProvider.of<ProductsCubit>(context)
-                        .updateProductSupplier(sup);
-                  }
+              void onChange<Supplier>(sup) {
+                BlocProvider.of<SuppliersCubit>(context).selectSupplier(sup);
+                BlocProvider.of<ProductsCubit>(context)
+                    .updateProductSupplier(sup);
+              }
 
-                  return CustomDropdown<Supplier>(
-                    labelText: "Select Supplier",
-                    value: state.selectedSupplier,
-                    items: dropDownItems,
-                    context: context,
-                    onChanged: onChange,
-                  );
-                }
-                return const SizedBox(
-                  width: 10,
-                );
-              },
-            ),
-            ErrorMessage(snapshot: snapshot)
-          ],
-        );
-      },
+              return CustomDropdown<Supplier>(
+                labelText: "Select Supplier",
+                value: state.selectedSupplier,
+                items: dropDownItems,
+                context: context,
+                onChanged: onChange,
+              );
+            }
+            return const SizedBox(width: 10);
+          },
+        ),
+      ],
     );
+
     var productDescriptionField = StreamBuilder(
       stream: BlocProvider.of<ProductsCubit>(context).productDescriptionStream,
       builder: (context, snapshot) {
@@ -226,7 +212,7 @@ class ProductDialog extends StatelessWidget {
             CustomTextFormField(
                 labelText: "Product Description",
                 hintText: "Sto Tomas",
-                width: 450,
+                width: 440,
                 height: 60,
                 minLines: 3,
                 initialValue: product != null
@@ -252,54 +238,43 @@ class ProductDialog extends StatelessWidget {
           },
           child: Center(
             child: SizedBox(
-              width: 500,
+              width: 450,
               child: Column(
                 children: [
                   Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         productCodeField,
-                        const SizedBox(
-                          width: 30,
-                        ),
                         productName,
                       ]),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [productDescriptionField],
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      productPriceField,
-                      const SizedBox(
-                        width: 30,
-                      ),
-                      productQuanity,
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      productUnitField,
-                      const SizedBox(
-                        width: 30,
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       categoryField,
-                      const SizedBox(
-                        width: 50,
-                      ),
+                      productPriceField,
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      productQuanity,
+                      productUnitField,
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       supplierField,
+                      const SizedBox(width: 200),
                     ],
                   ),
                 ],

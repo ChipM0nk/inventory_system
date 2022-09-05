@@ -91,7 +91,8 @@ class _CategoryPageState extends State<CategoryPage> {
         DataColumn(
           label: const Text(
             'Category Code',
-            style: TextStyle(fontStyle: FontStyle.italic),
+            style: TextStyle(
+                fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
           onSort: (colIdx, asc) {
             BlocProvider.of<CategoriesCubit>(context).sortCategories(
@@ -101,7 +102,8 @@ class _CategoryPageState extends State<CategoryPage> {
         DataColumn(
           label: const Text(
             'Category Name',
-            style: TextStyle(fontStyle: FontStyle.italic),
+            style: TextStyle(
+                fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
           onSort: (colIdx, asc) {
             BlocProvider.of<CategoriesCubit>(context).sortCategories(

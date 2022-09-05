@@ -18,6 +18,7 @@ class Invoice {
   final User salesPerson;
   final String poNumber;
   final String purchaseDate;
+  final String paymentType;
   final String paymentTerm;
   final String tinNumber;
   final String dueDate;
@@ -32,6 +33,7 @@ class Invoice {
     required this.salesPerson,
     required this.poNumber,
     required this.purchaseDate,
+    required this.paymentType,
     required this.paymentTerm,
     required this.tinNumber,
     required this.dueDate,

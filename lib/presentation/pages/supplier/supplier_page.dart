@@ -71,7 +71,7 @@ class _SupplierPageState extends State<SupplierPage> {
             Align(
               alignment: Alignment.topLeft,
               child: SizedBox(
-                width: 600,
+                width: 800,
                 child: CustomPaginatedDataTable(
                   header: const Text("Suppliers"),
                   dataColumns: dataColumns(supplierData),
@@ -92,7 +92,8 @@ class _SupplierPageState extends State<SupplierPage> {
         DataColumn(
           label: const Text(
             'Name',
-            style: TextStyle(fontStyle: FontStyle.italic),
+            style: TextStyle(
+                fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
           onSort: (colIdx, asc) {
             BlocProvider.of<SuppliersCubit>(context).sortSuppliers(
@@ -102,18 +103,21 @@ class _SupplierPageState extends State<SupplierPage> {
         const DataColumn(
             label: Text(
           'Contact Number',
-          style: TextStyle(fontStyle: FontStyle.italic),
+          style: TextStyle(
+              fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
         )),
         const DataColumn(
           label: Text(
             'Email Address',
-            style: TextStyle(fontStyle: FontStyle.italic),
+            style: TextStyle(
+                fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
         ),
         const DataColumn(
             label: Text(
           'Address',
-          style: TextStyle(fontStyle: FontStyle.italic),
+          style: TextStyle(
+              fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
         )),
         const DataColumn(
           label: Text(''),

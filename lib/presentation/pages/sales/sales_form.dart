@@ -1,10 +1,9 @@
 import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
 import 'package:edar_app/data/model/category.dart';
-import 'package:edar_app/data/model/invoice.dart';
 import 'package:edar_app/data/model/supplier.dart';
-import 'package:edar_app/presentation/widgets/fields/date_picker.dart';
+import 'package:edar_app/presentation/widgets/fields/custom_date_picker.dart';
+import 'package:edar_app/presentation/widgets/fields/custom_dropdown.dart';
 import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
-import 'package:edar_app/presentation/widgets/fields/error_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,19 +21,7 @@ class SalesForm extends StatefulWidget {
 }
 
 class _SalesFormState extends State<SalesForm> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final invoiceNo = TextEditingController();
-  final customerName = TextEditingController();
-  final customerAddress = TextEditingController();
-  final contactNumber = TextEditingController();
-  final salesPerson = TextEditingController();
-  final poNumber = TextEditingController();
-  final purchaseDate = TextEditingController(); //changet to date picker later
-  final paymentTyoe = TextEditingController();
-  final paymentTerms = TextEditingController();
-  final tinNo = TextEditingController();
-  final dueDate = TextEditingController(); //cahgnet to date picker later
-
+  final dateFormat = 'dd-MMM-yy';
   InvoiceItemModel invoiceItem = InvoiceItemModel();
   List<InvoiceItemModel> invoiceItems = [];
   DateTime selectedDate = DateTime.now();
@@ -68,6 +55,9 @@ class _SalesFormState extends State<SalesForm> {
 
     invoiceItems.add(invoiceItem);
 
+    BlocProvider.of<InvoiceCubit>(context).init();
+    BlocProvider.of<InvoiceCubit>(context).updatePaymentTerm('Cash');
+
     super.initState();
   }
 
@@ -79,8 +69,6 @@ class _SalesFormState extends State<SalesForm> {
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<InvoiceCubit>(context).init();
-
     var invoiceNumber = StreamBuilder<String>(
         stream: BlocProvider.of<InvoiceCubit>(context).invoiceNumberStream,
         builder: (context, snapshot) {
@@ -92,29 +80,11 @@ class _SalesFormState extends State<SalesForm> {
                         .updateInvoiceNumber(text);
                   },
                   labelText: 'Invoice No'),
-              snapshot.hasError
-                  ? ErrorText(errorText: snapshot.error.toString())
-                  : const SizedBox(
-                      height: 10,
-                    )
+              ErrorMessage(snapshot: snapshot),
             ],
           );
         });
 
-    var poNumber = StreamBuilder<String>(
-        stream: BlocProvider.of<InvoiceCubit>(context).poNumberStream,
-        builder: (context, snapshot) {
-          return Column(
-            children: [
-              CustomTextFormField(
-                  onChanged: (text) {
-                    BlocProvider.of<InvoiceCubit>(context).updatePoNumber(text);
-                  },
-                  labelText: 'PO Number'),
-              ErrorMessage(snapshot: snapshot)
-            ],
-          );
-        });
     var customerName = StreamBuilder<String>(
         stream: BlocProvider.of<InvoiceCubit>(context).customerNameStream,
         builder: (context, snapshot) {
@@ -146,7 +116,7 @@ class _SalesFormState extends State<SalesForm> {
           );
         });
 
-    var customerAddressField = StreamBuilder(
+    var customerAddressField = StreamBuilder<String>(
       stream: BlocProvider.of<InvoiceCubit>(context).customerAddressStream,
       builder: (context, snapshot) {
         return Column(
@@ -166,6 +136,99 @@ class _SalesFormState extends State<SalesForm> {
         );
       },
     );
+
+    var purchaseDate = Column(
+      children: [
+        CustomDatePicker(
+          labelText: "Purchase Date",
+          // selectedDate: selectedDate,
+          width: 175,
+          onChanged: (dateTime) {
+            BlocProvider.of<InvoiceCubit>(context).updatePurchaseDate(dateTime);
+          },
+          // initialValue: '21-Sep-22',
+          dateFormat: dateFormat,
+        ),
+      ],
+    );
+
+    var paymentType = StreamBuilder<String>(
+        stream: BlocProvider.of<InvoiceCubit>(context).paymentTermStream,
+        builder: (context, snapshot) {
+          void onPaymentTermChange<String>(val) {
+            print("hello");
+            BlocProvider.of<InvoiceCubit>(context).updatePaymentTerm(val);
+          }
+
+          return Column(
+            children: [
+              CustomDropdown<String>(
+                labelText: "Payment Type",
+                value: BlocProvider.of<InvoiceCubit>(context).getPaymentTerm(),
+                items: const [
+                  //TODO: Put in constant
+                  DropdownMenuItem<String>(
+                    value: 'Cash',
+                    child: Text('Cash'),
+                  ),
+                  DropdownMenuItem<String>(
+                    value: 'Cheque',
+                    child: Text('Cheque'),
+                  ),
+                ],
+                context: context,
+                onChanged: onPaymentTermChange,
+              ),
+            ],
+          );
+        });
+
+    var poNumber = StreamBuilder<String>(
+        stream: BlocProvider.of<InvoiceCubit>(context).poNumberStream,
+        builder: (context, snapshot) {
+          return Column(
+            children: [
+              CustomTextFormField(
+                  onChanged: (text) {
+                    BlocProvider.of<InvoiceCubit>(context).updatePoNumber(text);
+                  },
+                  labelText: 'PO Number'),
+              ErrorMessage(snapshot: snapshot)
+            ],
+          );
+        });
+
+    var dueDate = Column(
+      children: [
+        CustomDatePicker(
+          labelText: "Due Date",
+          // selectedDate: selectedDate,
+          width: 175,
+          onChanged: (dateTime) {
+            BlocProvider.of<InvoiceCubit>(context).updateDueDate(dateTime);
+          },
+          // initialValue: '21-Sep-22',
+          dateFormat: dateFormat,
+        ),
+      ],
+    );
+
+    var tinNumber = StreamBuilder<String>(
+        stream: BlocProvider.of<InvoiceCubit>(context).tinNumberStream,
+        builder: (context, snapshot) {
+          return Column(
+            children: [
+              CustomTextFormField(
+                  onChanged: (text) {
+                    BlocProvider.of<InvoiceCubit>(context)
+                        .updateTinNumber(text);
+                  },
+                  labelText: 'TIN Number'),
+              ErrorMessage(snapshot: snapshot)
+            ],
+          );
+        });
+
     return SizedBox(
       width: 1800,
       child: Column(
@@ -173,7 +236,7 @@ class _SalesFormState extends State<SalesForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 720,
+            width: 960,
             child: Column(
               children: [
                 Row(
@@ -182,99 +245,33 @@ class _SalesFormState extends State<SalesForm> {
                   children: [
                     invoiceNumber,
                     customerName,
-                    customerContactNumber,
+                    customerAddressField,
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    customerAddressField,
-                    Column(
-                      children: [
-                        CustomDatePicker(
-                          labelText: "Purchase Date",
-                          // selectedDate: selectedDate,
-                          width: 175,
-                          onChanged: (text) {
-                            print("updated: ${text}");
-                          },
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        )
-                      ],
-                    )
-                    // ElevatedButton(
-                    //   onPressed: () => _selectDate(context),
-                    //   child: Text('Select date'),
-                    // ),
+                    customerContactNumber,
+                    purchaseDate,
+                    poNumber,
+                    dueDate,
                   ],
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    customerName,
-                    poNumber,
-                    const SizedBox(
-                      width: 30,
-                    ),
+                    tinNumber,
+                    paymentType,
+                    const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: SizedBox(width: 200)),
+                    const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: SizedBox(width: 200)),
                   ],
                 ),
-
-                // Column(
-                //   mainAxisSize: MainAxisSize.min,
-                //   children: <Widget>[
-                //     invoiceNumber,
-                //     CustomTextFormField(
-                //         validator: (value) => Validators.stringNotEmpty(value),
-                //         labelText: "Customer Name",
-                //         controller: customerName),
-                //     CustomTextFormField(
-                //         validator: (value) => Validators.stringNotEmpty(value),
-                //         labelText: "Customer Address",
-                //         controller: customerAddress),
-                //     CustomTextFormField(
-                //         validator: (value) => Validators.stringNotEmpty(value),
-                //         labelText: "Contact No.",
-                //         controller: contactNumber),
-                //     CustomTextFormField(
-                //         validator: (value) => Validators.stringNotEmpty(value),
-                //         labelText: "Sales Person",
-                //         controller: salesPerson),
-                //   ],
-                // ),
-                // const SizedBox(
-                //   width: 50,
-                // ),
-                // Column(
-                //   mainAxisSize: MainAxisSize.min,
-                //   children: <Widget>[
-                //     CustomTextFormField(
-                //         validator: (value) => Validators.stringNotEmpty(value),
-                //         labelText: "Invoice No.",
-                //         controller: invoiceNo),
-                //     CustomTextFormField(
-                //         validator: (value) => Validators.stringNotEmpty(value),
-                //         labelText: "Customer Name",
-                //         controller: customerName),
-                //     CustomTextFormField(
-                //         validator: (value) => Validators.stringNotEmpty(value),
-                //         labelText: "Customer Address",
-                //         controller: customerAddress),
-                //     CustomTextFormField(
-                //         validator: (value) => Validators.stringNotEmpty(value),
-                //         labelText: "Contact No.",
-                //         controller: contactNumber),
-                //     CustomTextFormField(
-                //         validator: (value) => Validators.stringNotEmpty(value),
-                //         labelText: "Sales Person",
-                //         controller: salesPerson),
-                //     CustomTextFormField(
-                //         validator: (value) => Validators.stringNotEmpty(value),
-                //         labelText: "Sales Person",
-                //         controller: salesPerson),
-                //   ],
-                // )
               ],
             ),
           ),
@@ -282,29 +279,37 @@ class _SalesFormState extends State<SalesForm> {
               child: Align(
             alignment: Alignment.topLeft,
             child: DataTable(
-              columns: <DataColumn>[
+              columns: const <DataColumn>[
                 DataColumn(
                   label: Text(
                     'Item Name',
-                    style: TextStyle(fontStyle: FontStyle.italic),
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
                 DataColumn(
                   label: Text(
                     'Item Code',
-                    style: TextStyle(fontStyle: FontStyle.italic),
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
                 DataColumn(
                   label: Text(
                     'Quantity',
-                    style: TextStyle(fontStyle: FontStyle.italic),
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
                 DataColumn(
                   label: Text(
                     'Price',
-                    style: TextStyle(fontStyle: FontStyle.italic),
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ],

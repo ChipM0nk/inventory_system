@@ -15,6 +15,7 @@ Invoice _$InvoiceFromJson(Map<String, dynamic> json) => Invoice(
       salesPerson: User.fromJson(json['salesPerson'] as Map<String, dynamic>),
       poNumber: json['poNumber'] as String,
       purchaseDate: json['purchaseDate'] as String,
+      paymentType: json['paymentType'] as String,
       paymentTerm: json['paymentTerm'] as String,
       tinNumber: json['tinNumber'] as String,
       dueDate: json['dueDate'] as String,
@@ -40,6 +41,7 @@ Map<String, dynamic> _$InvoiceToJson(Invoice instance) {
   val['salesPerson'] = instance.salesPerson.toJson();
   val['poNumber'] = instance.poNumber;
   val['purchaseDate'] = instance.purchaseDate;
+  val['paymentType'] = instance.paymentType;
   val['paymentTerm'] = instance.paymentTerm;
   val['tinNumber'] = instance.tinNumber;
   val['dueDate'] = instance.dueDate;

@@ -17,6 +17,7 @@ class CustomTextFormField extends StatelessWidget {
     this.minLines = 1,
     this.width = 200,
     this.height = 30,
+    this.enabled = true,
   });
 
   final FormFieldValidator? validator; //TODO Remove later
@@ -30,6 +31,7 @@ class CustomTextFormField extends StatelessWidget {
   final int? minLines;
   final double? width;
   final double? height;
+  final bool enabled;
 
   TextStyle getHintTextStyle(context, hint) {
     return TextStyle(
@@ -41,31 +43,28 @@ class CustomTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Row(
-        children: [
-          SizedBox(
-            height: height,
-            width: width,
-            child: TextFormField(
-              decoration: InputDecoration(
-                labelText: labelText,
-                border: const OutlineInputBorder(),
-                hintText: hintText,
-                contentPadding: const EdgeInsets.all(10),
-                hintStyle: getHintTextStyle(context, true),
-              ),
-              keyboardType: textInputType,
-              initialValue: initialValue,
-              validator: validator,
-              minLines: minLines,
-              maxLines: minLines ?? (minLines! + 1),
-              controller: controller,
-              onChanged: onChanged,
-              style: getHintTextStyle(context, false),
-            ),
+      padding: const EdgeInsets.all(5.0),
+      child: SizedBox(
+        height: height,
+        width: width,
+        child: TextFormField(
+          enabled: enabled,
+          decoration: InputDecoration(
+            labelText: labelText,
+            border: const OutlineInputBorder(),
+            hintText: hintText,
+            contentPadding: const EdgeInsets.all(10),
+            hintStyle: getHintTextStyle(context, true),
           ),
-        ],
+          keyboardType: textInputType,
+          initialValue: initialValue,
+          validator: validator,
+          minLines: minLines,
+          maxLines: minLines ?? (minLines! + 1),
+          controller: controller,
+          onChanged: onChanged,
+          style: getHintTextStyle(context, false),
+        ),
       ),
     );
   }
