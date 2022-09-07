@@ -1,98 +1,81 @@
+// ignore_for_file: use_key_in_widget_constructors, must_be_immutable
+
+import 'package:edar_app/constants/text_field_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-// ignore: must_be_immutable
+typedef OnChanged = void Function(String values);
+
 class CustomTextField extends StatelessWidget {
   CustomTextField({
-    super.key,
+    this.validator,
     required this.labelText,
-    required this.hintText,
     this.controller,
-    required this.context,
-    this.keyboardType,
-    this.inputFormatters,
-    this.onTap,
-    this.onEditingComplete,
-    this.textInputAction = TextInputAction.done,
-    this.initialValue,
-    this.obscureText = false,
-    this.autofocus = false,
-    this.readonly = false,
     this.onChanged,
+    this.fontSize = 14,
+    this.hintText,
+    this.initialValue,
+    this.textInputType,
+    this.minLines = 1,
+    this.width = 200,
+    this.height = 30,
+    this.enabled = true,
+    this.inputFormatters,
+    this.focusNode,
   });
 
+  final FormFieldValidator? validator; //TODO Remove later
   final String labelText;
-  final String hintText;
   final TextEditingController? controller;
-  final BuildContext context;
-  TextInputType? keyboardType;
-  List<TextInputFormatter>? inputFormatters;
-  Function? onTap;
-  Function? onEditingComplete;
-  TextInputAction? textInputAction;
-  String? initialValue;
-  bool obscureText;
-  bool autofocus;
-  bool readonly;
+  OnChanged? onChanged;
+  final double fontSize;
+  final String? hintText;
+  final String? initialValue;
+  final TextInputType? textInputType;
+  final int? minLines;
+  final double? width;
+  final double? height;
+  final bool enabled;
+  final List<TextInputFormatter>? inputFormatters;
+  final FocusNode? focusNode;
 
-  String Function(String text)? onChanged;
-
-  final TextStyle labelTextStyle = const TextStyle(
-      color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15);
-
-  TextStyle getHintTextStyle(context, hint) {
+  TextStyle getHintTextStyle(context, hint, enabled) {
     return TextStyle(
-        fontSize: 12,
-        color: hint ? Colors.grey.shade400 : Colors.black,
+        fontSize: fontSize,
+        color: hint && enabled
+            ? Colors.grey.shade400
+            : !hint && !enabled
+                ? Colors.blue
+                : Colors.black,
         fontWeight: FontWeight.w900);
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            labelText,
-            style: labelTextStyle,
+      padding: const EdgeInsets.all(5.0),
+      child: SizedBox(
+        height: height,
+        width: width,
+        child: TextFormField(
+          enabled: enabled,
+          decoration: InputDecoration(
+            labelText: labelText,
+            border: const OutlineInputBorder(),
+            hintText: hintText,
+            contentPadding: const EdgeInsets.all(10),
+            hintStyle: getHintTextStyle(context, true, enabled),
           ),
-          const SizedBox(
-            height: 19,
-          ),
-          TextFormField(
-            autofocus: autofocus,
-            onEditingComplete: () => onEditingComplete,
-            textInputAction: textInputAction,
-            onTap: () => onTap,
-            obscureText: obscureText,
-            onChanged: onChanged,
-            maxLength: 20,
-            controller: controller,
-            keyboardType: keyboardType,
-            inputFormatters: inputFormatters,
-            maxLengthEnforcement: MaxLengthEnforcement.enforced,
-            cursorColor: Colors.black,
-            readOnly: readonly,
-            initialValue: initialValue,
-            style: getHintTextStyle(context, false),
-            decoration: InputDecoration(
-              errorStyle: const TextStyle(fontStyle: FontStyle.italic),
-              isDense: true,
-              counterText: "",
-              contentPadding: const EdgeInsets.only(bottom: 8),
-              hintStyle: getHintTextStyle(context, true),
-              focusedBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(width: 2),
-              ),
-              enabledBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(width: 2),
-              ),
-              hintText: hintText,
-            ),
-          ),
-        ],
+          keyboardType: textInputType,
+          initialValue: initialValue,
+          validator: validator,
+          minLines: minLines,
+          maxLines: minLines ?? (minLines! + 1),
+          controller: controller,
+          onChanged: onChanged,
+          style: getHintTextStyle(context, false, enabled),
+          inputFormatters: inputFormatters,
+        ),
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:edar_app/cubit/suppliers/suppliers_cubit.dart';
 import 'package:edar_app/data/model/supplier.dart';
 import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
-import 'package:edar_app/presentation/widgets/fields/form_field.dart';
+import 'package:edar_app/presentation/widgets/fields/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,7 +27,7 @@ class SupplierDialog extends StatelessWidget {
       builder: (context, snapshot) {
         return Column(
           children: [
-            CustomTextFormField(
+            CustomTextField(
                 labelText: "Supplier Name",
                 hintText: "GM",
                 width: 300,
@@ -48,7 +48,7 @@ class SupplierDialog extends StatelessWidget {
       builder: (context, snapshot) {
         return Column(
           children: [
-            CustomTextFormField(
+            CustomTextField(
                 labelText: "Contact Number",
                 hintText: "09219999999",
                 textInputType: TextInputType.number,
@@ -70,7 +70,7 @@ class SupplierDialog extends StatelessWidget {
       builder: (context, snapshot) {
         return Column(
           children: [
-            CustomTextFormField(
+            CustomTextField(
                 labelText: "Email Address",
                 hintText: "gm@gmail.com",
                 width: 300,
@@ -92,7 +92,7 @@ class SupplierDialog extends StatelessWidget {
       builder: (context, snapshot) {
         return Column(
           children: [
-            CustomTextFormField(
+            CustomTextField(
                 labelText: "Supplier Address",
                 hintText: "Sto Tomas",
                 textInputType: TextInputType.multiline,

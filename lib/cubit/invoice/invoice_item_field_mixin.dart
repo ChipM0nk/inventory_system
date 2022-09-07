@@ -3,6 +3,7 @@
 import 'package:edar_app/data/model/invoice_item.dart';
 import 'package:edar_app/data/model/product.dart';
 import 'package:edar_app/utils/mixin_validations.dart';
+import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 
 mixin InvoiceItemFieldMixin on ValidationMixin {
@@ -12,7 +13,7 @@ mixin InvoiceItemFieldMixin on ValidationMixin {
   late var _priceController;
   late var _amountController;
 
-  init() {
+  itemInit() {
     _snController = BehaviorSubject<String>();
     _productController = BehaviorSubject<Product>();
     _quantityController = BehaviorSubject<double>();
@@ -32,7 +33,13 @@ mixin InvoiceItemFieldMixin on ValidationMixin {
 
   Stream<Product> get productStream => _productController.stream;
   updateProduct(Product product) {
+    print("add product");
     _productController.sink.add(product);
+  }
+
+  Product? getProduct() {
+    print("get product, has value: ${_productController.hasValue}");
+    return _productController.hasValue ? _productController.value : null;
   }
 
   Stream<double> get quantityStream => _quantityController.stream;
@@ -62,16 +69,16 @@ mixin InvoiceItemFieldMixin on ValidationMixin {
     }
   }
 
-  Stream<bool> get buttonValid => Rx.combineLatest5(snStream, productStream,
-      quantityStream, priceStream, amountStream, (a, b, c, d, e) => true);
+  Stream<bool> get buttonValidInvoiceItem => Rx.combineLatest4(productStream,
+      quantityStream, priceStream, amountStream, (a, b, c, d) => true);
 
   InvoiceItem getInvoiceItem(int? invoiceItem) {
     return InvoiceItem(
       invoiceitemId: invoiceItem,
-      sn: _snController.value,
+      sn: "1",
       product: _productController.value,
       quantity: _quantityController.value,
-      price: _productController.value,
+      price: _priceController.value,
       amount: _amountController.value,
     );
   }

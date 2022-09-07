@@ -1,5 +1,7 @@
 import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
+import 'package:edar_app/cubit/products/products_cubit.dart';
 import 'package:edar_app/data/model/category.dart';
+import 'package:edar_app/data/model/invoice_item.dart';
 import 'package:edar_app/data/model/supplier.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_date_picker.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_dropdown.dart';
@@ -10,7 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/model/invoice_item_model.dart';
 import '../../../data/model/product.dart';
 
-import '../../widgets/fields/form_field.dart';
+import '../../widgets/fields/custom_text_field.dart';
 import 'add_item_dialog.dart';
 
 class SalesForm extends StatefulWidget {
@@ -49,11 +51,6 @@ class _SalesFormState extends State<SalesForm> {
         categoryName: "name",
       ),
     );
-    invoiceItem.product = product;
-    invoiceItem.sellPrice = 2.00;
-    invoiceItem.quantity = 1;
-
-    invoiceItems.add(invoiceItem);
 
     BlocProvider.of<InvoiceCubit>(context).init();
     BlocProvider.of<InvoiceCubit>(context).updatePaymentTerm('Cash');
@@ -74,7 +71,7 @@ class _SalesFormState extends State<SalesForm> {
         builder: (context, snapshot) {
           return Column(
             children: [
-              CustomTextFormField(
+              CustomTextField(
                   onChanged: (text) {
                     BlocProvider.of<InvoiceCubit>(context)
                         .updateInvoiceNumber(text);
@@ -90,7 +87,7 @@ class _SalesFormState extends State<SalesForm> {
         builder: (context, snapshot) {
           return Column(
             children: [
-              CustomTextFormField(
+              CustomTextField(
                   onChanged: (text) {
                     BlocProvider.of<InvoiceCubit>(context)
                         .updateCustomerName(text);
@@ -105,7 +102,7 @@ class _SalesFormState extends State<SalesForm> {
         builder: (context, snapshot) {
           return Column(
             children: [
-              CustomTextFormField(
+              CustomTextField(
                   onChanged: (text) {
                     BlocProvider.of<InvoiceCubit>(context)
                         .updateCustomerContact(text);
@@ -121,7 +118,7 @@ class _SalesFormState extends State<SalesForm> {
       builder: (context, snapshot) {
         return Column(
           children: [
-            CustomTextFormField(
+            CustomTextField(
                 labelText: "Customer Address",
                 hintText: "Sto Tomas",
                 textInputType: TextInputType.multiline,
@@ -156,7 +153,6 @@ class _SalesFormState extends State<SalesForm> {
         stream: BlocProvider.of<InvoiceCubit>(context).paymentTermStream,
         builder: (context, snapshot) {
           void onPaymentTermChange<String>(val) {
-            print("hello");
             BlocProvider.of<InvoiceCubit>(context).updatePaymentTerm(val);
           }
 
@@ -188,7 +184,7 @@ class _SalesFormState extends State<SalesForm> {
         builder: (context, snapshot) {
           return Column(
             children: [
-              CustomTextFormField(
+              CustomTextField(
                   onChanged: (text) {
                     BlocProvider.of<InvoiceCubit>(context).updatePoNumber(text);
                   },
@@ -218,7 +214,7 @@ class _SalesFormState extends State<SalesForm> {
         builder: (context, snapshot) {
           return Column(
             children: [
-              CustomTextFormField(
+              CustomTextField(
                   onChanged: (text) {
                     BlocProvider.of<InvoiceCubit>(context)
                         .updateTinNumber(text);
@@ -229,6 +225,108 @@ class _SalesFormState extends State<SalesForm> {
           );
         });
 
+    var invoiceItemDataTable = StreamBuilder<List<InvoiceItem>>(
+        stream: BlocProvider.of<InvoiceCubit>(context).invoiceItemsStream,
+        builder: (context, snapshot) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: DataTable(
+              headingRowHeight: 30,
+              columnSpacing: 30,
+              headingRowColor: MaterialStateColor.resolveWith(
+                (states) {
+                  return Colors.green.shade200;
+                },
+              ),
+              dataRowHeight: 20,
+              border: TableBorder.all(
+                  width: 1.0,
+                  style: BorderStyle.solid,
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10))),
+              columns: const <DataColumn>[
+                DataColumn(
+                  label: Text(
+                    'SN',
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                DataColumn(
+                  label: SizedBox(
+                    width: 150,
+                    child: Text(
+                      'Product Name',
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                DataColumn(
+                  label: SizedBox(
+                    width: 250,
+                    child: Text(
+                      'Product Description',
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                DataColumn(
+                  label: SizedBox(
+                    width: 60,
+                    child: Text(
+                      'Quantity',
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                DataColumn(
+                  label: Text(
+                    'Unit',
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                DataColumn(
+                  label: Text(
+                    'Price',
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                DataColumn(
+                  label: Text(
+                    'Total',
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+              rows: BlocProvider.of<InvoiceCubit>(context)
+                  .getInvoiceItems()!
+                  .map((iv) => DataRow(cells: [
+                        DataCell(Text((iv.product.productId).toString())),
+                        DataCell(Text(iv.product.productName)),
+                        DataCell(Text(iv.quantity.toString())),
+                        DataCell(Text(iv.quantity.toString())),
+                        DataCell(Text(iv.quantity.toString())),
+                        DataCell(Text(iv.quantity.toString())),
+                        DataCell(Text(iv.quantity.toString())),
+                      ]))
+                  .toList(),
+            ),
+          );
+        });
     return SizedBox(
       width: 1800,
       child: Column(
@@ -275,71 +373,48 @@ class _SalesFormState extends State<SalesForm> {
               ],
             ),
           ),
-          Expanded(
-              child: Align(
-            alignment: Alignment.topLeft,
-            child: DataTable(
-              columns: const <DataColumn>[
-                DataColumn(
-                  label: Text(
-                    'Item Name',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                DataColumn(
-                  label: Text(
-                    'Item Code',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                DataColumn(
-                  label: Text(
-                    'Quantity',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                DataColumn(
-                  label: Text(
-                    'Price',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-              rows: invoiceItems
-                  .map((iv) => DataRow(cells: [
-                        DataCell(Text((iv.product.productId).toString())),
-                        DataCell(Text(iv.product.productName)),
-                        DataCell(Text(iv.sellPrice.toString())),
-                        DataCell(Text(iv.quantity.toString())),
-                      ]))
-                  .toList(),
+          invoiceItemDataTable,
+          GestureDetector(
+            child: const Icon(
+              Icons.add_box_outlined,
+              color: Colors.green,
+              size: 25,
             ),
-          )),
+            onTap: () {
+              showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (_) {
+                    return MultiBlocProvider(
+                      providers: [
+                        BlocProvider.value(
+                            value: context.read<ProductsCubit>()),
+                        BlocProvider.value(value: context.read<InvoiceCubit>()),
+                      ],
+                      child: AddItemDialog(
+                        addInvoiceItem: addInvoiceItem,
+                      ),
+                    );
+                  });
+            },
+          ),
           Row(
             children: [
-              Expanded(
-                child: ElevatedButton(
-                  child: Text("Open Popup"),
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Container();
-                          // return AddItemDialog(
-                          //   addInvoiceItem: addInvoiceItem,
-                          // );
-                        });
-                  },
-                ),
-              )
+              Expanded(child: Container()
+                  // ElevatedButton(
+                  //   child: Text("Open Popup"),
+                  //   onPressed: () {
+                  //     showDialog(
+                  //         context: context,
+                  //         builder: (BuildContext context) {
+                  //           return Container();
+                  //           // return AddItemDialog(
+                  //           //   addInvoiceItem: addInvoiceItem,
+                  //           // );
+                  //         });
+                  //   },
+                  // ),
+                  )
             ],
           )
         ],

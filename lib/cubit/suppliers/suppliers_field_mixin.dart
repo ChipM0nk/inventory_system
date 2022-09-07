@@ -11,7 +11,6 @@ mixin SuppliersFieldMixin on ValidationMixin {
   late var _supplierContactNumController;
 
   init() {
-    print("init");
     _supplierNameController = BehaviorSubject<String>();
     _supplierAddressController = BehaviorSubject<String>();
     _supplierEmailAddController = BehaviorSubject<String>();

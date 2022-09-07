@@ -6,8 +6,9 @@ import 'package:edar_app/data/model/product.dart';
 import 'package:edar_app/data/model/supplier.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_dropdown.dart';
 import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
-import 'package:edar_app/presentation/widgets/fields/form_field.dart';
+import 'package:edar_app/presentation/widgets/fields/custom_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // ignore: must_be_immutable
@@ -19,6 +20,8 @@ class ProductDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     String title = 'Add Product';
     int? productId;
+    late bool catSelected = false;
+    late bool supSelected = false;
     BlocProvider.of<ProductsCubit>(context).init();
     BlocProvider.of<CategoriesCubit>(context).fetchCategories();
     BlocProvider.of<SuppliersCubit>(context).fetchSuppliers();
@@ -26,14 +29,14 @@ class ProductDialog extends StatelessWidget {
       title = 'Update Product';
       BlocProvider.of<ProductsCubit>(context).loadProducts(product!);
       productId = product!.productId;
-    }
+    } else {}
 
     var productCodeField = StreamBuilder(
       stream: BlocProvider.of<ProductsCubit>(context).productCodeStream,
       builder: (context, snapshot) {
         return Column(
           children: [
-            CustomTextFormField(
+            CustomTextField(
                 labelText: "Product Code",
                 hintText: "GM",
                 initialValue:
@@ -52,7 +55,7 @@ class ProductDialog extends StatelessWidget {
       builder: (context, snapshot) {
         return Column(
           children: [
-            CustomTextFormField(
+            CustomTextField(
                 labelText: "Product Name",
                 hintText: "GM",
                 initialValue:
@@ -71,11 +74,14 @@ class ProductDialog extends StatelessWidget {
       builder: (context, snapshot) {
         return Column(
           children: [
-            CustomTextFormField(
+            CustomTextField(
                 labelText: "Product Price",
-                hintText: "09219999999",
+                hintText: "999.99",
                 initialValue:
                     product != null ? product!.productPrice.toString() : null,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.allow(RegExp("[.0-9]")),
+                ],
                 onChanged: (text) {
                   BlocProvider.of<ProductsCubit>(context)
                       .updateProductPrice(text);
@@ -90,12 +96,15 @@ class ProductDialog extends StatelessWidget {
       builder: (context, snapshot) {
         return Column(
           children: [
-            CustomTextFormField(
+            CustomTextField(
                 labelText: "Product Quantity",
-                hintText: "09219999999",
+                hintText: "999.99",
                 initialValue: product != null
                     ? product!.productQuantity.toString()
                     : null,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.allow(RegExp("[.0-9]")),
+                ],
                 onChanged: (text) {
                   BlocProvider.of<ProductsCubit>(context)
                       .updateProductQuantity(text);
@@ -112,7 +121,7 @@ class ProductDialog extends StatelessWidget {
           padding: const EdgeInsets.only(left: 0, right: 0),
           child: Column(
             children: [
-              CustomTextFormField(
+              CustomTextField(
                   labelText: "Product Unit",
                   hintText: "09219999999",
                   initialValue:
@@ -127,89 +136,117 @@ class ProductDialog extends StatelessWidget {
         );
       },
     );
-    var categoryField = Column(
-      children: [
-        BlocBuilder<CategoriesCubit, CategoriesState>(
-          builder: (context, state) {
-            if (state is CategoriesLoaded) {
-              if (product != null && state.selectedCategory == null) {
-                BlocProvider.of<CategoriesCubit>(context)
-                    .selectCategory(product!.category);
-              }
-              List<DropdownMenuItem<Category>> dropDownItems = state.categories
-                  .map((e) => DropdownMenuItem<Category>(
-                        value: e,
-                        child: Text(e.categoryName),
-                      ))
-                  .toList();
+    var categoryField = StreamBuilder<Object>(
+        stream: BlocProvider.of<ProductsCubit>(context).productCategoryStream,
+        builder: (context, snapshot) {
+          return Column(
+            children: [
+              BlocBuilder<CategoriesCubit, CategoriesState>(
+                builder: (context, state) {
+                  if (state is CategoriesLoaded) {
+                    List<DropdownMenuItem<Category>> dropDownItems =
+                        state.categories
+                            .map((e) => DropdownMenuItem<Category>(
+                                  value: e,
+                                  child: Text(e.categoryName),
+                                ))
+                            .toList();
 
-              void onChange<Category>(cat) {
-                BlocProvider.of<CategoriesCubit>(context).selectCategory(cat);
-                BlocProvider.of<ProductsCubit>(context)
-                    .updateProductCategory(cat);
-              }
+                    if (product == null && catSelected == false) {
+                      BlocProvider.of<ProductsCubit>(context)
+                          .updateProductCategory(state.categories.first);
+                      catSelected = true;
+                    }
+                    void onChange<Category>(cat) async {
+                      await BlocProvider.of<ProductsCubit>(context)
+                          .updateProductCategory(cat);
+                    }
 
-              return CustomDropdown<Category>(
-                labelText: "Select Category",
-                value: state.selectedCategory,
-                items: dropDownItems,
-                context: context,
-                onChanged: onChange,
-              );
-            }
-            return const SizedBox(
-              width: 10,
-            );
-          },
-        ),
-      ],
-    );
+                    // print("Set selected: ${BlocProvider.of<ProductsCubit>(context).getCategory()!.categoryName}");
+                    // Category selected = product != null &&
+                    //         BlocProvider.of<ProductsCubit>(context)
+                    //                 .getCategory() !=
+                    //             null
+                    //     ? BlocProvider.of<ProductsCubit>(context).getCategory()!
+                    //     : state.categories.first;
+                    // print(" selected: ${selected.categoryName}");
+                    return CustomDropdown<Category>(
+                      labelText: "Category",
+                      value:
+                          BlocProvider.of<ProductsCubit>(context).getCategory(),
+                      items: dropDownItems,
+                      context: context,
+                      onChanged: onChange,
+                    );
+                  }
+                  return const SizedBox(
+                    width: 10,
+                  );
+                },
+              ),
+            ],
+          );
+        });
     //   },
     // );
     //TODO Change this and avoid setting selectedSupplier object.
     //see sales_form.dart Payment Term
-    var supplierField = Column(
-      children: [
-        BlocBuilder<SuppliersCubit, SuppliersState>(
-          builder: (context, state) {
-            if (state is SuppliersLoaded) {
-              if (product != null && state.selectedSupplier == null) {
-                BlocProvider.of<SuppliersCubit>(context)
-                    .selectSupplier(product!.supplier);
-              }
-              List<DropdownMenuItem<Supplier>> dropDownItems = state.suppliers
-                  .map((e) => DropdownMenuItem<Supplier>(
-                        value: e,
-                        child: Text(e.supplierName),
-                      ))
-                  .toList();
+    var supplierField = StreamBuilder<Supplier>(
+        stream: BlocProvider.of<ProductsCubit>(context).productSupplierStream,
+        builder: (context, snapshot) {
+          return Column(
+            children: [
+              BlocBuilder<SuppliersCubit, SuppliersState>(
+                builder: (context, state) {
+                  if (state is SuppliersLoaded) {
+                    List<DropdownMenuItem<Supplier>> dropDownItems =
+                        state.suppliers
+                            .map((e) => DropdownMenuItem<Supplier>(
+                                  value: e,
+                                  child: Text(e.supplierName),
+                                ))
+                            .toList();
 
-              void onChange<Supplier>(sup) {
-                BlocProvider.of<SuppliersCubit>(context).selectSupplier(sup);
-                BlocProvider.of<ProductsCubit>(context)
-                    .updateProductSupplier(sup);
-              }
+                    void onChange<Supplier>(sup) {
+                      BlocProvider.of<ProductsCubit>(context)
+                          .updateProductSupplier(sup);
+                    }
 
-              return CustomDropdown<Supplier>(
-                labelText: "Select Supplier",
-                value: state.selectedSupplier,
-                items: dropDownItems,
-                context: context,
-                onChanged: onChange,
-              );
-            }
-            return const SizedBox(width: 10);
-          },
-        ),
-      ],
-    );
+                    if (product == null && supSelected == false) {
+                      BlocProvider.of<ProductsCubit>(context)
+                          .updateProductSupplier(state.suppliers.first);
+                      supSelected = true;
+                    }
+                    // Supplier selected = product != null
+                    //     ? state.suppliers.firstWhere((supp) =>
+                    //         supp.supplierId ==
+                    //         BlocProvider.of<ProductsCubit>(context)
+                    //             .getSupplier()!
+                    //             .supplierId)
+                    //     : state.suppliers.first;
+
+                    return CustomDropdown<Supplier>(
+                      labelText: "Supplier",
+                      value:
+                          BlocProvider.of<ProductsCubit>(context).getSupplier(),
+                      items: dropDownItems,
+                      context: context,
+                      onChanged: onChange,
+                    );
+                  }
+                  return const SizedBox(width: 10);
+                },
+              ),
+            ],
+          );
+        });
 
     var productDescriptionField = StreamBuilder(
       stream: BlocProvider.of<ProductsCubit>(context).productDescriptionStream,
       builder: (context, snapshot) {
         return Column(
           children: [
-            CustomTextFormField(
+            CustomTextField(
                 labelText: "Product Description",
                 hintText: "Sto Tomas",
                 width: 440,

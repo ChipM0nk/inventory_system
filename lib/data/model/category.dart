@@ -25,4 +25,15 @@ class Category {
 
   /// Connect the generated [_$CategoryToJson] function to the `toJson` method.
   Map<String, dynamic> toJson() => _$CategoryToJson(this);
+
+  @override
+  bool operator ==(Object other) {
+    return other is Category && other.categoryId == categoryId;
+  }
+
+  @override
+  int get hashCode => categoryId.hashCode;
+
+  @override
+  String toString() => '{ id: $categoryId }';
 }

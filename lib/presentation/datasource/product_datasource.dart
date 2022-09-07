@@ -63,11 +63,11 @@ class ProductData extends DataTableSource {
         ),
 
         DataCell(
-          Text(dataItem.category.categoryName),
+          Text(dataItem.category!.categoryName),
           onTap: () => onItemClick(dataItem),
         ),
         DataCell(
-          Text(dataItem.supplier.supplierName),
+          Text(dataItem.supplier!.supplierName),
           onTap: () => onItemClick(dataItem),
         ),
         // DataCell(Text('${dataItem.productId}')),

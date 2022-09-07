@@ -25,9 +25,9 @@ class _HomePageState extends State<HomePage> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Align(
-            child: Header(),
+          title: const Align(
             alignment: Alignment.topLeft,
+            child: Header(),
           ),
           backgroundColor: Colors.green.shade900,
         ),
@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
                   scrollDirection: Axis.horizontal,
                   child: ConstrainedBox(
                     constraints:
-                        BoxConstraints(maxWidth: 1500, maxHeight: 1000),
+                        const BoxConstraints(maxWidth: 1500, maxHeight: 1000),
                     child: Row(
                       children: [
                         SideNavigationBar(
@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                             builder: (context, state) {
                               print("Auth state is ${state}");
                               if (state is! AuthenticationSuccess) {
-                                return Align(
+                                return const Align(
                                   alignment: Alignment.topLeft,
                                   child: Text(
                                       "Not Allowed"), //TODO Create actual page

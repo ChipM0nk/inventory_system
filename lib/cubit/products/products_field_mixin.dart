@@ -66,8 +66,7 @@ mixin ProductsFieldMixin on ValidationMixin {
     if (isFieldDoubleNumeric(fieldValue)) {
       _productPriceController.sink.add(double.parse(fieldValue));
     } else {
-      _productPriceController.sink
-          .addError("Please enter text with length greater than 4");
+      _productPriceController.sink.addError("Please enter numeric value");
     }
   }
 
@@ -76,8 +75,7 @@ mixin ProductsFieldMixin on ValidationMixin {
     if (isFieldDoubleNumeric(fieldValue)) {
       _productQuantityController.sink.add(double.parse(fieldValue));
     } else {
-      _productQuantityController.sink
-          .addError("Please enter text with length greater than 4");
+      _productQuantityController.sink.addError("Please enter numeric value");
     }
   }
 
@@ -97,10 +95,20 @@ mixin ProductsFieldMixin on ValidationMixin {
     _productSupplierController.sink.add(supplier);
   }
 
+  Supplier? getSupplier() {
+    return _productSupplierController.value;
+  }
+
   Stream<Category> get productCategoryStream =>
       _productCategoryController.stream;
-  updateProductCategory(Category category) {
+  updateProductCategory(Category category) async {
     _productCategoryController.sink.add(category);
+  }
+
+  Category? getCategory() {
+    return _productCategoryController.hasValue
+        ? _productCategoryController.value
+        : null;
   }
 
   Stream<bool> get buttonValid => Rx.combineLatest8(

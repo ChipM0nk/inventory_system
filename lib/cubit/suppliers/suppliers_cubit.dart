@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:edar_app/cubit/suppliers/suppliers_field_mixin.dart';
 import 'package:edar_app/data/model/supplier.dart';
 import 'package:edar_app/data/repository/supplier_repository.dart';
@@ -14,8 +16,6 @@ class SuppliersCubit extends Cubit<SuppliersState>
       : super(SuppliersInitial());
 
   void fetchSuppliers() {
-    print("Fetch suppliers");
-
     supplierRepository.fetchAll().then((suppliers) => {
           emit(SuppliersLoaded(
             suppliers: suppliers,
@@ -113,22 +113,22 @@ class SuppliersCubit extends Cubit<SuppliersState>
     }
   }
 
-  void selectSupplier(Supplier? supplier) {
-    final currentState = state;
-    if (currentState is SuppliersLoaded) {
-      final suppliers = currentState.suppliers;
-      var sel =
-          suppliers.firstWhere((sup) => sup.supplierId == supplier!.supplierId);
-      print("Selected: ${sel.supplierName}");
+  // void selectSupplier(Supplier? supplier) {
+  //   final currentState = state;
+  //   if (currentState is SuppliersLoaded) {
+  //     final suppliers = currentState.suppliers;
+  //     var sel =
+  //         suppliers.firstWhere((sup) => sup.supplierId == supplier!.supplierId);
+  //     print("Selected: ${sel.supplierName}");
 
-      emit(SuppliersLoaded(
-        suppliers: suppliers,
-        sortAscending: true,
-        selectedSupplier: suppliers
-            .firstWhere((sup) => sup.supplierId == supplier!.supplierId),
-      ));
-    }
-  }
+  //     emit(SuppliersLoaded(
+  //       suppliers: suppliers,
+  //       sortAscending: true,
+  //       selectedSupplier: suppliers
+  //           .firstWhere((sup) => sup.supplierId == supplier!.supplierId),
+  //     ));
+  //   }
+  // }
 
   loadSuppliers(Supplier supplier) {
     updateSupplierName(supplier.supplierName);

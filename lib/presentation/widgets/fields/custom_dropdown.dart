@@ -48,7 +48,7 @@ class CustomDropdown<T> extends StatelessWidget {
                     labelText: labelText,
                     constraints:
                         BoxConstraints(maxHeight: height, minHeight: height),
-                    contentPadding: EdgeInsets.zero,
+                    contentPadding: const EdgeInsets.all(10),
                     border: const OutlineInputBorder(),
                   ),
                   child: DropdownButton<T>(

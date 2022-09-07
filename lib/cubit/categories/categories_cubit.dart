@@ -106,18 +106,18 @@ class CategoriesCubit extends Cubit<CategoriesState>
     });
   }
 
-  void selectCategory(Category? category) {
-    final currentState = state;
-    if (currentState is CategoriesLoaded) {
-      final categories = currentState.categories;
-      emit(CategoriesLoaded(
-        categories: categories,
-        sortAscending: true,
-        selectedCategory: categories
-            .firstWhere((cat) => cat.categoryId == category!.categoryId),
-      ));
-    }
-  }
+  // void selectCategory(Category? category) {
+  //   final currentState = state;
+  //   if (currentState is CategoriesLoaded) {
+  //     final categories = currentState.categories;
+  //     emit(CategoriesLoaded(
+  //       categories: categories,
+  //       sortAscending: true,
+  //       selectedCategory: categories
+  //           .firstWhere((cat) => cat.categoryId == category!.categoryId),
+  //     ));
+  //   }
+  // }
 
   void searchCategory(String searchText) {
     final currentState = state;

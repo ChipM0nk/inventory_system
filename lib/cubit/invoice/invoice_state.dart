@@ -33,5 +33,11 @@ class UpdatingInvoice extends InvoiceState {}
 
 class InvoiceUpdated extends InvoiceState {}
 
+//dialog box
+
+class OpeningInvoiceItemDialog extends InvoiceState {}
+
+class InvoiceItemDialogOpened extends InvoiceState {}
+
 //error
 class InvoiceStateError extends InvoiceState {}

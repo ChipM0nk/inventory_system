@@ -27,4 +27,15 @@ class Supplier {
 
   /// Connect the generated [_$SupplierModelToJson] function to the `toJson` method.
   Map<String, dynamic> toJson() => _$SupplierToJson(this);
+
+  @override
+  bool operator ==(Object other) {
+    return other is Supplier && other.supplierId == supplierId;
+  }
+
+  @override
+  int get hashCode => supplierId.hashCode;
+
+  @override
+  String toString() => '{ id: $supplierId }';
 }

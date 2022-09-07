@@ -9,15 +9,12 @@ class SuppliersLoaded extends SuppliersState {
   List<Supplier>? filteredData;
   int? sortIndex;
   final bool sortAscending;
-  final Supplier? selectedSupplier;
 
-  SuppliersLoaded({
-    required this.suppliers,
-    this.filteredData,
-    this.sortIndex,
-    required this.sortAscending,
-    this.selectedSupplier,
-  });
+  SuppliersLoaded(
+      {required this.suppliers,
+      this.filteredData,
+      this.sortIndex,
+      required this.sortAscending});
 }
 
 //Add

@@ -21,16 +21,17 @@ class Product {
   final Supplier supplier;
   final Category category;
 
-  const Product(
-      {this.productId,
-      required this.productCode,
-      required this.productName,
-      required this.productDescription,
-      required this.productPrice,
-      required this.productQuantity,
-      required this.productUnit,
-      required this.supplier,
-      required this.category});
+  const Product({
+    this.productId,
+    required this.productCode,
+    required this.productName,
+    required this.productDescription,
+    required this.productPrice,
+    required this.productQuantity,
+    required this.productUnit,
+    required this.supplier,
+    required this.category,
+  });
 
   // Connect the generated [_$PersonFromJson] function to the `fromJson`
   /// factory.
@@ -39,4 +40,15 @@ class Product {
 
   /// Connect the generated [_$ProductToJson] function to the `toJson` method.
   Map<String, dynamic> toJson() => _$ProductToJson(this);
+
+  @override
+  bool operator ==(Object other) {
+    return other is Product && other.productId == productId;
+  }
+
+  @override
+  int get hashCode => productId.hashCode;
+
+  @override
+  String toString() => '{ id: $productId }';
 }
