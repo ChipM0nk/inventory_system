@@ -11,14 +11,14 @@ mixin InvoiceItemFieldMixin on ValidationMixin {
   late var _productController;
   late var _quantityController;
   late var _priceController;
-  late var _amountController;
+  late var _invoiceItemAmountController;
 
   itemInit() {
     _snController = BehaviorSubject<String>();
     _productController = BehaviorSubject<Product>();
     _quantityController = BehaviorSubject<double>();
     _priceController = BehaviorSubject<double>();
-    _amountController = BehaviorSubject<double>();
+    _invoiceItemAmountController = BehaviorSubject<double>();
   }
 
   Stream<String> get snStream => _snController.stream;
@@ -60,17 +60,18 @@ mixin InvoiceItemFieldMixin on ValidationMixin {
     }
   }
 
-  Stream<double> get amountStream => _amountController.stream;
-  updateAmount(String fieldValue) {
-    if (isFieldDoubleNumeric(fieldValue)) {
-      _amountController.sink.add(double.parse(fieldValue));
-    } else {
-      _amountController.sink.addError("Please enter valid numeric value");
-    }
+  Stream<double> get invoiceItemAmountStream =>
+      _invoiceItemAmountController.stream;
+  updateInvoiceItemAmount(double fieldValue) {
+    _invoiceItemAmountController.sink.add(fieldValue);
   }
 
-  Stream<bool> get buttonValidInvoiceItem => Rx.combineLatest4(productStream,
-      quantityStream, priceStream, amountStream, (a, b, c, d) => true);
+  Stream<bool> get buttonValidInvoiceItem => Rx.combineLatest4(
+      productStream,
+      quantityStream,
+      priceStream,
+      invoiceItemAmountStream,
+      (a, b, c, d) => true);
 
   InvoiceItem getInvoiceItem(int? invoiceItem) {
     return InvoiceItem(
@@ -79,7 +80,7 @@ mixin InvoiceItemFieldMixin on ValidationMixin {
       product: _productController.value,
       quantity: _quantityController.value,
       price: _priceController.value,
-      amount: _amountController.value,
+      amount: _invoiceItemAmountController.value,
     );
   }
 }

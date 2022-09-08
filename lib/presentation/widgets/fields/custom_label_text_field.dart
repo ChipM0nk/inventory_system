@@ -7,40 +7,23 @@ import 'package:flutter/services.dart';
 
 typedef OnChanged = void Function(String values);
 
-class CustomTextField extends StatelessWidget {
-  CustomTextField({
-    this.validator,
-    required this.labelText,
+class CustomLabelTextField extends StatelessWidget {
+  CustomLabelTextField({
     this.controller,
-    this.onChanged,
     this.fontSize = 14,
-    this.hintText,
-    this.initialValue,
     this.textInputType,
-    this.minLines = 1,
     this.width = 200,
     this.height = 30,
     this.enabled = true,
-    this.inputFormatters,
-    this.focusNode,
-    this.snapshot,
   });
 
-  final FormFieldValidator? validator; //TODO Remove later
-  final String labelText;
   final TextEditingController? controller;
   OnChanged? onChanged;
   final double fontSize;
-  final String? hintText;
-  final String? initialValue;
   final TextInputType? textInputType;
-  final int? minLines;
   final double? width;
   final double? height;
   final bool enabled;
-  final List<TextInputFormatter>? inputFormatters;
-  final FocusNode? focusNode;
-  final AsyncSnapshot<Object?>? snapshot;
 
   TextStyle getHintTextStyle(context, hint, enabled) {
     return TextStyle(
@@ -56,33 +39,26 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(5.0),
+      padding: const EdgeInsets.all(10.0),
       child: Column(
         children: [
           SizedBox(
             height: height,
             width: width,
             child: TextFormField(
+              textAlignVertical: TextAlignVertical.center,
+              textAlign: TextAlign.end,
               enabled: enabled,
-              decoration: InputDecoration(
-                labelText: labelText,
-                border: const OutlineInputBorder(),
-                hintText: hintText,
-                contentPadding: const EdgeInsets.all(10),
-                hintStyle: getHintTextStyle(context, true, enabled),
+              decoration: const InputDecoration(
+                contentPadding: EdgeInsets.all(10),
+                border: InputBorder.none,
               ),
               keyboardType: textInputType,
-              initialValue: initialValue,
-              validator: validator,
-              minLines: minLines,
-              maxLines: minLines ?? (minLines! + 1),
               controller: controller,
               onChanged: onChanged,
               style: getHintTextStyle(context, false, enabled),
-              inputFormatters: inputFormatters,
             ),
           ),
-          ErrorMessage(snapshot: snapshot)
         ],
       ),
     );

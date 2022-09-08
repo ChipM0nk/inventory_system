@@ -25,90 +25,71 @@ class SupplierDialog extends StatelessWidget {
     var supplierNameField = StreamBuilder(
       stream: BlocProvider.of<SuppliersCubit>(context).supplierNameStream,
       builder: (context, snapshot) {
-        return Column(
-          children: [
-            CustomTextField(
-                labelText: "Supplier Name",
-                hintText: "GM",
-                width: 300,
-                initialValue:
-                    supplier != null ? supplier!.supplierName.toString() : null,
-                onChanged: (text) {
-                  BlocProvider.of<SuppliersCubit>(context)
-                      .updateSupplierName(text);
-                }),
-            ErrorMessage(snapshot: snapshot)
-          ],
-        );
+        return CustomTextField(
+            labelText: "Supplier Name",
+            hintText: "GM",
+            width: 300,
+            initialValue:
+                supplier != null ? supplier!.supplierName.toString() : null,
+            snapshot: snapshot,
+            onChanged: (text) {
+              BlocProvider.of<SuppliersCubit>(context).updateSupplierName(text);
+            });
       },
     );
 
     var supplierContactField = StreamBuilder(
       stream: BlocProvider.of<SuppliersCubit>(context).supplierContactNumStream,
       builder: (context, snapshot) {
-        return Column(
-          children: [
-            CustomTextField(
-                labelText: "Contact Number",
-                hintText: "09219999999",
-                textInputType: TextInputType.number,
-                width: 300,
-                initialValue: supplier != null
-                    ? supplier!.supplierContactNumber.toString()
-                    : null,
-                onChanged: (text) {
-                  BlocProvider.of<SuppliersCubit>(context)
-                      .updateSupplierContactNumber(text);
-                }),
-            ErrorMessage(snapshot: snapshot)
-          ],
-        );
+        return CustomTextField(
+            labelText: "Contact Number",
+            hintText: "09219999999",
+            textInputType: TextInputType.number,
+            width: 300,
+            initialValue: supplier != null
+                ? supplier!.supplierContactNumber.toString()
+                : null,
+            snapshot: snapshot,
+            onChanged: (text) {
+              BlocProvider.of<SuppliersCubit>(context)
+                  .updateSupplierContactNumber(text);
+            });
       },
     );
     var supplierEmailAddField = StreamBuilder(
       stream: BlocProvider.of<SuppliersCubit>(context).supplierEmailAddStream,
       builder: (context, snapshot) {
-        return Column(
-          children: [
-            CustomTextField(
-                labelText: "Email Address",
-                hintText: "gm@gmail.com",
-                width: 300,
-                initialValue: supplier != null
-                    ? supplier!.supplierEmailAdd.toString()
-                    : null,
-                onChanged: (text) {
-                  BlocProvider.of<SuppliersCubit>(context)
-                      .updateSupplierEmailAddress(text);
-                }),
-            ErrorMessage(snapshot: snapshot)
-          ],
-        );
+        return CustomTextField(
+            labelText: "Email Address",
+            hintText: "gm@gmail.com",
+            width: 300,
+            initialValue:
+                supplier != null ? supplier!.supplierEmailAdd.toString() : null,
+            snapshot: snapshot,
+            onChanged: (text) {
+              BlocProvider.of<SuppliersCubit>(context)
+                  .updateSupplierEmailAddress(text);
+            });
       },
     );
 
     var supplierAddressField = StreamBuilder(
       stream: BlocProvider.of<SuppliersCubit>(context).supplierAddressStream,
       builder: (context, snapshot) {
-        return Column(
-          children: [
-            CustomTextField(
-                labelText: "Supplier Address",
-                hintText: "Sto Tomas",
-                textInputType: TextInputType.multiline,
-                width: 300,
-                minLines: 6,
-                height: 80,
-                initialValue: supplier != null
-                    ? supplier!.supplierAddress.toString()
-                    : null,
-                onChanged: (text) {
-                  BlocProvider.of<SuppliersCubit>(context)
-                      .updateSupplierAddress(text);
-                }),
-            ErrorMessage(snapshot: snapshot)
-          ],
-        );
+        return CustomTextField(
+            labelText: "Supplier Address",
+            hintText: "Sto Tomas",
+            textInputType: TextInputType.multiline,
+            width: 300,
+            minLines: 6,
+            height: 80,
+            initialValue:
+                supplier != null ? supplier!.supplierAddress.toString() : null,
+            snapshot: snapshot,
+            onChanged: (text) {
+              BlocProvider.of<SuppliersCubit>(context)
+                  .updateSupplierAddress(text);
+            });
       },
     );
     return AlertDialog(

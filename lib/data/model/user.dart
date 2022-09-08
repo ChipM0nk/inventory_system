@@ -10,10 +10,10 @@ class User {
   @JsonKey(name: "userId")
   final int? userId;
   final String username;
-  final String password;
+  final String? password;
   @JsonKey(ignore: true)
   final String? confirmPassword;
-  final List<String> menuList;
+  final List<String>? menuList;
 
   // Connect the generated [_$PersonFromJson] function to the `fromJson`
   /// factory.
@@ -22,9 +22,9 @@ class User {
   const User({
     this.userId,
     required this.username,
-    required this.password,
+    this.password,
     this.confirmPassword,
-    required this.menuList,
+    this.menuList,
   });
 
   /// Connect the generated [_$UserToJson] function to the `toJson` method.

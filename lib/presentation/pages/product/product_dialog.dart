@@ -34,84 +34,64 @@ class ProductDialog extends StatelessWidget {
     var productCodeField = StreamBuilder(
       stream: BlocProvider.of<ProductsCubit>(context).productCodeStream,
       builder: (context, snapshot) {
-        return Column(
-          children: [
-            CustomTextField(
-                labelText: "Product Code",
-                hintText: "GM",
-                initialValue:
-                    product != null ? product!.productCode.toString() : null,
-                onChanged: (text) {
-                  BlocProvider.of<ProductsCubit>(context)
-                      .updateProductCode(text);
-                }),
-            ErrorMessage(snapshot: snapshot)
-          ],
-        );
+        return CustomTextField(
+            labelText: "Product Code",
+            hintText: "GM",
+            initialValue:
+                product != null ? product!.productCode.toString() : null,
+            snapshot: snapshot,
+            onChanged: (text) {
+              BlocProvider.of<ProductsCubit>(context).updateProductCode(text);
+            });
       },
     );
     var productName = StreamBuilder(
       stream: BlocProvider.of<ProductsCubit>(context).productNameStream,
       builder: (context, snapshot) {
-        return Column(
-          children: [
-            CustomTextField(
-                labelText: "Product Name",
-                hintText: "GM",
-                initialValue:
-                    product != null ? product!.productName.toString() : null,
-                onChanged: (text) {
-                  BlocProvider.of<ProductsCubit>(context)
-                      .updateProductName(text);
-                }),
-            ErrorMessage(snapshot: snapshot)
-          ],
-        );
+        return CustomTextField(
+            labelText: "Product Name",
+            hintText: "GM",
+            initialValue:
+                product != null ? product!.productName.toString() : null,
+            snapshot: snapshot,
+            onChanged: (text) {
+              BlocProvider.of<ProductsCubit>(context).updateProductName(text);
+            });
       },
     );
     var productPriceField = StreamBuilder(
       stream: BlocProvider.of<ProductsCubit>(context).productPriceStream,
       builder: (context, snapshot) {
-        return Column(
-          children: [
-            CustomTextField(
-                labelText: "Product Price",
-                hintText: "999.99",
-                initialValue:
-                    product != null ? product!.productPrice.toString() : null,
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.allow(RegExp("[.0-9]")),
-                ],
-                onChanged: (text) {
-                  BlocProvider.of<ProductsCubit>(context)
-                      .updateProductPrice(text);
-                }),
-            ErrorMessage(snapshot: snapshot)
-          ],
-        );
+        return CustomTextField(
+            labelText: "Product Price",
+            hintText: "999.99",
+            initialValue:
+                product != null ? product!.productPrice.toString() : null,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.allow(RegExp("[.0-9]")),
+            ],
+            snapshot: snapshot,
+            onChanged: (text) {
+              BlocProvider.of<ProductsCubit>(context).updateProductPrice(text);
+            });
       },
     );
     var productQuanity = StreamBuilder(
       stream: BlocProvider.of<ProductsCubit>(context).productQuantityStream,
       builder: (context, snapshot) {
-        return Column(
-          children: [
-            CustomTextField(
-                labelText: "Product Quantity",
-                hintText: "999.99",
-                initialValue: product != null
-                    ? product!.productQuantity.toString()
-                    : null,
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.allow(RegExp("[.0-9]")),
-                ],
-                onChanged: (text) {
-                  BlocProvider.of<ProductsCubit>(context)
-                      .updateProductQuantity(text);
-                }),
-            ErrorMessage(snapshot: snapshot)
-          ],
-        );
+        return CustomTextField(
+            labelText: "Product Quantity",
+            hintText: "999.99",
+            initialValue:
+                product != null ? product!.productQuantity.toString() : null,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.allow(RegExp("[.0-9]")),
+            ],
+            snapshot: snapshot,
+            onChanged: (text) {
+              BlocProvider.of<ProductsCubit>(context)
+                  .updateProductQuantity(text);
+            });
       },
     );
     var productUnitField = StreamBuilder(
@@ -119,20 +99,15 @@ class ProductDialog extends StatelessWidget {
       builder: (context, snapshot) {
         return Padding(
           padding: const EdgeInsets.only(left: 0, right: 0),
-          child: Column(
-            children: [
-              CustomTextField(
-                  labelText: "Product Unit",
-                  hintText: "09219999999",
-                  initialValue:
-                      product != null ? product!.productUnit.toString() : null,
-                  onChanged: (text) {
-                    BlocProvider.of<ProductsCubit>(context)
-                        .updateProductUnit(text);
-                  }),
-              ErrorMessage(snapshot: snapshot)
-            ],
-          ),
+          child: CustomTextField(
+              labelText: "Product Unit",
+              hintText: "09219999999",
+              initialValue:
+                  product != null ? product!.productUnit.toString() : null,
+              snapshot: snapshot,
+              onChanged: (text) {
+                BlocProvider.of<ProductsCubit>(context).updateProductUnit(text);
+              }),
         );
       },
     );
@@ -162,14 +137,6 @@ class ProductDialog extends StatelessWidget {
                           .updateProductCategory(cat);
                     }
 
-                    // print("Set selected: ${BlocProvider.of<ProductsCubit>(context).getCategory()!.categoryName}");
-                    // Category selected = product != null &&
-                    //         BlocProvider.of<ProductsCubit>(context)
-                    //                 .getCategory() !=
-                    //             null
-                    //     ? BlocProvider.of<ProductsCubit>(context).getCategory()!
-                    //     : state.categories.first;
-                    // print(" selected: ${selected.categoryName}");
                     return CustomDropdown<Category>(
                       labelText: "Category",
                       value:
@@ -180,7 +147,7 @@ class ProductDialog extends StatelessWidget {
                     );
                   }
                   return const SizedBox(
-                    width: 10,
+                    width: 16, //todo: handle
                   );
                 },
               ),
@@ -217,13 +184,6 @@ class ProductDialog extends StatelessWidget {
                           .updateProductSupplier(state.suppliers.first);
                       supSelected = true;
                     }
-                    // Supplier selected = product != null
-                    //     ? state.suppliers.firstWhere((supp) =>
-                    //         supp.supplierId ==
-                    //         BlocProvider.of<ProductsCubit>(context)
-                    //             .getSupplier()!
-                    //             .supplierId)
-                    //     : state.suppliers.first;
 
                     return CustomDropdown<Supplier>(
                       labelText: "Supplier",
@@ -234,7 +194,7 @@ class ProductDialog extends StatelessWidget {
                       onChanged: onChange,
                     );
                   }
-                  return const SizedBox(width: 10);
+                  return const SizedBox(width: 16); //todo handle
                 },
               ),
             ],
@@ -244,24 +204,19 @@ class ProductDialog extends StatelessWidget {
     var productDescriptionField = StreamBuilder(
       stream: BlocProvider.of<ProductsCubit>(context).productDescriptionStream,
       builder: (context, snapshot) {
-        return Column(
-          children: [
-            CustomTextField(
-                labelText: "Product Description",
-                hintText: "Sto Tomas",
-                width: 440,
-                height: 60,
-                minLines: 3,
-                initialValue: product != null
-                    ? product!.productDescription.toString()
-                    : null,
-                onChanged: (text) {
-                  BlocProvider.of<ProductsCubit>(context)
-                      .updateProductDecription(text);
-                }),
-            ErrorMessage(snapshot: snapshot)
-          ],
-        );
+        return CustomTextField(
+            labelText: "Product Description",
+            hintText: "Sto Tomas",
+            width: 440,
+            height: 60,
+            minLines: 3,
+            initialValue:
+                product != null ? product!.productDescription.toString() : null,
+            snapshot: snapshot,
+            onChanged: (text) {
+              BlocProvider.of<ProductsCubit>(context)
+                  .updateProductDecription(text);
+            });
       },
     );
     return AlertDialog(

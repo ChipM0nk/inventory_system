@@ -4,6 +4,7 @@ import 'package:edar_app/data/model/invoice.dart';
 import 'package:edar_app/data/model/invoice_item.dart';
 import 'package:edar_app/data/model/user.dart';
 import 'package:edar_app/utils/mixin_validations.dart';
+import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 
 mixin InvoiceFieldMixin on ValidationMixin {
@@ -19,6 +20,7 @@ mixin InvoiceFieldMixin on ValidationMixin {
   late var _tinNumberController;
   late var _dueDateController;
   late var _invoiceItemListController;
+  late var _invoiceTotalAmountController;
 
   List<InvoiceItem> initialList = [];
 
@@ -35,8 +37,20 @@ mixin InvoiceFieldMixin on ValidationMixin {
     _tinNumberController = BehaviorSubject<String>();
     _dueDateController = BehaviorSubject<String>();
     _invoiceItemListController = BehaviorSubject<List<InvoiceItem>>();
-
+    _invoiceTotalAmountController = BehaviorSubject<double>();
     _invoiceItemListController.sink.add(initialList);
+
+    //test
+    User salesPerson = const User(
+        username:
+            "23432"); //TODO Change to actual user from localStorage after login
+    _salesPersonController.sink.add(salesPerson);
+    _paymentTypeController.sink.add('Cash');
+
+    String initialDate =
+        DateFormat('dd-MMM-yy').format(DateTime.now()); //default
+    updatePurchaseDate(initialDate);
+    updateDueDate(initialDate);
   }
 
   Stream<String> get invoiceNumberStream => _invoiceNumberController.stream;
@@ -79,7 +93,7 @@ mixin InvoiceFieldMixin on ValidationMixin {
     }
   }
 
-  Stream<String> get salesPersonStream => _salesPersonController.stream;
+  Stream<User> get salesPersonStream => _salesPersonController.stream;
   updateSalesPerson(User user) {
     _salesPersonController.sink.add(user);
   }
@@ -115,8 +129,8 @@ mixin InvoiceFieldMixin on ValidationMixin {
     }
   }
 
-  String getPaymentTerm() {
-    return _paymentTermController.value;
+  String getPaymentType() {
+    return _paymentTypeController.value;
   }
 
   Stream<String> get tinNumberStream => _tinNumberController.stream;
@@ -160,11 +174,29 @@ mixin InvoiceFieldMixin on ValidationMixin {
     _invoiceItemListController.sink.add(invoiceItems);
   }
 
-  deleteInvoiceItem(InvoiceItem invoiceItem) {
-    List<InvoiceItem> invoiceItems = _invoiceItemListController.value
-        .map((ii) => ii.invoiceItemId != invoiceItem.invoiceitemId)
-        .toList();
+  removeInvoiceItem(InvoiceItem invoiceItem) {
+    List<InvoiceItem> invoiceItems = _invoiceItemListController.value;
+    invoiceItems.remove(invoiceItem);
     _invoiceItemListController.sink.add(invoiceItems);
+  }
+
+  Stream<double> get totalAmountStream => _invoiceTotalAmountController.stream;
+
+  updateTotalAmount(double totalAmount) {
+    print("update amount");
+    _invoiceTotalAmountController.sink.add(totalAmount);
+  }
+
+  calculateTotalAmount(List<InvoiceItem> invoiceItems) {
+    double invoiceTotalAmount =
+        invoiceItems.fold(0.0, (sum, element) => sum + element.amount);
+    updateTotalAmount(invoiceTotalAmount);
+  }
+
+  double getInvoiceTotalAmount() {
+    return _invoiceTotalAmountController.hasValue
+        ? _invoiceTotalAmountController.value
+        : 0.0;
   }
 
   ///invoice item list
@@ -194,6 +226,7 @@ mixin InvoiceFieldMixin on ValidationMixin {
       tinNumber: _tinNumberController.value,
       dueDate: _dueDateController.value,
       invoiceItems: _invoiceItemListController.value,
+      totalAmount: _invoiceItemListController.value,
     );
   }
 }

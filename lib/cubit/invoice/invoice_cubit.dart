@@ -3,7 +3,6 @@ import 'package:bloc/bloc.dart';
 import 'package:edar_app/cubit/invoice/invoice_field_mixin.dart';
 import 'package:edar_app/cubit/invoice/invoice_item_field_mixin.dart';
 import 'package:edar_app/data/model/invoice.dart';
-import 'package:edar_app/data/model/product.dart';
 import 'package:edar_app/data/repository/invoice_repository.dart';
 import 'package:edar_app/utils/mixin_validations.dart';
 

@@ -12,7 +12,7 @@ import '../../../data/model/invoice_item_model.dart';
 import '../../../data/model/product.dart';
 
 class AddItemDialog extends StatelessWidget {
-  final Function(InvoiceItemModel) addInvoiceItem;
+  final Function(InvoiceItem) addInvoiceItem;
   final InvoiceItem? invoiceItem;
   const AddItemDialog({
     Key? key,
@@ -59,7 +59,7 @@ class AddItemDialog extends StatelessWidget {
               totalAmountController.text =
                   double.parse(priceController.text).toString();
               BlocProvider.of<InvoiceCubit>(context)
-                  .updateAmount(double.parse(priceController.text).toString());
+                  .updateInvoiceItemAmount(double.parse(priceController.text));
 
               categoryFocusNode.requestFocus();
             }
@@ -150,9 +150,13 @@ class AddItemDialog extends StatelessWidget {
                         onChanged: (text) {
                           BlocProvider.of<InvoiceCubit>(context)
                               .updatePrice(text);
-                          totalAmountController.text = (double.parse(text) *
-                                  double.parse(quantityController.text))
-                              .toStringAsFixed(2);
+                          double totalAmount = double.parse(
+                              (double.parse(text) *
+                                      double.parse(quantityController.text))
+                                  .toStringAsFixed(2));
+                          totalAmountController.text = totalAmount.toString();
+                          BlocProvider.of<InvoiceCubit>(context)
+                              .updateInvoiceItemAmount(totalAmount);
                         }),
                     ErrorMessage(snapshot: snapshot)
                   ],
@@ -175,9 +179,13 @@ class AddItemDialog extends StatelessWidget {
                         onChanged: (text) {
                           BlocProvider.of<InvoiceCubit>(context)
                               .updateQuantity(text);
-                          totalAmountController.text = (double.parse(text) *
-                                  double.parse(priceController.text))
-                              .toStringAsFixed(2);
+                          double totalAmount = double.parse(
+                              (double.parse(text) *
+                                      double.parse(priceController.text))
+                                  .toStringAsFixed(2));
+                          totalAmountController.text = totalAmount.toString();
+                          BlocProvider.of<InvoiceCubit>(context)
+                              .updateInvoiceItemAmount(totalAmount);
                         }),
                     ErrorMessage(snapshot: snapshot)
                   ],
@@ -186,21 +194,24 @@ class AddItemDialog extends StatelessWidget {
             );
 
             var totalAmount = StreamBuilder(
-              stream: BlocProvider.of<InvoiceCubit>(context).amountStream,
+              stream: BlocProvider.of<InvoiceCubit>(context)
+                  .invoiceItemAmountStream,
               builder: (context, snapshot) {
                 return Column(
                   children: [
                     CustomTextField(
-                        labelText: "Amount",
-                        controller: totalAmountController,
-                        enabled: false,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.allow(RegExp("[.0-9]")),
-                        ],
-                        onChanged: (text) {
-                          BlocProvider.of<InvoiceCubit>(context)
-                              .updateAmount(text);
-                        }),
+                      labelText: "Amount",
+                      controller: totalAmountController,
+                      enabled: false,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.allow(RegExp("[.0-9]")),
+                      ],
+                      // onChanged: (text) {
+                      //   print("value canged");
+                      //   BlocProvider.of<InvoiceCubit>(context)
+                      //       .updateInvoiceItemAmount(double.parse(text));
+                      // },
+                    ),
                     ErrorMessage(snapshot: snapshot)
                   ],
                 );
@@ -230,8 +241,7 @@ class AddItemDialog extends StatelessWidget {
                           InvoiceItem invoiceItem =
                               BlocProvider.of<InvoiceCubit>(context)
                                   .getInvoiceItem(null);
-                          BlocProvider.of<InvoiceCubit>(context)
-                              .addInvoiceItem(invoiceItem);
+                          addInvoiceItem(invoiceItem);
                           Navigator.of(context).pop();
                         }
                       : null);

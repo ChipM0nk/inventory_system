@@ -23,6 +23,7 @@ class Invoice {
   final String tinNumber;
   final String dueDate;
   final List<InvoiceItem> invoiceItems;
+  final double totalAmount;
 
   const Invoice({
     this.invoiceId,
@@ -38,6 +39,7 @@ class Invoice {
     required this.tinNumber,
     required this.dueDate,
     required this.invoiceItems,
+    required this.totalAmount,
   });
   // Connect the generated [_$PersonFromJson] function to the `fromJson`
   /// factory.

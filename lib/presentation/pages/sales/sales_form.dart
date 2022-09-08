@@ -1,16 +1,15 @@
 import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
 import 'package:edar_app/cubit/products/products_cubit.dart';
-import 'package:edar_app/data/model/category.dart';
+
 import 'package:edar_app/data/model/invoice_item.dart';
-import 'package:edar_app/data/model/supplier.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_date_picker.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_dropdown.dart';
-import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
+import 'package:edar_app/presentation/widgets/fields/custom_label_text_field.dart';
+import 'package:edar_app/presentation/widgets/fields/numeric_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/model/invoice_item_model.dart';
-import '../../../data/model/product.dart';
 
 import '../../widgets/fields/custom_text_field.dart';
 import 'add_item_dialog.dart';
@@ -27,41 +26,33 @@ class _SalesFormState extends State<SalesForm> {
   InvoiceItemModel invoiceItem = InvoiceItemModel();
   List<InvoiceItemModel> invoiceItems = [];
   DateTime selectedDate = DateTime.now();
+  final totalAmountController = TextEditingController();
 
   @override
   void initState() {
-    // Product product = Product();
-    // product.productId = 1;
-    // product.productName = "bowl";
-
-    Product product = const Product(
-      productCode: "code",
-      productName: "name",
-      productDescription: "productDescription",
-      productPrice: 12.99,
-      productQuantity: 12.99,
-      productUnit: "productUnit",
-      supplier: Supplier(
-          supplierName: "name",
-          supplierContactNumber: "sds",
-          supplierEmailAdd: "dsf@dfds",
-          supplierAddress: "ass"),
-      category: Category(
-        categoryCode: "code",
-        categoryName: "name",
-      ),
-    );
-
     BlocProvider.of<InvoiceCubit>(context).init();
     BlocProvider.of<InvoiceCubit>(context).updatePaymentTerm('Cash');
+    totalAmountController.text = "0.0";
 
     super.initState();
   }
 
-  void addInvoiceItem(invoiceItem) {
-    setState(() {
-      invoiceItems.add(invoiceItem);
-    });
+  void _addItem(InvoiceItem invoiceItem) {
+    double totalAmount =
+        double.parse(totalAmountController.text) + invoiceItem.amount;
+    BlocProvider.of<InvoiceCubit>(context).addInvoiceItem(invoiceItem);
+
+    BlocProvider.of<InvoiceCubit>(context).updateTotalAmount(totalAmount);
+    totalAmountController.text = totalAmount.toString();
+  }
+
+  void _deleteItem(InvoiceItem invoiceItem) {
+    double totalAmount =
+        double.parse(totalAmountController.text) - invoiceItem.amount;
+
+    BlocProvider.of<InvoiceCubit>(context).removeInvoiceItem(invoiceItem);
+    BlocProvider.of<InvoiceCubit>(context).updateTotalAmount(totalAmount);
+    totalAmountController.text = totalAmount.toString();
   }
 
   @override
@@ -69,68 +60,51 @@ class _SalesFormState extends State<SalesForm> {
     var invoiceNumber = StreamBuilder<String>(
         stream: BlocProvider.of<InvoiceCubit>(context).invoiceNumberStream,
         builder: (context, snapshot) {
-          return Column(
-            children: [
-              CustomTextField(
-                  onChanged: (text) {
-                    BlocProvider.of<InvoiceCubit>(context)
-                        .updateInvoiceNumber(text);
-                  },
-                  labelText: 'Invoice No'),
-              ErrorMessage(snapshot: snapshot),
-            ],
-          );
+          return CustomTextField(
+              snapshot: snapshot,
+              onChanged: (text) {
+                BlocProvider.of<InvoiceCubit>(context)
+                    .updateInvoiceNumber(text);
+              },
+              labelText: 'Invoice No');
         });
 
     var customerName = StreamBuilder<String>(
         stream: BlocProvider.of<InvoiceCubit>(context).customerNameStream,
         builder: (context, snapshot) {
-          return Column(
-            children: [
-              CustomTextField(
-                  onChanged: (text) {
-                    BlocProvider.of<InvoiceCubit>(context)
-                        .updateCustomerName(text);
-                  },
-                  labelText: 'Customer Name'),
-              ErrorMessage(snapshot: snapshot)
-            ],
-          );
+          return CustomTextField(
+              snapshot: snapshot,
+              onChanged: (text) {
+                BlocProvider.of<InvoiceCubit>(context).updateCustomerName(text);
+              },
+              labelText: 'Customer Name');
         });
     var customerContactNumber = StreamBuilder<String>(
         stream: BlocProvider.of<InvoiceCubit>(context).customerContactStream,
         builder: (context, snapshot) {
-          return Column(
-            children: [
-              CustomTextField(
-                  onChanged: (text) {
-                    BlocProvider.of<InvoiceCubit>(context)
-                        .updateCustomerContact(text);
-                  },
-                  labelText: 'Contact Number'),
-              ErrorMessage(snapshot: snapshot)
-            ],
-          );
+          return CustomTextField(
+              snapshot: snapshot,
+              onChanged: (text) {
+                BlocProvider.of<InvoiceCubit>(context)
+                    .updateCustomerContact(text);
+              },
+              labelText: 'Contact Number');
         });
 
     var customerAddressField = StreamBuilder<String>(
       stream: BlocProvider.of<InvoiceCubit>(context).customerAddressStream,
       builder: (context, snapshot) {
-        return Column(
-          children: [
-            CustomTextField(
-                labelText: "Customer Address",
-                hintText: "Sto Tomas",
-                textInputType: TextInputType.multiline,
-                width: 450,
-                minLines: 1,
-                onChanged: (text) {
-                  BlocProvider.of<InvoiceCubit>(context)
-                      .updateCustomerAddress(text);
-                }),
-            ErrorMessage(snapshot: snapshot)
-          ],
-        );
+        return CustomTextField(
+            labelText: "Customer Address",
+            hintText: "Sto Tomas",
+            textInputType: TextInputType.multiline,
+            width: 450,
+            minLines: 1,
+            snapshot: snapshot,
+            onChanged: (text) {
+              BlocProvider.of<InvoiceCubit>(context)
+                  .updateCustomerAddress(text);
+            });
       },
     );
 
@@ -156,73 +130,67 @@ class _SalesFormState extends State<SalesForm> {
             BlocProvider.of<InvoiceCubit>(context).updatePaymentTerm(val);
           }
 
-          return Column(
-            children: [
-              CustomDropdown<String>(
-                labelText: "Payment Type",
-                value: BlocProvider.of<InvoiceCubit>(context).getPaymentTerm(),
-                items: const [
-                  //TODO: Put in constant
-                  DropdownMenuItem<String>(
-                    value: 'Cash',
-                    child: Text('Cash'),
-                  ),
-                  DropdownMenuItem<String>(
-                    value: 'Cheque',
-                    child: Text('Cheque'),
-                  ),
-                ],
-                context: context,
-                onChanged: onPaymentTermChange,
+          return CustomDropdown<String>(
+            labelText: "Payment Type",
+            value: BlocProvider.of<InvoiceCubit>(context).getPaymentType(),
+            items: const [
+              //TODO: Put in constant
+              DropdownMenuItem<String>(
+                value: 'Cash',
+                child: Text('Cash'),
+              ),
+              DropdownMenuItem<String>(
+                value: 'Cheque',
+                child: Text('Cheque'),
               ),
             ],
+            context: context,
+            onChanged: onPaymentTermChange,
           );
         });
 
     var poNumber = StreamBuilder<String>(
         stream: BlocProvider.of<InvoiceCubit>(context).poNumberStream,
         builder: (context, snapshot) {
-          return Column(
-            children: [
-              CustomTextField(
-                  onChanged: (text) {
-                    BlocProvider.of<InvoiceCubit>(context).updatePoNumber(text);
-                  },
-                  labelText: 'PO Number'),
-              ErrorMessage(snapshot: snapshot)
-            ],
-          );
+          return CustomTextField(
+              snapshot: snapshot,
+              onChanged: (text) {
+                BlocProvider.of<InvoiceCubit>(context).updatePoNumber(text);
+              },
+              labelText: 'PO Number');
         });
 
-    var dueDate = Column(
-      children: [
-        CustomDatePicker(
-          labelText: "Due Date",
-          // selectedDate: selectedDate,
-          width: 175,
-          onChanged: (dateTime) {
-            BlocProvider.of<InvoiceCubit>(context).updateDueDate(dateTime);
-          },
-          // initialValue: '21-Sep-22',
-          dateFormat: dateFormat,
-        ),
-      ],
+    var dueDate = CustomDatePicker(
+      labelText: "Due Date",
+      // selectedDate: selectedDate,
+      width: 175,
+      onChanged: (dateTime) {
+        BlocProvider.of<InvoiceCubit>(context).updateDueDate(dateTime);
+      },
+      // initialValue: '21-Sep-22',
+      dateFormat: dateFormat,
     );
 
     var tinNumber = StreamBuilder<String>(
         stream: BlocProvider.of<InvoiceCubit>(context).tinNumberStream,
         builder: (context, snapshot) {
-          return Column(
-            children: [
-              CustomTextField(
-                  onChanged: (text) {
-                    BlocProvider.of<InvoiceCubit>(context)
-                        .updateTinNumber(text);
-                  },
-                  labelText: 'TIN Number'),
-              ErrorMessage(snapshot: snapshot)
-            ],
-          );
+          return CustomTextField(
+              snapshot: snapshot,
+              onChanged: (text) {
+                BlocProvider.of<InvoiceCubit>(context).updateTinNumber(text);
+              },
+              labelText: 'TIN Number');
+        });
+
+    var paymentTerm = StreamBuilder<String>(
+        stream: BlocProvider.of<InvoiceCubit>(context).paymentTermStream,
+        builder: (context, snapshot) {
+          return CustomTextField(
+              snapshot: snapshot,
+              onChanged: (text) {
+                BlocProvider.of<InvoiceCubit>(context).updatePaymentTerm(text);
+              },
+              labelText: 'Payment Term');
         });
 
     var invoiceItemDataTable = StreamBuilder<List<InvoiceItem>>(
@@ -246,14 +214,6 @@ class _SalesFormState extends State<SalesForm> {
                       topLeft: Radius.circular(10),
                       topRight: Radius.circular(10))),
               columns: const <DataColumn>[
-                DataColumn(
-                  label: Text(
-                    'SN',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
                 DataColumn(
                   label: SizedBox(
                     width: 150,
@@ -280,6 +240,17 @@ class _SalesFormState extends State<SalesForm> {
                   label: SizedBox(
                     width: 60,
                     child: Text(
+                      'Price',
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                DataColumn(
+                  label: SizedBox(
+                    width: 60,
+                    child: Text(
                       'Quantity',
                       style: TextStyle(
                           fontStyle: FontStyle.italic,
@@ -288,24 +259,30 @@ class _SalesFormState extends State<SalesForm> {
                   ),
                 ),
                 DataColumn(
-                  label: Text(
-                    'Unit',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.bold),
+                  label: SizedBox(
+                    width: 40,
+                    child: Text(
+                      'Unit',
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                DataColumn(
+                  label: SizedBox(
+                    width: 60,
+                    child: Text(
+                      'Total',
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
                 DataColumn(
                   label: Text(
-                    'Price',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                DataColumn(
-                  label: Text(
-                    'Total',
+                    '',
                     style: TextStyle(
                         fontStyle: FontStyle.italic,
                         fontWeight: FontWeight.bold),
@@ -315,13 +292,35 @@ class _SalesFormState extends State<SalesForm> {
               rows: BlocProvider.of<InvoiceCubit>(context)
                   .getInvoiceItems()!
                   .map((iv) => DataRow(cells: [
-                        DataCell(Text((iv.product.productId).toString())),
-                        DataCell(Text(iv.product.productName)),
-                        DataCell(Text(iv.quantity.toString())),
-                        DataCell(Text(iv.quantity.toString())),
-                        DataCell(Text(iv.quantity.toString())),
-                        DataCell(Text(iv.quantity.toString())),
-                        DataCell(Text(iv.quantity.toString())),
+                        DataCell(SizedBox(
+                            width: 150, child: Text(iv.product.productName))),
+                        DataCell(SizedBox(
+                          width: 250,
+                          child: Tooltip(
+                              message: iv.product.productDescription,
+                              child: Text(
+                                iv.product.productDescription,
+                                overflow: TextOverflow.ellipsis,
+                              )),
+                        )),
+                        DataCell(SizedBox(
+                            width: 60,
+                            child: NumericText(text: iv.price.toString()))),
+                        DataCell(SizedBox(
+                            width: 40, child: Text(iv.quantity.toString()))),
+                        DataCell(SizedBox(
+                            width: 40, child: Text(iv.product.productUnit))),
+                        DataCell(SizedBox(
+                            width: 60,
+                            child: NumericText(text: iv.amount.toString()))),
+                        DataCell(GestureDetector(
+                          child: const Icon(
+                            Icons.delete,
+                            size: 15,
+                            color: Colors.red,
+                          ),
+                          onTap: () => _deleteItem(iv),
+                        )),
                       ]))
                   .toList(),
             ),
@@ -351,8 +350,8 @@ class _SalesFormState extends State<SalesForm> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     customerContactNumber,
-                    purchaseDate,
                     poNumber,
+                    purchaseDate,
                     dueDate,
                   ],
                 ),
@@ -362,9 +361,7 @@ class _SalesFormState extends State<SalesForm> {
                   children: [
                     tinNumber,
                     paymentType,
-                    const Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: SizedBox(width: 200)),
+                    paymentTerm,
                     const Padding(
                         padding: EdgeInsets.all(5.0),
                         child: SizedBox(width: 200)),
@@ -374,6 +371,27 @@ class _SalesFormState extends State<SalesForm> {
             ),
           ),
           invoiceItemDataTable,
+          SizedBox(
+            width: 820,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                const Text('Total Amount: '),
+                SizedBox(
+                    height: 60,
+                    width: 100,
+                    child: StreamBuilder<double>(
+                        stream: BlocProvider.of<InvoiceCubit>(context)
+                            .totalAmountStream,
+                        builder: (context, snapshot) {
+                          return CustomLabelTextField(
+                            controller: totalAmountController,
+                            enabled: false,
+                          );
+                        })),
+              ],
+            ),
+          ),
           GestureDetector(
             child: const Icon(
               Icons.add_box_outlined,
@@ -391,30 +409,28 @@ class _SalesFormState extends State<SalesForm> {
                             value: context.read<ProductsCubit>()),
                         BlocProvider.value(value: context.read<InvoiceCubit>()),
                       ],
-                      child: AddItemDialog(
-                        addInvoiceItem: addInvoiceItem,
-                      ),
+                      child: AddItemDialog(addInvoiceItem: _addItem),
                     );
                   });
             },
           ),
           Row(
             children: [
-              Expanded(child: Container()
-                  // ElevatedButton(
-                  //   child: Text("Open Popup"),
-                  //   onPressed: () {
-                  //     showDialog(
-                  //         context: context,
-                  //         builder: (BuildContext context) {
-                  //           return Container();
-                  //           // return AddItemDialog(
-                  //           //   addInvoiceItem: addInvoiceItem,
-                  //           // );
-                  //         });
-                  //   },
-                  // ),
-                  )
+              StreamBuilder<bool>(
+                  stream: BlocProvider.of<InvoiceCubit>(context).buttonValid,
+                  builder: (context, snapshot) {
+                    return ElevatedButton(
+                      child: Text("Save"),
+                      onPressed: snapshot.hasData &&
+                              BlocProvider.of<InvoiceCubit>(context)
+                                  .getInvoiceItems()!
+                                  .isNotEmpty
+                          ? () {
+                              print('hello');
+                            }
+                          : null,
+                    );
+                  }),
             ],
           )
         ],

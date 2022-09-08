@@ -9,9 +9,10 @@ part of 'user.dart';
 User _$UserFromJson(Map<String, dynamic> json) => User(
       userId: json['id'] as int?,
       username: json['username'] as String,
-      password: json['password'] as String,
-      menuList:
-          (json['menuList'] as List<dynamic>).map((e) => e as String).toList(),
+      password: json['password'] as String?,
+      menuList: (json['menuList'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$UserToJson(User instance) {
@@ -25,7 +26,7 @@ Map<String, dynamic> _$UserToJson(User instance) {
 
   writeNotNull('id', instance.userId);
   val['username'] = instance.username;
-  val['password'] = instance.password;
-  val['menuList'] = instance.menuList;
+  writeNotNull('password', instance.password);
+  writeNotNull('menuList', instance.menuList);
   return val;
 }

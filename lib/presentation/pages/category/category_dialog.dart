@@ -27,22 +27,16 @@ class CategoryDialog extends StatelessWidget {
       builder: (context, snapshot) {
         return Padding(
           padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-          child: Column(
-            children: [
-              CustomTextField(
-                  labelText: "Category Code",
-                  hintText: "BWLS",
-                  width: 300,
-                  initialValue: category != null
-                      ? category!.categoryCode.toString()
-                      : null,
-                  onChanged: (text) {
-                    BlocProvider.of<CategoriesCubit>(context)
-                        .updateCategoryCode(text);
-                  }),
-              ErrorMessage(snapshot: snapshot)
-            ],
-          ),
+          child: CustomTextField(
+              labelText: "Category Code",
+              hintText: "BWLS",
+              initialValue:
+                  category != null ? category!.categoryCode.toString() : null,
+              snapshot: snapshot,
+              onChanged: (text) {
+                BlocProvider.of<CategoriesCubit>(context)
+                    .updateCategoryCode(text);
+              }),
         );
       },
     );
@@ -52,22 +46,16 @@ class CategoryDialog extends StatelessWidget {
       builder: (context, snapshot) {
         return Padding(
           padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-          child: Column(
-            children: [
-              CustomTextField(
-                  labelText: "Category Name",
-                  hintText: "Toilet Bowls",
-                  width: 300,
-                  initialValue: category != null
-                      ? category!.categoryName.toString()
-                      : null,
-                  onChanged: (text) {
-                    BlocProvider.of<CategoriesCubit>(context)
-                        .updateCategoryName(text);
-                  }),
-              ErrorMessage(snapshot: snapshot)
-            ],
-          ),
+          child: CustomTextField(
+              labelText: "Category Name",
+              hintText: "Toilet Bowls",
+              initialValue:
+                  category != null ? category!.categoryName.toString() : null,
+              snapshot: snapshot,
+              onChanged: (text) {
+                BlocProvider.of<CategoriesCubit>(context)
+                    .updateCategoryName(text);
+              }),
         );
       },
     );
