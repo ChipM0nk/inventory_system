@@ -34,7 +34,7 @@ class CustomDropdown<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(5.0),
+      padding: const EdgeInsets.only(bottom: 10),
       child: SizedBox(
         width: width,
         child: Column(

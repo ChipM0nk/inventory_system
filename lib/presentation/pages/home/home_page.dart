@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
                   scrollDirection: Axis.horizontal,
                   child: ConstrainedBox(
                     constraints:
-                        const BoxConstraints(maxWidth: 1500, maxHeight: 1000),
+                        const BoxConstraints(maxWidth: 1300, maxHeight: 1000),
                     child: Row(
                       children: [
                         SideNavigationBar(

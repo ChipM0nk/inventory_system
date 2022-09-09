@@ -19,6 +19,9 @@ mixin InvoiceItemFieldMixin on ValidationMixin {
     _quantityController = BehaviorSubject<double>();
     _priceController = BehaviorSubject<double>();
     _invoiceItemAmountController = BehaviorSubject<double>();
+
+    _priceController.sink.add(0.0);
+    _quantityController.sink.add(0.0);
   }
 
   Stream<String> get snStream => _snController.stream;
@@ -49,6 +52,7 @@ mixin InvoiceItemFieldMixin on ValidationMixin {
     } else {
       _quantityController.sink.addError("Please enter valid numeric value");
     }
+    updateInvoiceItemAmount();
   }
 
   Stream<double> get priceStream => _priceController.stream;
@@ -58,12 +62,14 @@ mixin InvoiceItemFieldMixin on ValidationMixin {
     } else {
       _priceController.sink.addError("Please enter valid numeric value");
     }
+    updateInvoiceItemAmount();
   }
 
   Stream<double> get invoiceItemAmountStream =>
       _invoiceItemAmountController.stream;
-  updateInvoiceItemAmount(double fieldValue) {
-    _invoiceItemAmountController.sink.add(fieldValue);
+  updateInvoiceItemAmount() {
+    double itemAmount = _quantityController.value * _priceController.value;
+    _invoiceItemAmountController.sink.add(itemAmount);
   }
 
   Stream<bool> get buttonValidInvoiceItem => Rx.combineLatest4(

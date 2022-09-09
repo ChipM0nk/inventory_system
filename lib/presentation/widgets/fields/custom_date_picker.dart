@@ -61,37 +61,32 @@ class CustomDatePicker extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.all(5.0),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: height,
-                width: width,
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: labelText,
-                    border: const OutlineInputBorder(),
-                    contentPadding: const EdgeInsets.all(10),
-                    hintStyle: getHintTextStyle(context, true),
+          SizedBox(
+            height: height,
+            width: width,
+            child: TextFormField(
+              decoration: InputDecoration(
+                labelText: labelText,
+                border: const OutlineInputBorder(),
+                contentPadding: const EdgeInsets.all(10),
+                hintStyle: getHintTextStyle(context, true),
+                suffixIcon: IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: () => {selectDate(context)},
+                  icon: const Icon(
+                    Icons.calendar_month_outlined,
                   ),
-                  controller: controller,
-                  style: getHintTextStyle(context, false),
-                  enabled: false,
                 ),
               ),
-              IconButton(
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-                onPressed: () => {selectDate(context)},
-                icon: const Icon(
-                  Icons.calendar_month_outlined,
-                ),
-              ),
-            ],
+              controller: controller,
+              style: getHintTextStyle(context, false),
+              readOnly: true,
+              // enabled: false,
+            ),
           ),
           const SizedBox(height: 16)
         ],

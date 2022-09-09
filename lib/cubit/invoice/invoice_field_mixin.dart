@@ -165,6 +165,8 @@ mixin InvoiceFieldMixin on ValidationMixin {
     List<InvoiceItem> invoiceItems = _invoiceItemListController.value;
     invoiceItems.add(invoiceItem);
     _invoiceItemListController.sink.add(invoiceItems);
+
+    calculateTotalAmount(invoiceItems);
   }
 
   updateInvoiceItem(InvoiceItem invoiceItem) {
@@ -172,12 +174,14 @@ mixin InvoiceFieldMixin on ValidationMixin {
     invoiceItems[invoiceItems.indexWhere(
         (ii) => ii.invoiceitemId == invoiceItem.invoiceitemId)] = invoiceItem;
     _invoiceItemListController.sink.add(invoiceItems);
+    calculateTotalAmount(invoiceItems);
   }
 
   removeInvoiceItem(InvoiceItem invoiceItem) {
     List<InvoiceItem> invoiceItems = _invoiceItemListController.value;
     invoiceItems.remove(invoiceItem);
     _invoiceItemListController.sink.add(invoiceItems);
+    calculateTotalAmount(invoiceItems);
   }
 
   Stream<double> get totalAmountStream => _invoiceTotalAmountController.stream;
@@ -190,6 +194,7 @@ mixin InvoiceFieldMixin on ValidationMixin {
   calculateTotalAmount(List<InvoiceItem> invoiceItems) {
     double invoiceTotalAmount =
         invoiceItems.fold(0.0, (sum, element) => sum + element.amount);
+    print("Total Amount: ${invoiceTotalAmount}");
     updateTotalAmount(invoiceTotalAmount);
   }
 

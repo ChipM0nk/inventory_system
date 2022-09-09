@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../data/model/invoice_item_model.dart';
 import '../../../data/model/product.dart';
 
 class AddItemDialog extends StatelessWidget {
@@ -31,14 +30,9 @@ class AddItemDialog extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: BlocBuilder<InvoiceCubit, InvoiceState>(
           builder: (context, state) {
-            final FocusNode categoryFocusNode = FocusNode();
             final TextEditingController priceController =
                 TextEditingController();
             final TextEditingController quantityController =
-                TextEditingController();
-            final TextEditingController categoryController =
-                TextEditingController();
-            final TextEditingController totalAmountController =
                 TextEditingController();
 
             late bool prodSelected = false;
@@ -49,24 +43,30 @@ class AddItemDialog extends StatelessWidget {
               BlocProvider.of<InvoiceCubit>(context)
                   .updatePrice(prod.productPrice.toString());
 
-              categoryController.text = prod.category.categoryName.toString();
-              // BlocProvider.of<InvoiceCubit>(context)
-              //     .updateca(prod.category.categoryName);
-
               BlocProvider.of<InvoiceCubit>(context).updateQuantity("1");
               quantityController.text = "1";
-
-              totalAmountController.text =
-                  double.parse(priceController.text).toString();
-              BlocProvider.of<InvoiceCubit>(context)
-                  .updateInvoiceItemAmount(double.parse(priceController.text));
-
-              categoryFocusNode.requestFocus();
             }
 
             var productDropdownField = StreamBuilder<Product>(
                 stream: BlocProvider.of<InvoiceCubit>(context).productStream,
                 builder: (context, snapshot) {
+                  final categoryController = TextEditingController();
+                  categoryController.text = snapshot.hasData
+                      ? snapshot.data!.category.categoryName
+                      : "";
+
+                  var productCategory = Column(
+                    children: [
+                      CustomTextField(
+                        labelText: "Category",
+                        controller: categoryController,
+                        enabled: false,
+                      ),
+                      const Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: SizedBox(width: 200)),
+                    ],
+                  );
                   return StreamBuilder<Object>(
                       stream:
                           BlocProvider.of<InvoiceCubit>(context).priceStream,
@@ -110,23 +110,11 @@ class AddItemDialog extends StatelessWidget {
                                     width: 100, child: Text("Error"));
                               },
                             ),
+                            productCategory,
                           ],
                         );
                       });
                 });
-
-            var productCategory = Column(
-              children: [
-                CustomTextField(
-                  labelText: "Category",
-                  controller: categoryController,
-                  enabled: false,
-                  focusNode: categoryFocusNode,
-                ),
-                const Padding(
-                    padding: EdgeInsets.all(5.0), child: SizedBox(width: 200)),
-              ],
-            );
 
             var productPrice = StreamBuilder(
               stream: BlocProvider.of<InvoiceCubit>(context).priceStream,
@@ -134,30 +122,17 @@ class AddItemDialog extends StatelessWidget {
                 return Column(
                   children: [
                     CustomTextField(
-                        labelText: "Price",
-                        hintText: "1299.99",
-                        controller: priceController,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.allow(RegExp("[.0-9]")),
-                          // TextInputFormatter.withFunction((oldValue, newValue) {
-                          //   String newText = NumberFormat("###.0#")
-                          //       .format(double.parse(oldValue.text));
-                          //   print("newVal :${newText}");
-                          //   return TextEditingValue(text: newText);
-                          //   // return newValue;
-                          // })
-                        ],
-                        onChanged: (text) {
-                          BlocProvider.of<InvoiceCubit>(context)
-                              .updatePrice(text);
-                          double totalAmount = double.parse(
-                              (double.parse(text) *
-                                      double.parse(quantityController.text))
-                                  .toStringAsFixed(2));
-                          totalAmountController.text = totalAmount.toString();
-                          BlocProvider.of<InvoiceCubit>(context)
-                              .updateInvoiceItemAmount(totalAmount);
-                        }),
+                      labelText: "Price",
+                      hintText: "1299.99",
+                      controller: priceController,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.allow(RegExp("[.0-9]")),
+                      ],
+                      onChanged: (text) {
+                        BlocProvider.of<InvoiceCubit>(context)
+                            .updatePrice(text);
+                      },
+                    ),
                     ErrorMessage(snapshot: snapshot)
                   ],
                 );
@@ -179,13 +154,6 @@ class AddItemDialog extends StatelessWidget {
                         onChanged: (text) {
                           BlocProvider.of<InvoiceCubit>(context)
                               .updateQuantity(text);
-                          double totalAmount = double.parse(
-                              (double.parse(text) *
-                                      double.parse(priceController.text))
-                                  .toStringAsFixed(2));
-                          totalAmountController.text = totalAmount.toString();
-                          BlocProvider.of<InvoiceCubit>(context)
-                              .updateInvoiceItemAmount(totalAmount);
                         }),
                     ErrorMessage(snapshot: snapshot)
                   ],
@@ -197,6 +165,9 @@ class AddItemDialog extends StatelessWidget {
               stream: BlocProvider.of<InvoiceCubit>(context)
                   .invoiceItemAmountStream,
               builder: (context, snapshot) {
+                final totalAmountController = TextEditingController();
+                totalAmountController.text =
+                    snapshot.hasData ? snapshot.data.toString() : "0.0";
                 return Column(
                   children: [
                     CustomTextField(
@@ -206,11 +177,6 @@ class AddItemDialog extends StatelessWidget {
                       inputFormatters: <TextInputFormatter>[
                         FilteringTextInputFormatter.allow(RegExp("[.0-9]")),
                       ],
-                      // onChanged: (text) {
-                      //   print("value canged");
-                      //   BlocProvider.of<InvoiceCubit>(context)
-                      //       .updateInvoiceItemAmount(double.parse(text));
-                      // },
                     ),
                     ErrorMessage(snapshot: snapshot)
                   ],
@@ -220,7 +186,7 @@ class AddItemDialog extends StatelessWidget {
             return Column(
               children: <Widget>[
                 productDropdownField,
-                productCategory,
+                // productCategory,
                 productPrice,
                 quantity,
                 totalAmount,

@@ -15,20 +15,23 @@ class Header extends StatelessWidget {
         onPressed: () => {BlocProvider.of<AuthCubit>(context).logout()},
         child: const Text("Logout"));
 
-    return Expanded(
-        child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text("EDAR"),
-        BlocBuilder<AuthCubit, AuthState>(
-          builder: (context, state) {
-            if (state is AuthenticationSuccess) {
-              return logOut;
-            }
-            return logIn;
-          },
-        ),
-      ],
-    ));
+    return SizedBox(
+      width: 1280,
+      child: Expanded(
+          child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text("EDAR"),
+          BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, state) {
+              if (state is AuthenticationSuccess) {
+                return logOut;
+              }
+              return logIn;
+            },
+          ),
+        ],
+      )),
+    );
   }
 }

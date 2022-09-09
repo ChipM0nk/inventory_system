@@ -13,6 +13,9 @@ class NumericText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final formattedText = NumberFormat(format).format(double.parse(text));
-    return Text(formattedText);
+    return Text(
+      formattedText,
+      textAlign: TextAlign.end,
+    );
   }
 }

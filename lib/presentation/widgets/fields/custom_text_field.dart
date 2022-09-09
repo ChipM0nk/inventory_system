@@ -1,6 +1,5 @@
 // ignore_for_file: use_key_in_widget_constructors, must_be_immutable
 
-import 'package:edar_app/constants/text_field_type.dart';
 import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -56,7 +55,7 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(5.0),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Column(
         children: [
           SizedBox(
@@ -80,6 +79,7 @@ class CustomTextField extends StatelessWidget {
               onChanged: onChanged,
               style: getHintTextStyle(context, false, enabled),
               inputFormatters: inputFormatters,
+              autofocus: true,
             ),
           ),
           ErrorMessage(snapshot: snapshot)
