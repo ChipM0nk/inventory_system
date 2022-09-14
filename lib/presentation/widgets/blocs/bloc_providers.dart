@@ -1,8 +1,10 @@
 import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
 import 'package:edar_app/cubit/products/products_cubit.dart';
+import 'package:edar_app/cubit/purchases/purchase_cubit.dart';
 import 'package:edar_app/cubit/suppliers/suppliers_cubit.dart';
 import 'package:edar_app/data/repository/invoice_repository.dart';
 import 'package:edar_app/data/repository/product_repository.dart';
+import 'package:edar_app/data/repository/purchase_repository.dart';
 import 'package:edar_app/data/repository/supplier_repository.dart';
 import 'package:edar_app/routing/route_names.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +19,9 @@ class BlocProviders {
       case SalesRoute:
         print("Sales form page loaded");
         return _getSalesFormBlockProvider();
+      case PurchasesRoute:
+        print("Purchase loaded");
+        return _getPurchaseBlocProvider();
       case CategoriesRoute:
         print("Category page loaded");
         return _getCategoryBlocProvider();
@@ -26,6 +31,7 @@ class BlocProviders {
       case ProductsRoute:
         print("Supplier page loaded");
         return _getProductBlocProvider();
+
       default:
         return _getCategoryBlocProvider();
     }
@@ -43,6 +49,23 @@ class BlocProviders {
         ProductsCubit(productRepository: productRepository);
     return [
       BlocProvider<InvoiceCubit>(create: (context) => invoiceCubit),
+      BlocProvider<ProductsCubit>(create: (context) => productCubit),
+    ];
+    // return MultiBlocProvider(providers: providers, child: child) BlocProvider<CategoriesCubit>(create: (context) => categoriesCubit);
+  }
+
+  static List<BlocProvider> _getPurchaseBlocProvider() {
+    //TODO Change later
+    PurchaseRepository purchaseRepository =
+        PurchaseRepository(networkService: NetworkService());
+    PurchaseCubit purchaseCubit =
+        PurchaseCubit(purchaseRepository: purchaseRepository);
+    ProductRepository productRepository =
+        ProductRepository(networkService: NetworkService());
+    ProductsCubit productCubit =
+        ProductsCubit(productRepository: productRepository);
+    return [
+      BlocProvider<PurchaseCubit>(create: (context) => purchaseCubit),
       BlocProvider<ProductsCubit>(create: (context) => productCubit),
     ];
     // return MultiBlocProvider(providers: providers, child: child) BlocProvider<CategoriesCubit>(create: (context) => categoriesCubit);

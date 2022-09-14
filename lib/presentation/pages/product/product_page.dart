@@ -81,13 +81,19 @@ class _ProductPageState extends State<ProductPage> {
               alignment: Alignment.topLeft,
               child: SizedBox(
                 width: 1200,
-                child: CustomPaginatedDataTable(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: CustomPaginatedDataTable(
                     header: const Text("Products"),
+                    dataRowHeight: 40,
+                    columnSpacing: 30,
                     dataColumns: dataColumns(productData),
                     rowsPerPage: 10,
                     sortAscending: state.sortAscending,
                     sortIndex: state.sortIndex,
-                    source: productData),
+                    source: productData,
+                  ),
+                ),
               ),
             ),
           ]);
@@ -119,16 +125,23 @@ class _ProductPageState extends State<ProductPage> {
                 .sortProducts((product) => product.productName, colIdx, asc);
           },
         ),
-        DataColumn(
-          label: const Text(
-            'Description',
+        // DataColumn(
+        //   label: const Text(
+        //     'Description',
+        //     style: TextStyle(
+        //         fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+        //   ),
+        //   onSort: (colIdx, asc) {
+        //     BlocProvider.of<ProductsCubit>(context).sortProducts(
+        //         (product) => product.productDescription, colIdx, asc);
+        //   },
+        // ),
+        const DataColumn(
+          label: Text(
+            'Category',
             style: TextStyle(
                 fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
-          onSort: (colIdx, asc) {
-            BlocProvider.of<ProductsCubit>(context).sortProducts(
-                (product) => product.productDescription, colIdx, asc);
-          },
         ),
         DataColumn(
           label: const Text(
@@ -142,10 +155,13 @@ class _ProductPageState extends State<ProductPage> {
           },
         ),
         DataColumn(
-          label: const Text(
-            'Quantity',
-            style: TextStyle(
-                fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+          label: const SizedBox(
+            width: 40,
+            child: Text(
+              'Qty',
+              style: TextStyle(
+                  fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+            ),
           ),
           onSort: (colIdx, asc) {
             BlocProvider.of<ProductsCubit>(context).sortProducts(
@@ -163,19 +179,17 @@ class _ProductPageState extends State<ProductPage> {
                 .sortProducts((product) => product.productUnit, colIdx, asc);
           },
         ),
-        const DataColumn(
-          label: Text(
-            'Category',
-            style: TextStyle(
-                fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
-          ),
-        ),
-        const DataColumn(
+
+        DataColumn(
           label: Text(
             'Supplier',
             style: TextStyle(
                 fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
+          onSort: (colIdx, asc) {
+            BlocProvider.of<ProductsCubit>(context).sortProducts(
+                (product) => product.supplier.supplierName, colIdx, asc);
+          },
         ),
         const DataColumn(
           label: Text(''),
@@ -183,8 +197,6 @@ class _ProductPageState extends State<ProductPage> {
       ];
 
   void _deleteProduct(int productId) {
-    print('deleting product : ${productId}');
-
     searchController.clear();
     showDialog(
         context: context,

@@ -15,21 +15,24 @@ class ErrorMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return snapshot != null && snapshot!.hasError
-        ? SizedBox(
-            height: height,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  snapshot!.error.toString(),
-                  style: TextStyle(
-                      fontSize: fontSize,
-                      fontStyle: FontStyle.italic,
-                      color: const Color(0xFFFF0000),
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
-            ))
+        ? Padding(
+            padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+            child: SizedBox(
+                height: height,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      snapshot!.error.toString(),
+                      style: TextStyle(
+                          fontSize: fontSize,
+                          fontStyle: FontStyle.italic,
+                          color: const Color(0xFFFF0000),
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                )),
+          )
         : const SizedBox(
             height: 16,
           );

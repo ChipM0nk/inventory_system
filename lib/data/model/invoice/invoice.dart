@@ -1,5 +1,5 @@
 // ignore: depend_on_referenced_packages
-import 'package:edar_app/data/model/invoice_item.dart';
+import 'package:edar_app/data/model/invoice/invoice_item.dart';
 import 'package:edar_app/data/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';

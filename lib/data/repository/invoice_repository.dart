@@ -1,6 +1,4 @@
-import 'dart:convert';
-
-import 'package:edar_app/data/model/invoice.dart';
+import 'package:edar_app/data/model/invoice/invoice.dart';
 import 'package:edar_app/data/network/network_service.dart';
 import 'package:edar_app/routing/route_names.dart';
 
@@ -10,19 +8,18 @@ class InvoiceRepository {
   InvoiceRepository({required this.networkService});
 
   Future<List<Invoice>> fetchAll() async {
-    final objRaw = await networkService.fetchAll(CategoriesRoute);
+    final objRaw = await networkService.fetchAll(InvoicesRoute);
     return objRaw.map((e) => Invoice.fromJson(e)).toList();
   }
 
   Future<bool> addInvoice(Map<String, dynamic> invoiceObj) async {
-    final isAdded = await networkService.addItem(invoiceObj, CategoriesRoute);
+    final isAdded = await networkService.addItem(invoiceObj, InvoicesRoute);
 
     return isAdded;
   }
 
   Future<bool> deleteInvoice(int invoiceId) async {
-    final isDeleted =
-        await networkService.deleteItem(invoiceId, CategoriesRoute);
+    final isDeleted = await networkService.deleteItem(invoiceId, InvoicesRoute);
 
     return isDeleted;
   }
@@ -30,7 +27,7 @@ class InvoiceRepository {
   Future<bool> udpateInvoice(
       Map<String, dynamic> invoiceObj, int invoiceId) async {
     final isUpdated =
-        await networkService.udpateItem(invoiceObj, invoiceId, CategoriesRoute);
+        await networkService.udpateItem(invoiceObj, invoiceId, InvoicesRoute);
 
     return isUpdated;
   }

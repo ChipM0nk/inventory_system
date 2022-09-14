@@ -1,9 +1,9 @@
 import 'package:edar_app/presentation/pages/category/category_page.dart';
 import 'package:edar_app/presentation/pages/product/product_page.dart';
-import 'package:edar_app/presentation/pages/sales/sales_form.dart';
+import 'package:edar_app/presentation/pages/purchase/purchase_page.dart';
+import 'package:edar_app/presentation/pages/sales/sales_page.dart';
 import 'package:edar_app/presentation/pages/supplier/supplier_page.dart';
 import 'package:edar_app/presentation/widgets/content_card.dart';
-import 'package:edar_app/presentation/widgets/navbar/custom_menu_list.dart';
 import 'package:edar_app/routing/route_names.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +15,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
   // if (page != null) {}
   switch (settings.name) {
     case SalesRoute:
-      return _getPageRoute(SalesForm(), settings);
+      return _getPageRoute(SalesPage(), settings);
+    case PurchasesRoute:
+      return _getPageRoute(PurchasePage(), settings);
     case CategoriesRoute:
       return _getPageRoute(CategoryPage(), settings);
     case SuppliersRoute:
@@ -23,7 +25,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case ProductsRoute:
       return _getPageRoute(ProductPage(), settings);
     default:
-      return _getPageRoute(SalesForm(), settings);
+      return _getPageRoute(SalesPage(), settings);
   }
 }
 

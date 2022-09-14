@@ -14,6 +14,13 @@ var MenuItemList = [
       route: SalesRoute),
   CustomMenuItem(
       sideNavigationBarItem: const SideNavigationBarItem(
+        icon: Icons.shopping_bag_outlined,
+        label: 'Purchase Form',
+      ),
+      // page: const SupplierPage(),
+      route: PurchasesRoute),
+  CustomMenuItem(
+      sideNavigationBarItem: const SideNavigationBarItem(
         icon: Icons.category,
         label: 'Category',
       ),
@@ -28,7 +35,7 @@ var MenuItemList = [
       route: SuppliersRoute),
   CustomMenuItem(
       sideNavigationBarItem: const SideNavigationBarItem(
-        icon: Icons.umbrella,
+        icon: Icons.shower,
         label: 'Product',
       ),
       // page: const SupplierPage(),

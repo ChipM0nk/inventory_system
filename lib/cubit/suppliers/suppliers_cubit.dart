@@ -27,7 +27,6 @@ class SuppliersCubit extends Cubit<SuppliersState>
 
   void sortSuppliers<T>(Comparable<T> Function(Supplier) getField,
       int sortIndex, bool ascending) {
-    print("Sorting suppliers");
     final currentState = state;
     if (currentState is SuppliersLoaded) {
       final suppliers = currentState.suppliers;
@@ -112,23 +111,6 @@ class SuppliersCubit extends Cubit<SuppliersState>
       }
     }
   }
-
-  // void selectSupplier(Supplier? supplier) {
-  //   final currentState = state;
-  //   if (currentState is SuppliersLoaded) {
-  //     final suppliers = currentState.suppliers;
-  //     var sel =
-  //         suppliers.firstWhere((sup) => sup.supplierId == supplier!.supplierId);
-  //     print("Selected: ${sel.supplierName}");
-
-  //     emit(SuppliersLoaded(
-  //       suppliers: suppliers,
-  //       sortAscending: true,
-  //       selectedSupplier: suppliers
-  //           .firstWhere((sup) => sup.supplierId == supplier!.supplierId),
-  //     ));
-  //   }
-  // }
 
   loadSuppliers(Supplier supplier) {
     updateSupplierName(supplier.supplierName);

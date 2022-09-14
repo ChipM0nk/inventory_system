@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
-import 'package:edar_app/data/model/invoice.dart';
-import 'package:edar_app/data/model/invoice_item.dart';
+import 'package:edar_app/data/model/invoice/invoice.dart';
+import 'package:edar_app/data/model/invoice/invoice_item.dart';
 import 'package:edar_app/data/model/user.dart';
 import 'package:edar_app/utils/mixin_validations.dart';
 import 'package:intl/intl.dart';
@@ -117,6 +117,7 @@ mixin InvoiceFieldMixin on ValidationMixin {
   Stream<String> get paymentTypeStream => _paymentTypeController.stream;
   updatePaymentType(String fieldValue) {
     _paymentTypeController.sink.add(fieldValue);
+    print("update payment type: ${_paymentTypeController.value}");
   }
 
   Stream<String> get paymentTermStream => _paymentTermController.stream;
@@ -215,7 +216,10 @@ mixin InvoiceFieldMixin on ValidationMixin {
       tinNumberStream,
       dueDateStream,
       invoiceItemsStream,
-      (a, b, c, d, e, f, g, h, i) => true);
+      (a, b, c, d, e, f, g, h, i) =>
+          true &&
+          _invoiceItemListController.hasValue &&
+          _invoiceItemListController.value.isNotEmpty);
 
   Invoice getInvoice(int? invoiceId) {
     return Invoice(
@@ -231,7 +235,7 @@ mixin InvoiceFieldMixin on ValidationMixin {
       tinNumber: _tinNumberController.value,
       dueDate: _dueDateController.value,
       invoiceItems: _invoiceItemListController.value,
-      totalAmount: _invoiceItemListController.value,
+      totalAmount: _invoiceTotalAmountController.value,
     );
   }
 }

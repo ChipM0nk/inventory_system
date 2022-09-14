@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 typedef OnChanged = void Function(String values);
+typedef OnFieldSubmitted = void Function(String values);
 
 class CustomTextField extends StatelessWidget {
   CustomTextField({
@@ -12,6 +13,7 @@ class CustomTextField extends StatelessWidget {
     required this.labelText,
     this.controller,
     this.onChanged,
+    this.onFieldSubmitted,
     this.fontSize = 14,
     this.hintText,
     this.initialValue,
@@ -29,6 +31,7 @@ class CustomTextField extends StatelessWidget {
   final String labelText;
   final TextEditingController? controller;
   OnChanged? onChanged;
+  OnFieldSubmitted? onFieldSubmitted;
   final double fontSize;
   final String? hintText;
   final String? initialValue;
@@ -76,7 +79,9 @@ class CustomTextField extends StatelessWidget {
               minLines: minLines,
               maxLines: minLines ?? (minLines! + 1),
               controller: controller,
+              focusNode: focusNode,
               onChanged: onChanged,
+              onFieldSubmitted: onFieldSubmitted,
               style: getHintTextStyle(context, false, enabled),
               inputFormatters: inputFormatters,
               autofocus: true,

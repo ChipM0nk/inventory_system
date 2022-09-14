@@ -2,7 +2,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:edar_app/cubit/invoice/invoice_field_mixin.dart';
 import 'package:edar_app/cubit/invoice/invoice_item_field_mixin.dart';
-import 'package:edar_app/data/model/invoice.dart';
+import 'package:edar_app/data/model/invoice/invoice.dart';
 import 'package:edar_app/data/repository/invoice_repository.dart';
 import 'package:edar_app/utils/mixin_validations.dart';
 
@@ -54,7 +54,7 @@ class InvoiceCubit extends Cubit<InvoiceState>
       if (isAdded) {
         // fetchInvoice();
         emit(InvoiceAdded());
-        fetchInvoice();
+        // fetchInvoice();
       } else {
         emit(InvoiceStateError());
       }

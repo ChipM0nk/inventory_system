@@ -1,6 +1,5 @@
 import 'package:edar_app/cubit/categories/categories_cubit.dart';
 import 'package:edar_app/data/model/category.dart';
-import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

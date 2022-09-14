@@ -1,7 +1,6 @@
 import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
 import 'package:edar_app/cubit/products/products_cubit.dart';
-import 'package:edar_app/data/model/invoice_item.dart';
-import 'package:edar_app/presentation/widgets/fields/custom_dropdown.dart';
+import 'package:edar_app/data/model/invoice/invoice_item.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_text_field.dart';
 import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
 import 'package:flutter/material.dart';
@@ -36,16 +35,17 @@ class AddItemDialog extends StatelessWidget {
                 TextEditingController();
 
             late bool prodSelected = false;
-            void onChange<Product>(prod) {
-              BlocProvider.of<InvoiceCubit>(context).updateProduct(prod);
 
-              priceController.text = prod.productPrice.toString();
-              BlocProvider.of<InvoiceCubit>(context)
-                  .updatePrice(prod.productPrice.toString());
+            // void onChange<Product>(prod) {
+            //   BlocProvider.of<InvoiceCubit>(context).updateProduct(prod);
 
-              BlocProvider.of<InvoiceCubit>(context).updateQuantity("1");
-              quantityController.text = "1";
-            }
+            //   priceController.text = prod.productPrice.toString();
+            //   BlocProvider.of<InvoiceCubit>(context)
+            //       .updatePrice(prod.productPrice.toString());
+
+            //   BlocProvider.of<InvoiceCubit>(context).updateQuantity("1");
+            //   quantityController.text = "1";
+            // }
 
             var productDropdownField = StreamBuilder<Product>(
                 stream: BlocProvider.of<InvoiceCubit>(context).productStream,
@@ -62,9 +62,6 @@ class AddItemDialog extends StatelessWidget {
                         controller: categoryController,
                         enabled: false,
                       ),
-                      const Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: SizedBox(width: 200)),
                     ],
                   );
                   return StreamBuilder<Object>(
@@ -76,34 +73,65 @@ class AddItemDialog extends StatelessWidget {
                             BlocBuilder<ProductsCubit, ProductsState>(
                               builder: (context, state) {
                                 if (state is ProductsLoaded) {
-                                  List<DropdownMenuItem<Product>>
-                                      dropDownItems = state.products
-                                          .map((e) => DropdownMenuItem<Product>(
-                                                value: e,
-                                                child: Text(
-                                                  e.productName,
-                                                  style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.w900),
-                                                ),
-                                              ))
-                                          .toList();
+                                  // if (invoiceItem == null &&
+                                  //     prodSelected == false) {
+                                  //   onChange<Product>(state.products.first);
+                                  //   prodSelected = true;
+                                  // }
 
-                                  if (invoiceItem == null &&
-                                      prodSelected == false) {
-                                    onChange<Product>(state.products.first);
-                                    prodSelected = true;
-                                  }
+                                  return Autocomplete<String>(
+                                    optionsBuilder:
+                                        (TextEditingValue textEditingValue) {
+                                      if (textEditingValue.text == '') {
+                                        return const Iterable<String>.empty();
+                                      } else {
+                                        List<String> matches = <String>[];
+                                        matches.addAll(state.products
+                                            .map((e) => e.productName)
+                                            .toList());
 
-                                  return CustomDropdown<Product>(
-                                    labelText: "Product",
-                                    value:
-                                        BlocProvider.of<InvoiceCubit>(context)
-                                            .getProduct(),
-                                    items: dropDownItems,
-                                    context: context,
-                                    onChanged: onChange,
+                                        matches.retainWhere((s) {
+                                          return s.toLowerCase().contains(
+                                              textEditingValue.text
+                                                  .toLowerCase());
+                                        });
+                                        return matches;
+                                      }
+                                    },
+                                    fieldViewBuilder: (context,
+                                        textEditingController,
+                                        focusNode,
+                                        onFieldSubmitted) {
+                                      return CustomTextField(
+                                        labelText: "Product",
+                                        focusNode: focusNode,
+                                        hintText: "GM Toilet Bowl",
+                                        controller: textEditingController,
+                                        onFieldSubmitted: (String value) {
+                                          onFieldSubmitted();
+                                          print(
+                                              'You just typed a new entry  $value');
+                                        },
+                                      );
+                                    },
+                                    onSelected: (String productName) {
+                                      Product product = state.products
+                                          .firstWhere((element) =>
+                                              element.productName ==
+                                              productName);
+                                      BlocProvider.of<InvoiceCubit>(context)
+                                          .updateProduct(product);
+
+                                      priceController.text =
+                                          product.productPrice.toString();
+                                      BlocProvider.of<InvoiceCubit>(context)
+                                          .updatePrice(
+                                              product.productPrice.toString());
+
+                                      BlocProvider.of<InvoiceCubit>(context)
+                                          .updateQuantity("1");
+                                      quantityController.text = "1";
+                                    },
                                   );
                                 }
                                 return const SizedBox(
@@ -125,6 +153,7 @@ class AddItemDialog extends StatelessWidget {
                       labelText: "Price",
                       hintText: "1299.99",
                       controller: priceController,
+                      snapshot: snapshot,
                       inputFormatters: <TextInputFormatter>[
                         FilteringTextInputFormatter.allow(RegExp("[.0-9]")),
                       ],
@@ -133,7 +162,6 @@ class AddItemDialog extends StatelessWidget {
                             .updatePrice(text);
                       },
                     ),
-                    ErrorMessage(snapshot: snapshot)
                   ],
                 );
               },
@@ -148,6 +176,7 @@ class AddItemDialog extends StatelessWidget {
                         labelText: "Quantity",
                         // initialValue: "1",
                         controller: quantityController,
+                        snapshot: snapshot,
                         inputFormatters: <TextInputFormatter>[
                           FilteringTextInputFormatter.allow(RegExp("[.0-9]")),
                         ],
@@ -155,7 +184,6 @@ class AddItemDialog extends StatelessWidget {
                           BlocProvider.of<InvoiceCubit>(context)
                               .updateQuantity(text);
                         }),
-                    ErrorMessage(snapshot: snapshot)
                   ],
                 );
               },
@@ -186,7 +214,6 @@ class AddItemDialog extends StatelessWidget {
             return Column(
               children: <Widget>[
                 productDropdownField,
-                // productCategory,
                 productPrice,
                 quantity,
                 totalAmount,

@@ -1,27 +1,23 @@
 import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
 
-import 'package:edar_app/data/model/invoice_item.dart';
+import 'package:edar_app/data/model/invoice/invoice_item.dart';
 import 'package:edar_app/presentation/pages/sales/sales_datatable.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_date_picker.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../data/model/invoice_item_model.dart';
-
 import '../../widgets/fields/custom_text_field.dart';
 
-class SalesForm extends StatefulWidget {
-  const SalesForm({Key? key}) : super(key: key);
+class SalesPage extends StatefulWidget {
+  const SalesPage({Key? key}) : super(key: key);
 
   @override
-  State<SalesForm> createState() => _SalesFormState();
+  State<SalesPage> createState() => _SalesPageState();
 }
 
-class _SalesFormState extends State<SalesForm> {
+class _SalesPageState extends State<SalesPage> {
   final dateFormat = 'dd-MMM-yy';
-  InvoiceItemModel invoiceItem = InvoiceItemModel();
-  List<InvoiceItemModel> invoiceItems = [];
   DateTime selectedDate = DateTime.now();
 
   @override
@@ -106,15 +102,14 @@ class _SalesFormState extends State<SalesForm> {
     );
 
     var paymentType = StreamBuilder<String>(
-        stream: BlocProvider.of<InvoiceCubit>(context).paymentTermStream,
+        stream: BlocProvider.of<InvoiceCubit>(context).paymentTypeStream,
         builder: (context, snapshot) {
-          void onPaymentTermChange<String>(val) {
-            BlocProvider.of<InvoiceCubit>(context).updatePaymentTerm(val);
+          void onPaymentTypeChange<String>(val) {
+            BlocProvider.of<InvoiceCubit>(context).updatePaymentType(val);
           }
 
           return CustomDropdown<String>(
             labelText: "Payment Type",
-            value: BlocProvider.of<InvoiceCubit>(context).getPaymentType(),
             items: const [
               //TODO: Put in constant
               DropdownMenuItem<String>(
@@ -126,8 +121,9 @@ class _SalesFormState extends State<SalesForm> {
                 child: Text('Cheque'),
               ),
             ],
+            value: BlocProvider.of<InvoiceCubit>(context).getPaymentType(),
             context: context,
-            onChanged: onPaymentTermChange,
+            onChanged: onPaymentTypeChange,
           );
         });
 
@@ -223,11 +219,11 @@ class _SalesFormState extends State<SalesForm> {
                     stream: BlocProvider.of<InvoiceCubit>(context).buttonValid,
                     builder: (context, snapshot) {
                       return ElevatedButton(
-                        onPressed: snapshot.hasData &&
+                        onPressed: snapshot.hasData
+                            ? () {
                                 BlocProvider.of<InvoiceCubit>(context)
-                                    .getInvoiceItems()!
-                                    .isNotEmpty
-                            ? () {}
+                                    .addInvoice();
+                              }
                             : null,
                         child: const Text("Save"),
                       );

@@ -80,6 +80,7 @@ class ProductDialog extends StatelessWidget {
       stream: BlocProvider.of<ProductsCubit>(context).productQuantityStream,
       builder: (context, snapshot) {
         return CustomTextField(
+            enabled: false,
             labelText: "Product Quantity",
             hintText: "999.99",
             initialValue:

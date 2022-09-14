@@ -37,16 +37,30 @@ class ProductData extends DataTableSource {
           onTap: () => onItemClick(dataItem),
         ),
         DataCell(
-          Text(dataItem.productName),
+          SizedBox(
+              width: 150,
+              child: Tooltip(
+                  message: dataItem.productDescription,
+                  child: Text(
+                    dataItem.productName,
+                    overflow: TextOverflow.ellipsis,
+                  ))),
           onTap: () => onItemClick(dataItem),
         ),
+        // DataCell(
+        //   SizedBox(
+        //     width: 150,
+        //     child: Tooltip(
+        //         message: dataItem.productDescription,
+        //         child: Text(
+        //           dataItem.productDescription,
+        //           overflow: TextOverflow.ellipsis,
+        //         )),
+        //   ),
+        //   onTap: () => onItemClick(dataItem),
+        // ),
         DataCell(
-          Tooltip(
-              message: dataItem.productDescription,
-              child: Text(
-                dataItem.productDescription,
-                overflow: TextOverflow.ellipsis,
-              )),
+          Text(dataItem.category.categoryName),
           onTap: () => onItemClick(dataItem),
         ),
         DataCell(
@@ -54,7 +68,11 @@ class ProductData extends DataTableSource {
           onTap: () => onItemClick(dataItem),
         ),
         DataCell(
-          Text(dataItem.productQuantity.toString()),
+          SizedBox(
+              width: 60,
+              child: Text(
+                dataItem.productQuantity.toString(),
+              )),
           onTap: () => onItemClick(dataItem),
         ),
         DataCell(
@@ -63,11 +81,7 @@ class ProductData extends DataTableSource {
         ),
 
         DataCell(
-          Text(dataItem.category!.categoryName),
-          onTap: () => onItemClick(dataItem),
-        ),
-        DataCell(
-          Text(dataItem.supplier!.supplierName),
+          Text(dataItem.supplier.supplierName),
           onTap: () => onItemClick(dataItem),
         ),
         // DataCell(Text('${dataItem.productId}')),

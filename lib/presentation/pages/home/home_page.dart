@@ -35,62 +35,58 @@ class _HomePageState extends State<HomePage> {
           builder: (context, state) {
             return ListView(
               children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: ConstrainedBox(
-                    constraints:
-                        const BoxConstraints(maxWidth: 1300, maxHeight: 1000),
-                    child: Row(
-                      children: [
-                        SideNavigationBar(
-                          theme: SideNavigationBarTheme(
-                            backgroundColor: Colors.green.shade900,
-                            togglerTheme:
-                                SideNavigationBarTogglerTheme.standard(),
-                            itemTheme: const SideNavigationBarItemTheme(
-                              unselectedItemColor: Colors.white,
-                            ),
-                            dividerTheme:
-                                SideNavigationBarDividerTheme.standard(),
+                ConstrainedBox(
+                  constraints:
+                      const BoxConstraints(maxWidth: 1200, maxHeight: 750),
+                  child: Row(
+                    children: [
+                      SideNavigationBar(
+                        theme: SideNavigationBarTheme(
+                          backgroundColor: Colors.green.shade900,
+                          togglerTheme:
+                              SideNavigationBarTogglerTheme.standard(),
+                          itemTheme: const SideNavigationBarItemTheme(
+                            unselectedItemColor: Colors.white,
                           ),
-                          selectedIndex: selectedIndex,
-                          items: MenuItemList.map(
-                                  (menuItem) => menuItem.sideNavigationBarItem)
-                              .toList(),
-                          onTap: (index) {
-                            print(
-                                "Navigating to : ${MenuItemList[index].route}");
-                            locator<NavigationService>()
-                                .navigateTo(MenuItemList[index].route);
-                            setState(() {
-                              selectedIndex = index;
-                            });
-                          },
-                          toggler: SideBarToggler(
-                              expandIcon: Icons.keyboard_arrow_left,
-                              shrinkIcon: Icons.keyboard_arrow_right,
-                              onToggle: () {
-                                print('Toggle');
-                              }),
+                          dividerTheme:
+                              SideNavigationBarDividerTheme.standard(),
                         ),
-                        Expanded(
-                          child: BlocBuilder<AuthCubit, AuthState>(
-                            builder: (context, state) {
-                              print("Auth state is ${state}");
-                              if (state is! AuthenticationSuccess) {
-                                return const Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                      "Not Allowed"), //TODO Create actual page
-                                );
-                              }
+                        selectedIndex: selectedIndex,
+                        items: MenuItemList.map(
+                                (menuItem) => menuItem.sideNavigationBarItem)
+                            .toList(),
+                        onTap: (index) {
+                          print("Navigating to : ${MenuItemList[index].route}");
+                          locator<NavigationService>()
+                              .navigateTo(MenuItemList[index].route);
+                          setState(() {
+                            selectedIndex = index;
+                          });
+                        },
+                        toggler: SideBarToggler(
+                            expandIcon: Icons.keyboard_arrow_right,
+                            shrinkIcon: Icons.keyboard_arrow_left,
+                            onToggle: () {
+                              print('Toggle');
+                            }),
+                      ),
+                      Expanded(
+                        child: BlocBuilder<AuthCubit, AuthState>(
+                          builder: (context, state) {
+                            print("Auth state is ${state}");
+                            if (state is! AuthenticationSuccess) {
+                              return const Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                    "Not Allowed"), //TODO Create actual page
+                              );
+                            }
 
-                              return widget.child;
-                            },
-                          ),
-                        )
-                      ],
-                    ),
+                            return widget.child;
+                          },
+                        ),
+                      )
+                    ],
                   ),
                 )
               ],

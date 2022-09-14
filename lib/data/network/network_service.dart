@@ -28,7 +28,7 @@ class NetworkService {
       // return jsonDecode(response.body);
       return true;
     } catch (e) {
-      print(e);
+      print("Error encountered: ${e}");
       return false;
     }
   }
