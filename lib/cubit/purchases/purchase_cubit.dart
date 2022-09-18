@@ -1,4 +1,5 @@
 import 'package:edar_app/cubit/purchases/purchase_field_mixin.dart';
+import 'package:edar_app/cubit/purchases/purchase_item_field_mixin.dart';
 import 'package:edar_app/data/model/purchase/purchase.dart';
 import 'package:edar_app/data/repository/purchase_repository.dart';
 import 'package:edar_app/utils/mixin_validations.dart';
@@ -7,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 part 'purchase_state.dart';
 
 class PurchaseCubit extends Cubit<PurchaseState>
-    with ValidationMixin, PurchaseFieldMixin {
+    with ValidationMixin, PurchaseFieldMixin, PurchaseItemFieldMixin {
   final PurchaseRepository purchaseRepository;
 
   PurchaseCubit({required this.purchaseRepository}) : super(PurchaseInitial());

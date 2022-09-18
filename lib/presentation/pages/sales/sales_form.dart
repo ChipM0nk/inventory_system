@@ -9,14 +9,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../widgets/fields/custom_text_field.dart';
 
-class SalesPage extends StatefulWidget {
-  const SalesPage({Key? key}) : super(key: key);
+class SalesForm extends StatefulWidget {
+  const SalesForm({Key? key}) : super(key: key);
 
   @override
-  State<SalesPage> createState() => _SalesPageState();
+  State<SalesForm> createState() => _SalesFormState();
 }
 
-class _SalesPageState extends State<SalesPage> {
+class _SalesFormState extends State<SalesForm> {
   final dateFormat = 'dd-MMM-yy';
   DateTime selectedDate = DateTime.now();
 

@@ -25,6 +25,7 @@ class CustomTextField extends StatelessWidget {
     this.inputFormatters,
     this.focusNode,
     this.snapshot,
+    this.autofocus = false,
   });
 
   final FormFieldValidator? validator; //TODO Remove later
@@ -43,6 +44,7 @@ class CustomTextField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final FocusNode? focusNode;
   final AsyncSnapshot<Object?>? snapshot;
+  final bool autofocus;
 
   TextStyle getHintTextStyle(context, hint, enabled) {
     return TextStyle(
@@ -60,6 +62,8 @@ class CustomTextField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
             height: height,
@@ -84,7 +88,7 @@ class CustomTextField extends StatelessWidget {
               onFieldSubmitted: onFieldSubmitted,
               style: getHintTextStyle(context, false, enabled),
               inputFormatters: inputFormatters,
-              autofocus: true,
+              autofocus: autofocus,
             ),
           ),
           ErrorMessage(snapshot: snapshot)

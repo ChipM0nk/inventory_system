@@ -4,6 +4,7 @@ import 'package:edar_app/data/model/purchase/purchase.dart';
 import 'package:edar_app/data/model/purchase/purchase_item.dart';
 import 'package:edar_app/data/model/supplier.dart';
 import 'package:edar_app/utils/mixin_validations.dart';
+import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 
 mixin PurchaseFieldMixin on ValidationMixin {
@@ -14,12 +15,22 @@ mixin PurchaseFieldMixin on ValidationMixin {
   late var _purchaseItemListController;
   late var _totalAmountController;
 
+  List<PurchaseItem> initialList = [];
+
   init() {
     _purchaseNoController = BehaviorSubject<String>();
     _purchaseDateController = BehaviorSubject<String>();
     _batchCodeController = BehaviorSubject<String>();
     _purchaseItemListController = BehaviorSubject<List<PurchaseItem>>();
+    _supplierController = BehaviorSubject<Supplier>();
     _totalAmountController = BehaviorSubject<double>();
+
+    // _purchaseItemListController.sink.add(initialList);
+    updatePurchaseItemList(initialList);
+    updateBatchCode("034304402");
+    String initialDate =
+        DateFormat('dd-MMM-yy').format(DateTime.now()); //default
+    updatePurchaseDate(initialDate);
   }
 
   //set format
@@ -38,7 +49,7 @@ mixin PurchaseFieldMixin on ValidationMixin {
     _purchaseDateController.sink.add(dateTime);
   }
 
-  //set format
+  //validate format
   Stream<String> get batchCodeStream => _batchCodeController.stream;
   updateBatchCode(String fieldValue) {
     if (validTextLength(fieldValue, 4)) {
@@ -50,18 +61,31 @@ mixin PurchaseFieldMixin on ValidationMixin {
 
   //set format
   Stream<Supplier> get supplierStream => _supplierController.stream;
-  updateSupplier(Supplier supplier) {
-    _supplierController.add.sink(supplier);
+  updateSupplier(Supplier? supplier) {
+    if (supplier != null) {
+      _supplierController.sink.add(supplier);
+    } else {
+      _supplierController.sink.addError("Please select a suplier");
+    }
+
+    updatePurchaseItemList(initialList);
   }
 
   //set format
   Stream<List<PurchaseItem>> get purchaseItemsStream =>
       _purchaseItemListController.stream;
   updatePurchaseItemList(List<PurchaseItem> purchaseItems) {
-    _purchaseItemListController.sink.add(purchaseItems);
+    if (purchaseItems.isNotEmpty) {
+      _purchaseItemListController.sink.add(purchaseItems);
+    } else {
+      _purchaseItemListController =
+          BehaviorSubject<List<PurchaseItem>>(); //reset workaround
+      _purchaseItemListController.sink.add(purchaseItems);
+      updateTotalAmount(0.0);
+    }
   }
 
-  List<PurchaseItem>? getPurchaseItems() {
+  List<PurchaseItem> getPurchaseItems() {
     return _purchaseItemListController.hasValue
         ? _purchaseItemListController.value
         : [];
@@ -110,7 +134,7 @@ mixin PurchaseFieldMixin on ValidationMixin {
       batchCodeStream,
       purchaseItemsStream,
       totalAmountStream,
-      (a, b, c, d, e) => true && _purchaseItemListController.value.size > 0);
+      (a, b, c, d, e) => true && _purchaseItemListController.value.length > 0);
 
   Purchase getPurchase(int? purchaseId) {
     return Purchase(

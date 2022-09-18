@@ -64,9 +64,14 @@ class BlocProviders {
         ProductRepository(networkService: NetworkService());
     ProductsCubit productCubit =
         ProductsCubit(productRepository: productRepository);
+    SupplierRepository supplierRepository =
+        SupplierRepository(networkService: NetworkService());
+    SuppliersCubit suppliersCubit =
+        SuppliersCubit(supplierRepository: supplierRepository);
     return [
       BlocProvider<PurchaseCubit>(create: (context) => purchaseCubit),
       BlocProvider<ProductsCubit>(create: (context) => productCubit),
+      BlocProvider<SuppliersCubit>(create: (context) => suppliersCubit),
     ];
     // return MultiBlocProvider(providers: providers, child: child) BlocProvider<CategoriesCubit>(create: (context) => categoriesCubit);
   }

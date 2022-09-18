@@ -1,0 +1,41 @@
+{
+    "purchaseNo": "123123",
+    "purchaseDate": "17-Sep-22",
+    "batchCode": "2131-23",
+    "supplier": {
+        "id": 2,
+        "supplierName": "AB",
+        "supplierAddress": "address 2\n",
+        "supplierEmailAdd": "test@yahoo.com",
+        "supplierContactNumber": "2131231232"
+    },
+    "purchaseItems": [
+        {
+            "product": {
+                "id": 3,
+                "productCode": "LVT2",
+                "productName": "Lavatory",
+                "productDescription": "Lavatory 2",
+                "productPrice": 12.99,
+                "productQuantity": 2,
+                "productUnit": "pc",
+                "supplier": {
+                    "id": 5,
+                    "supplierName": "EDAR",
+                    "supplierAddress": "San Celestino\nLipaBatangas\n4217",
+                    "supplierEmailAdd": "edar@gmail.com",
+                    "supplierContactNumber": "0239480239483"
+                },
+                "category": {
+                    "id": 17,
+                    "categoryCode": "TILE",
+                    "categoryName": "Tiles and Fixtures"
+                }
+            },
+            "purchaseAmount": 1243,
+            "batchQuantity": 10,
+            "itemTotalAmount": 12430
+        }
+    ],
+    "totalAmount": 1243
+}

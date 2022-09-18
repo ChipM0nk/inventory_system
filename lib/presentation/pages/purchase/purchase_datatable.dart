@@ -1,6 +1,8 @@
 import 'package:edar_app/cubit/products/products_cubit.dart';
 import 'package:edar_app/cubit/purchases/purchase_cubit.dart';
 import 'package:edar_app/data/model/purchase/purchase_item.dart';
+import 'package:edar_app/data/model/supplier.dart';
+import 'package:edar_app/presentation/pages/purchase/add_purchase_item_dialog.dart';
 
 import 'package:edar_app/presentation/utils/util.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_label_text_field.dart';
@@ -20,13 +22,77 @@ class PurchaseDatatable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 1000,
+      width: 900,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           StreamBuilder<List<PurchaseItem>>(
             stream: BlocProvider.of<PurchaseCubit>(context).purchaseItemsStream,
             builder: (context, snapshot) {
-              return SingleChildScrollView(
+              var listDataRows = BlocProvider.of<PurchaseCubit>(context)
+                  .getPurchaseItems()
+                  .map(
+                    (iv) => DataRow(
+                      cells: [
+                        DataCell(SizedBox(
+                          width: 260,
+                          child: Tooltip(
+                              message: iv.product.productDescription,
+                              child: Text(
+                                iv.product.productName,
+                                overflow: TextOverflow.ellipsis,
+                              )),
+                        )),
+                        DataCell(SizedBox(
+                            width: 100,
+                            child: NumericText(
+                                text: iv.purchaseAmount.toString()))),
+                        DataCell(SizedBox(
+                            width: 100,
+                            child: Text(iv.batchQuantity.toString()))),
+                        DataCell(SizedBox(
+                            width: 100,
+                            child: NumericText(
+                                text: iv.itemTotalAmount.toString()))),
+                        DataCell(SizedBox(
+                          width: 10,
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            icon: const Icon(
+                              Icons.delete,
+                              size: 15,
+                              color: Colors.red,
+                            ),
+                            onPressed: () => deletePurchaseItem(iv),
+                          ),
+                        )),
+                      ],
+                    ),
+                  )
+                  .toList();
+
+              const emptyDataRow = [
+                DataRow(cells: [
+                  DataCell(SizedBox(
+                    width: 260,
+                  )),
+                  DataCell(SizedBox(
+                    width: 100,
+                  )),
+                  DataCell(SizedBox(
+                    width: 100,
+                  )),
+                  DataCell(SizedBox(
+                    width: 100,
+                  )),
+                  DataCell(SizedBox(
+                    width: 10,
+                  )),
+                ])
+              ];
+
+              var singleChildScrollView = SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: DataTable(
                   headingRowHeight: 30,
@@ -101,71 +167,51 @@ class PurchaseDatatable extends StatelessWidget {
                     ),
                   ],
                   rows: BlocProvider.of<PurchaseCubit>(context)
-                      .getPurchaseItems()!
-                      .map((iv) => DataRow(cells: [
-                            DataCell(SizedBox(
-                              width: 260,
-                              child: Tooltip(
-                                  message: iv.product.productName,
-                                  child: Text(
-                                    iv.product.productDescription,
-                                    overflow: TextOverflow.ellipsis,
-                                  )),
-                            )),
-                            DataCell(SizedBox(
-                                width: 100,
-                                child: NumericText(
-                                    text: iv.purchaseAmount.toString()))),
-                            DataCell(SizedBox(
-                                width: 100,
-                                child: Text(iv.batchQuantity.toString()))),
-                            DataCell(SizedBox(
-                                width: 100,
-                                child: NumericText(
-                                    text: iv.itemTotalAmount.toString()))),
-                            DataCell(SizedBox(
-                              width: 10,
-                              child: IconButton(
-                                padding: EdgeInsets.zero,
-                                icon: const Icon(
-                                  Icons.delete,
-                                  size: 15,
-                                  color: Colors.red,
-                                ),
-                                onPressed: () => deletePurchaseItem(iv),
-                              ),
-                            )),
-                          ]))
-                      .toList(),
+                          .getPurchaseItems()
+                          .isEmpty
+                      ? emptyDataRow
+                      : listDataRows,
                 ),
               );
+              return singleChildScrollView;
             },
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              GestureDetector(
-                child: const Icon(
-                  Icons.add_box_outlined,
-                  color: Colors.green,
-                  size: 25,
-                ),
-                onTap: () {
-                  showDialog(
-                      barrierDismissible: false,
-                      context: context,
-                      builder: (_) {
-                        return MultiBlocProvider(providers: [
-                          BlocProvider.value(
-                              value: context.read<ProductsCubit>()),
-                          BlocProvider.value(
-                              value: context.read<PurchaseCubit>()),
-                        ], child: Container()
-                            // AddItemDialog(addPurchaseItem: addPurchaseItem),
-                            );
-                      });
-                },
-              ),
+              StreamBuilder<Supplier>(
+                  stream:
+                      BlocProvider.of<PurchaseCubit>(context).supplierStream,
+                  builder: (context, snapshot) {
+                    bool enabled = snapshot.hasData;
+
+                    return GestureDetector(
+                      child: Icon(
+                        Icons.add_box_outlined,
+                        color: enabled ? Colors.green : Colors.grey,
+                        size: 25,
+                      ),
+                      onTap: () {
+                        enabled
+                            ? showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (_) {
+                                  return MultiBlocProvider(
+                                    providers: [
+                                      BlocProvider.value(
+                                          value: context.read<ProductsCubit>()),
+                                      BlocProvider.value(
+                                          value: context.read<PurchaseCubit>()),
+                                    ],
+                                    child: AddPurchaseItemDialog(
+                                        addPurchaseItem: addPurchaseItem),
+                                  );
+                                })
+                            : null;
+                      },
+                    );
+                  }),
               Row(
                 children: [
                   const Text(

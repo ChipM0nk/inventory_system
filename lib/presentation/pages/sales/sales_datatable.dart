@@ -26,6 +26,71 @@ class SalesDataTable extends StatelessWidget {
           StreamBuilder<List<InvoiceItem>>(
             stream: BlocProvider.of<InvoiceCubit>(context).invoiceItemsStream,
             builder: (context, snapshot) {
+              var invoiceItemList = BlocProvider.of<InvoiceCubit>(context)
+                  .getInvoiceItems()
+                  .map((iv) => DataRow(cells: [
+                        DataCell(SizedBox(
+                            width: 180, child: Text(iv.product.productName))),
+                        DataCell(SizedBox(
+                          width: 260,
+                          child: Tooltip(
+                              message: iv.product.productDescription,
+                              child: Text(
+                                iv.product.productDescription,
+                                overflow: TextOverflow.ellipsis,
+                              )),
+                        )),
+                        DataCell(SizedBox(
+                            width: 100,
+                            child: NumericText(text: iv.price.toString()))),
+                        DataCell(SizedBox(
+                            width: 60, child: Text(iv.quantity.toString()))),
+                        DataCell(SizedBox(
+                            width: 50, child: Text(iv.product.productUnit))),
+                        DataCell(SizedBox(
+                            width: 100,
+                            child: NumericText(text: iv.amount.toString()))),
+                        DataCell(SizedBox(
+                          width: 10,
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            icon: const Icon(
+                              Icons.delete,
+                              size: 15,
+                              color: Colors.red,
+                            ),
+                            onPressed: () => deleteInvoiceItem(iv),
+                          ),
+                        )),
+                      ]))
+                  .toList();
+
+              const emptyList = [
+                DataRow(cells: [
+                  DataCell(SizedBox(
+                    width: 180,
+                  )),
+                  DataCell(SizedBox(
+                    width: 260,
+                  )),
+                  DataCell(SizedBox(
+                    width: 100,
+                  )),
+                  DataCell(SizedBox(
+                    width: 60,
+                  )),
+                  DataCell(SizedBox(
+                    width: 50,
+                  )),
+                  DataCell(SizedBox(
+                    width: 100,
+                  )),
+                  DataCell(SizedBox(
+                    width: 10,
+                  )),
+                ])
+              ];
+
               return SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: DataTable(
@@ -123,47 +188,10 @@ class SalesDataTable extends StatelessWidget {
                     ),
                   ],
                   rows: BlocProvider.of<InvoiceCubit>(context)
-                      .getInvoiceItems()!
-                      .map((iv) => DataRow(cells: [
-                            DataCell(SizedBox(
-                                width: 180,
-                                child: Text(iv.product.productName))),
-                            DataCell(SizedBox(
-                              width: 260,
-                              child: Tooltip(
-                                  message: iv.product.productDescription,
-                                  child: Text(
-                                    iv.product.productDescription,
-                                    overflow: TextOverflow.ellipsis,
-                                  )),
-                            )),
-                            DataCell(SizedBox(
-                                width: 100,
-                                child: NumericText(text: iv.price.toString()))),
-                            DataCell(SizedBox(
-                                width: 60,
-                                child: Text(iv.quantity.toString()))),
-                            DataCell(SizedBox(
-                                width: 50,
-                                child: Text(iv.product.productUnit))),
-                            DataCell(SizedBox(
-                                width: 100,
-                                child:
-                                    NumericText(text: iv.amount.toString()))),
-                            DataCell(SizedBox(
-                              width: 10,
-                              child: IconButton(
-                                padding: EdgeInsets.zero,
-                                icon: const Icon(
-                                  Icons.delete,
-                                  size: 15,
-                                  color: Colors.red,
-                                ),
-                                onPressed: () => deleteInvoiceItem(iv),
-                              ),
-                            )),
-                          ]))
-                      .toList(),
+                          .getInvoiceItems()
+                          .isEmpty
+                      ? emptyList
+                      : invoiceItemList,
                 ),
               );
             },

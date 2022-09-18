@@ -1,3 +1,4 @@
+import 'package:edar_app/constants/text_field_formats.dart';
 import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
 import 'package:edar_app/cubit/products/products_cubit.dart';
 import 'package:edar_app/data/model/invoice/invoice_item.dart';
@@ -34,18 +35,7 @@ class AddItemDialog extends StatelessWidget {
             final TextEditingController quantityController =
                 TextEditingController();
 
-            late bool prodSelected = false;
-
-            // void onChange<Product>(prod) {
-            //   BlocProvider.of<InvoiceCubit>(context).updateProduct(prod);
-
-            //   priceController.text = prod.productPrice.toString();
-            //   BlocProvider.of<InvoiceCubit>(context)
-            //       .updatePrice(prod.productPrice.toString());
-
-            //   BlocProvider.of<InvoiceCubit>(context).updateQuantity("1");
-            //   quantityController.text = "1";
-            // }
+            // late bool prodSelected = false;
 
             var productDropdownField = StreamBuilder<Product>(
                 stream: BlocProvider.of<InvoiceCubit>(context).productStream,
@@ -64,25 +54,21 @@ class AddItemDialog extends StatelessWidget {
                       ),
                     ],
                   );
-                  return StreamBuilder<Object>(
+                  return StreamBuilder<Product>(
                       stream:
-                          BlocProvider.of<InvoiceCubit>(context).priceStream,
+                          BlocProvider.of<InvoiceCubit>(context).productStream,
                       builder: (context, snapshot) {
                         return Column(
                           children: [
                             BlocBuilder<ProductsCubit, ProductsState>(
                               builder: (context, state) {
                                 if (state is ProductsLoaded) {
-                                  // if (invoiceItem == null &&
-                                  //     prodSelected == false) {
-                                  //   onChange<Product>(state.products.first);
-                                  //   prodSelected = true;
-                                  // }
-
                                   return Autocomplete<String>(
                                     optionsBuilder:
                                         (TextEditingValue textEditingValue) {
                                       if (textEditingValue.text == '') {
+                                        BlocProvider.of<InvoiceCubit>(context)
+                                            .updateProduct(null);
                                         return const Iterable<String>.empty();
                                       } else {
                                         List<String> matches = <String>[];
@@ -107,10 +93,10 @@ class AddItemDialog extends StatelessWidget {
                                         focusNode: focusNode,
                                         hintText: "GM Toilet Bowl",
                                         controller: textEditingController,
+                                        autofocus: true,
+                                        snapshot: snapshot,
                                         onFieldSubmitted: (String value) {
                                           onFieldSubmitted();
-                                          print(
-                                              'You just typed a new entry  $value');
                                         },
                                       );
                                     },
@@ -155,7 +141,7 @@ class AddItemDialog extends StatelessWidget {
                       controller: priceController,
                       snapshot: snapshot,
                       inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.allow(RegExp("[.0-9]")),
+                        TextFieldFormat.amountFormat
                       ],
                       onChanged: (text) {
                         BlocProvider.of<InvoiceCubit>(context)
@@ -178,7 +164,7 @@ class AddItemDialog extends StatelessWidget {
                         controller: quantityController,
                         snapshot: snapshot,
                         inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.allow(RegExp("[.0-9]")),
+                          TextFieldFormat.amountFormat
                         ],
                         onChanged: (text) {
                           BlocProvider.of<InvoiceCubit>(context)
@@ -203,7 +189,7 @@ class AddItemDialog extends StatelessWidget {
                       controller: totalAmountController,
                       enabled: false,
                       inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.allow(RegExp("[.0-9]")),
+                        TextFieldFormat.amountFormat
                       ],
                     ),
                     ErrorMessage(snapshot: snapshot)

@@ -15,15 +15,16 @@ mixin PurchaseItemFieldMixin on ValidationMixin {
     _productController = BehaviorSubject<Product>();
     _purchaseAmountController = BehaviorSubject<double>();
     _batchQuantityController = BehaviorSubject<double>();
-
-    updatePurchaseAmount("0.0");
-    updateBatchQuantity("0.0");
-    updateItemTotal();
+    _itemTotalController = BehaviorSubject<double>();
   }
 
   Stream<Product> get productStream => _productController.stream;
-  updateProduct(Product product) {
-    _productController.sink.add(product);
+  updateProduct(Product? product) {
+    if (product != null) {
+      _productController.sink.add(product);
+    } else {
+      _productController.sink.addError("Please select a product");
+    }
   }
 
   Stream<double> get purchaseAmountStream => _purchaseAmountController.stream;
@@ -50,13 +51,21 @@ mixin PurchaseItemFieldMixin on ValidationMixin {
 
   Stream<double> get itemTotalStream => _itemTotalController.stream;
   updateItemTotal() {
-    double total =
-        _batchQuantityController.value * _purchaseAmountController.value;
+    double total = (_batchQuantityController.hasValue
+            ? _batchQuantityController.value
+            : 0.0) *
+        (_purchaseAmountController.hasValue
+            ? _purchaseAmountController.value
+            : 0.0);
     _itemTotalController.sink.add(total);
   }
 
-  Stream<bool> get buttonValidPurchaseItem => Rx.combineLatest3(productStream,
-      purchaseAmountStream, batchQuantityStream, (a, b, c) => true);
+  Stream<bool> get buttonValidPurchaseItem => Rx.combineLatest4(
+      productStream,
+      purchaseAmountStream,
+      batchQuantityStream,
+      itemTotalStream,
+      (a, b, c, d) => true);
 
   PurchaseItem getPurchaseItem(int? purchaseItemId) {
     return PurchaseItem(

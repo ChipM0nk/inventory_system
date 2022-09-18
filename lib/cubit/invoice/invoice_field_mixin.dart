@@ -22,9 +22,8 @@ mixin InvoiceFieldMixin on ValidationMixin {
   late var _invoiceItemListController;
   late var _invoiceTotalAmountController;
 
-  List<InvoiceItem> initialList = [];
-
   init() {
+    List<InvoiceItem> initialList = [];
     _invoiceNumberController = BehaviorSubject<String>();
     _customerNameController = BehaviorSubject<String>();
     _customerAddressController = BehaviorSubject<String>();
@@ -156,7 +155,7 @@ mixin InvoiceFieldMixin on ValidationMixin {
     _dueDateController.sink.add(invoiceItems);
   }
 
-  List<InvoiceItem>? getInvoiceItems() {
+  List<InvoiceItem> getInvoiceItems() {
     return _invoiceItemListController.hasValue
         ? _invoiceItemListController.value
         : [];
@@ -217,9 +216,7 @@ mixin InvoiceFieldMixin on ValidationMixin {
       dueDateStream,
       invoiceItemsStream,
       (a, b, c, d, e, f, g, h, i) =>
-          true &&
-          _invoiceItemListController.hasValue &&
-          _invoiceItemListController.value.isNotEmpty);
+          true && _invoiceItemListController.value.length > 0);
 
   Invoice getInvoice(int? invoiceId) {
     return Invoice(

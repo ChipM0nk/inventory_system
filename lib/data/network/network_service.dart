@@ -20,6 +20,7 @@ class NetworkService {
   ) async {
     try {
       // addObj = {"categoryCode": "asd", "categoryName": "asdasd"};
+      print("Calling :${serviceName}");
       print("To String: " + jsonEncode(addObj));
       final response = await post(Uri.parse("$BASE_URL$serviceName"),
           headers: {"Content-Type": "application/json"},

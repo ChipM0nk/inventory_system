@@ -19,13 +19,6 @@ mixin InvoiceItemFieldMixin on ValidationMixin {
     _quantityController = BehaviorSubject<double>();
     _priceController = BehaviorSubject<double>();
     _invoiceItemAmountController = BehaviorSubject<double>();
-
-    _priceController.sink.add(0.0);
-    _quantityController.sink.add(0.0);
-
-    updatePrice("0.0");
-    updateQuantity("0.0");
-    updateInvoiceItemAmount();
   }
 
   Stream<String> get snStream => _snController.stream;
@@ -39,8 +32,12 @@ mixin InvoiceItemFieldMixin on ValidationMixin {
   }
 
   Stream<Product> get productStream => _productController.stream;
-  updateProduct(Product product) {
-    _productController.sink.add(product);
+  updateProduct(Product? product) {
+    if (product != null) {
+      _productController.sink.add(product);
+    } else {
+      _productController.sink.addError("Please select a product");
+    }
   }
 
   Product? getProduct() {
@@ -70,7 +67,9 @@ mixin InvoiceItemFieldMixin on ValidationMixin {
   Stream<double> get invoiceItemAmountStream =>
       _invoiceItemAmountController.stream;
   updateInvoiceItemAmount() {
-    double itemAmount = _quantityController.value * _priceController.value;
+    double itemAmount =
+        (_quantityController.hasValue ? _quantityController.value : 0.0) *
+            (_priceController.hasValue ? _priceController.value : 0.0);
     _invoiceItemAmountController.sink.add(itemAmount);
   }
 
