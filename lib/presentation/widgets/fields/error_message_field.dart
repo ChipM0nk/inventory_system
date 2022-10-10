@@ -16,7 +16,7 @@ class ErrorMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ((snapshot != null && snapshot!.hasError) || message != null)
+    return (snapshot != null && snapshot!.hasError)
         ? Padding(
             padding: const EdgeInsets.only(left: 10.0, right: 10.0),
             child: SizedBox(
@@ -25,7 +25,7 @@ class ErrorMessage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      snapshot != null ? snapshot!.error.toString() : message!,
+                      snapshot!.error.toString(),
                       style: TextStyle(
                           fontSize: fontSize,
                           fontStyle: FontStyle.italic,
