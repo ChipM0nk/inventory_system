@@ -5,8 +5,6 @@ part 'supplier.g.dart';
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
 @immutable
 class Supplier {
-  @JsonKey(name: "id")
-  @JsonKey(name: "supplierId")
   final int? supplierId;
   final String supplierName;
   final String supplierAddress;

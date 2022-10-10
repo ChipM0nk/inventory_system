@@ -38,9 +38,9 @@ class _ProductPageState extends State<ProductPage> {
           return Column(children: [
             Row(
               children: [
-                SizedBox(
-                  height: 20,
-                  width: 450,
+                Expanded(
+                  // height: 20,
+                  // width: 450,
                   child: TextField(
                       controller: searchController,
                       decoration: const InputDecoration(

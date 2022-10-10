@@ -141,8 +141,8 @@ class _PurchaseFormState extends State<PurchaseForm> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    supplierFinderField,
                     purchaseNo,
-                    batchCode,
                     const SizedBox(width: 200),
                     const SizedBox(width: 200),
                   ],
@@ -152,7 +152,7 @@ class _PurchaseFormState extends State<PurchaseForm> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     purchaseDate,
-                    supplierFinderField,
+                    batchCode,
                     const SizedBox(width: 200),
                     const SizedBox(width: 200),
                   ],

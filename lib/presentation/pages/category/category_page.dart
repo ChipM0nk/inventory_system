@@ -34,55 +34,61 @@ class _CategoryPageState extends State<CategoryPage> {
                 data: state.filteredData ?? state.categories,
                 onDeleteClick: _deleteCategory,
                 onItemClick: _openUpdateCategoryDialog);
-            return Column(children: [
-              Row(
+            return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: 20,
-                    width: 350,
-                    child: TextField(
-                        controller: searchController,
-                        decoration: const InputDecoration(
-                          hintText: 'Search',
+                    width: 500,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          height: 20,
+                          width: 350,
+                          child: TextField(
+                              controller: searchController,
+                              decoration: const InputDecoration(
+                                hintText: 'Search',
+                              ),
+                              onChanged: (value) => {
+                                    BlocProvider.of<CategoriesCubit>(context)
+                                        .searchCategory(value),
+                                  }),
                         ),
-                        onChanged: (value) => {
-                              BlocProvider.of<CategoriesCubit>(context)
-                                  .searchCategory(value),
-                            }),
+                        const SizedBox(
+                          width: 30,
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (_) {
+                                  searchController.clear();
+                                  return BlocProvider.value(
+                                    value: context.read<CategoriesCubit>(),
+                                    child: CategoryDialog(),
+                                  );
+                                });
+                          },
+                          child: const Text("Add Category"),
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(
-                    width: 30,
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: SizedBox(
+                      width: 500,
+                      child: CustomPaginatedDataTable(
+                          header: const Text("Categories"),
+                          dataColumns: dataColumns(categoryData),
+                          rowsPerPage: 10,
+                          sortAscending: state.sortAscending,
+                          sortIndex: state.sortIndex,
+                          source: categoryData),
+                    ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (_) {
-                            searchController.clear();
-                            return BlocProvider.value(
-                              value: context.read<CategoriesCubit>(),
-                              child: CategoryDialog(),
-                            );
-                          });
-                    },
-                    child: const Text("Add Category"),
-                  ),
-                ],
-              ),
-              Align(
-                alignment: Alignment.topLeft,
-                child: SizedBox(
-                  width: 500,
-                  child: CustomPaginatedDataTable(
-                      header: const Text("Categories"),
-                      dataColumns: dataColumns(categoryData),
-                      rowsPerPage: 10,
-                      sortAscending: state.sortAscending,
-                      sortIndex: state.sortIndex,
-                      source: categoryData),
-                ),
-              ),
-            ]);
+                ]);
           },
         ));
   }

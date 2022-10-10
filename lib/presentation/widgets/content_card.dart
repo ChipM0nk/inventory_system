@@ -11,9 +11,9 @@ class ContentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 1000,
-      height: 750,
+    return Expanded(
+      // width: 1000,
+      // height: 750,
       child: Card(
         child: Align(
           alignment: Alignment.topRight,

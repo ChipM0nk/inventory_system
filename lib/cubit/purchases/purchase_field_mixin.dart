@@ -15,9 +15,9 @@ mixin PurchaseFieldMixin on ValidationMixin {
   late var _purchaseItemListController;
   late var _totalAmountController;
 
-  List<PurchaseItem> initialList = [];
-
   init() {
+    List<PurchaseItem> initialList = [];
+
     _purchaseNoController = BehaviorSubject<String>();
     _purchaseDateController = BehaviorSubject<String>();
     _batchCodeController = BehaviorSubject<String>();
@@ -68,21 +68,17 @@ mixin PurchaseFieldMixin on ValidationMixin {
       _supplierController.sink.addError("Please select a suplier");
     }
 
-    updatePurchaseItemList(initialList);
+    List<PurchaseItem> purchaseItems = _purchaseItemListController.value;
+    purchaseItems.clear();
+    updatePurchaseItemList(purchaseItems);
   }
 
   //set format
   Stream<List<PurchaseItem>> get purchaseItemsStream =>
       _purchaseItemListController.stream;
   updatePurchaseItemList(List<PurchaseItem> purchaseItems) {
-    if (purchaseItems.isNotEmpty) {
-      _purchaseItemListController.sink.add(purchaseItems);
-    } else {
-      _purchaseItemListController =
-          BehaviorSubject<List<PurchaseItem>>(); //reset workaround
-      _purchaseItemListController.sink.add(purchaseItems);
-      updateTotalAmount(0.0);
-    }
+    _purchaseItemListController.sink.add(purchaseItems);
+    updateTotalAmount(0.0);
   }
 
   List<PurchaseItem> getPurchaseItems() {

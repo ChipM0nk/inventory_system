@@ -23,18 +23,20 @@ class CategoriesCubit extends Cubit<CategoriesState>
   //action methods
   void fetchCategories() {
     print("Fetch categories");
-    categoryRepository.fetchAll().then((categories) => {
-          emit(CategoriesLoaded(
-            categories: categories,
-            sortIndex: null,
-            sortAscending: true,
-          )),
-        });
+    categoryRepository
+        .fetchAll()
+        .then((categories) => {
+              emit(CategoriesLoaded(
+                categories: categories,
+                sortIndex: null,
+                sortAscending: true,
+              )),
+            })
+        .onError((error, stackTrace) => updateError('$error'));
   }
 
   void sortCategories<T>(Comparable<T> Function(Category) getField,
       int sortIndex, bool ascending) {
-    print("Sorting categories");
     final currentState = state;
     if (currentState is CategoriesLoaded) {
       final categories = currentState.categories;
@@ -57,7 +59,7 @@ class CategoriesCubit extends Cubit<CategoriesState>
   }
 
   void addCategory() {
-    emit(AddingCategory());
+    // emit(AddingCategory());
 
     Category category = getCategory(null);
 
@@ -68,18 +70,19 @@ class CategoriesCubit extends Cubit<CategoriesState>
         emit(CategoryAdded());
         fetchCategories();
       } else {
-        emit(CategoryStateError());
+        updateError(null);
       }
-    });
+    }).onError(
+      (error, stackTrace) {
+        print("Error message : ${error}");
+        updateError('$error');
+      },
+    );
   }
 
   void updateCategory(int categoryId) {
-    emit(UpdatingCategory());
-
     Category category = getCategory(categoryId);
-
     Map<String, dynamic> categoryObj = category.toJson();
-    print("Update : ${categoryObj}");
     categoryRepository
         .udpateCategory(categoryObj, category.categoryId!)
         .then((isUpdated) {
@@ -88,36 +91,21 @@ class CategoriesCubit extends Cubit<CategoriesState>
         emit(CategoryUpdated());
         fetchCategories();
       } else {
-        emit(CategoryStateError());
+        updateError(null);
       }
-    });
+    }).onError((error, stackTrace) => updateError('$error'));
   }
 
   void deleteCategory(int categoryId) {
-    emit(DeletingCategory());
-
     categoryRepository.deleteCategory(categoryId).then((isDeleted) {
       if (isDeleted) {
         emit(CategoryDeleted());
         fetchCategories();
       } else {
-        emit(CategoryStateError());
+        updateError(null);
       }
-    });
+    }).onError((error, stackTrace) => updateError('$error'));
   }
-
-  // void selectCategory(Category? category) {
-  //   final currentState = state;
-  //   if (currentState is CategoriesLoaded) {
-  //     final categories = currentState.categories;
-  //     emit(CategoriesLoaded(
-  //       categories: categories,
-  //       sortAscending: true,
-  //       selectedCategory: categories
-  //           .firstWhere((cat) => cat.categoryId == category!.categoryId),
-  //     ));
-  //   }
-  // }
 
   void searchCategory(String searchText) {
     final currentState = state;

@@ -18,20 +18,12 @@ class CategoriesLoaded extends CategoriesState {
   });
 }
 
-//Add
-class AddingCategory extends CategoriesState {}
-
 class CategoryAdded extends CategoriesState {}
 
 //delete
-class DeletingCategory extends CategoriesState {}
 
 class CategoryDeleted extends CategoriesState {}
 
 //update
-class UpdatingCategory extends CategoriesState {}
 
 class CategoryUpdated extends CategoriesState {}
-
-//error
-class CategoryStateError extends CategoriesState {}

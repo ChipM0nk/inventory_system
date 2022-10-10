@@ -6,8 +6,6 @@ part 'category.g.dart';
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
 @immutable
 class Category {
-  @JsonKey(name: "id")
-  @JsonKey(name: "categoryId")
   final int? categoryId;
   final String categoryCode;
   final String categoryName;

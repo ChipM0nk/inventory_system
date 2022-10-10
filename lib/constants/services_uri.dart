@@ -1,5 +1,5 @@
 const String SalesService = '/sales';
-const String CategoriesService = '/categories';
-const String SuppliersService = "/suppliers";
-const String ProductsService = "/products";
+const String CategoriesService = '/category';
+const String SuppliersService = "/supplier";
+const String ProductsService = "/product";
 const String InvoicesService = "/invoice";

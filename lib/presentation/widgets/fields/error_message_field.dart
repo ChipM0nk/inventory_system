@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 class ErrorMessage extends StatelessWidget {
   final AsyncSnapshot<Object?>? snapshot;
+  final String? message;
   final double fontSize;
   final double height;
 
   const ErrorMessage({
-    required this.snapshot,
+    this.snapshot,
+    this.message,
     this.fontSize = 10,
     this.height = 16,
     super.key,
@@ -14,7 +16,7 @@ class ErrorMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return snapshot != null && snapshot!.hasError
+    return ((snapshot != null && snapshot!.hasError) || message != null)
         ? Padding(
             padding: const EdgeInsets.only(left: 10.0, right: 10.0),
             child: SizedBox(
@@ -23,7 +25,7 @@ class ErrorMessage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      snapshot!.error.toString(),
+                      snapshot != null ? snapshot!.error.toString() : message!,
                       style: TextStyle(
                           fontSize: fontSize,
                           fontStyle: FontStyle.italic,

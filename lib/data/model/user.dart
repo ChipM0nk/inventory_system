@@ -6,8 +6,6 @@ part 'user.g.dart';
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
 @immutable
 class User {
-  @JsonKey(name: "id")
-  @JsonKey(name: "userId")
   final int? userId;
   final String username;
   final String? password;

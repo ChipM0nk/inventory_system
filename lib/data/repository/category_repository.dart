@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:edar_app/data/model/category.dart';
 import 'package:edar_app/data/network/network_service.dart';
 import 'package:edar_app/routing/route_names.dart';

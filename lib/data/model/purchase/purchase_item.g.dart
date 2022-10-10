@@ -7,7 +7,7 @@ part of 'purchase_item.dart';
 // **************************************************************************
 
 PurchaseItem _$PurchaseItemFromJson(Map<String, dynamic> json) => PurchaseItem(
-      purchaseItemId: json['id'] as int?,
+      purchaseItemId: json['purchaseItemId'] as int?,
       product: Product.fromJson(json['product'] as Map<String, dynamic>),
       purchaseAmount: (json['purchaseAmount'] as num).toDouble(),
       batchQuantity: (json['batchQuantity'] as num).toDouble(),
@@ -23,7 +23,7 @@ Map<String, dynamic> _$PurchaseItemToJson(PurchaseItem instance) {
     }
   }
 
-  writeNotNull('id', instance.purchaseItemId);
+  writeNotNull('purchaseItemId', instance.purchaseItemId);
   val['product'] = instance.product.toJson();
   val['purchaseAmount'] = instance.purchaseAmount;
   val['batchQuantity'] = instance.batchQuantity;

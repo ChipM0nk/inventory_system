@@ -1,6 +1,7 @@
 import 'package:edar_app/cubit/categories/categories_cubit.dart';
 import 'package:edar_app/data/model/category.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_text_field.dart';
+import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -32,6 +33,7 @@ class CategoryDialog extends StatelessWidget {
               initialValue:
                   category != null ? category!.categoryCode.toString() : null,
               snapshot: snapshot,
+              autofocus: true,
               onChanged: (text) {
                 BlocProvider.of<CategoriesCubit>(context)
                     .updateCategoryCode(text);
@@ -58,28 +60,43 @@ class CategoryDialog extends StatelessWidget {
         );
       },
     );
+
+    var serviceErrorMessage = StreamBuilder(
+      stream: BlocProvider.of<CategoriesCubit>(context).errorStream,
+      builder: (context, snapshot) {
+        return Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+          child: ErrorMessage(
+            snapshot: snapshot,
+            fontSize: 14,
+            height: 20,
+          ),
+        );
+      },
+    );
     return AlertDialog(
       scrollable: true,
       title: Text(title),
-      content: BlocListener<CategoriesCubit, CategoriesState>(
-          listener: (context, state) {
-            if (state is CategoryAdded || state is CategoryUpdated) {
-              Navigator.of(context, rootNavigator: true).pop();
-            }
-          },
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Column(
-                  children: [
-                    categoryCode,
-                    categoryName,
-                  ],
-                ),
-              ],
-            ),
-          )),
+      content: BlocBuilder<CategoriesCubit, CategoriesState>(
+          builder: (context, state) {
+        if (state is CategoryAdded || state is CategoryUpdated) {
+          Navigator.of(context, rootNavigator: true).pop();
+        }
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Column(
+                children: [
+                  categoryCode,
+                  categoryName,
+                  serviceErrorMessage,
+                ],
+              ),
+            ],
+          ),
+        );
+      }),
       actions: [
         StreamBuilder(
           stream: BlocProvider.of<CategoriesCubit>(context).buttonValid,

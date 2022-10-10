@@ -7,8 +7,6 @@ part 'purchase_item.g.dart';
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
 @immutable
 class PurchaseItem {
-  @JsonKey(name: "id")
-  @JsonKey(name: "purchaseItemId")
   final int? purchaseItemId;
   final Product product;
   final double purchaseAmount;

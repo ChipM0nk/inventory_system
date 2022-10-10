@@ -7,7 +7,7 @@ part of 'supplier.dart';
 // **************************************************************************
 
 Supplier _$SupplierFromJson(Map<String, dynamic> json) => Supplier(
-      supplierId: json['id'] as int?,
+      supplierId: json['supplierId'] as int?,
       supplierName: json['supplierName'] as String,
       supplierAddress: json['supplierAddress'] as String,
       supplierEmailAdd: json['supplierEmailAdd'] as String,
@@ -23,7 +23,7 @@ Map<String, dynamic> _$SupplierToJson(Supplier instance) {
     }
   }
 
-  writeNotNull('id', instance.supplierId);
+  writeNotNull('supplierId', instance.supplierId);
   val['supplierName'] = instance.supplierName;
   val['supplierAddress'] = instance.supplierAddress;
   val['supplierEmailAdd'] = instance.supplierEmailAdd;
