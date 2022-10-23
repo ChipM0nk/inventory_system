@@ -26,6 +26,7 @@ class CustomTextField extends StatelessWidget {
     this.focusNode,
     this.snapshot,
     this.autofocus = false,
+    this.obscureText = false,
   });
 
   final FormFieldValidator? validator; //TODO Remove later
@@ -45,6 +46,7 @@ class CustomTextField extends StatelessWidget {
   final FocusNode? focusNode;
   final AsyncSnapshot<Object?>? snapshot;
   final bool autofocus;
+  final bool obscureText;
 
   TextStyle getHintTextStyle(context, hint, enabled) {
     return TextStyle(
@@ -89,6 +91,7 @@ class CustomTextField extends StatelessWidget {
               style: getHintTextStyle(context, false, enabled),
               inputFormatters: inputFormatters,
               autofocus: autofocus,
+              obscureText: obscureText,
             ),
           ),
           ErrorMessage(snapshot: snapshot)

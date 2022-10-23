@@ -94,6 +94,17 @@ class AddPurchaseItemDialog extends StatelessWidget {
                                                     textEditingValue.text
                                                         .toLowerCase());
                                               });
+
+                                              if (matches.isEmpty) {
+                                                BlocProvider.of<PurchaseCubit>(
+                                                        context)
+                                                    .updateProduct(null);
+
+                                                BlocProvider.of<PurchaseCubit>(
+                                                        context)
+                                                    .updateBatchQuantity("0");
+                                                quantityController.text = "0";
+                                              }
                                               return matches;
                                             }
                                           },
@@ -147,7 +158,7 @@ class AddPurchaseItemDialog extends StatelessWidget {
                 return Column(
                   children: [
                     CustomTextField(
-                      labelText: "Purchase Price",
+                      labelText: "Purchase Amount",
                       hintText: "1299.99",
                       controller: priceController,
                       snapshot: snapshot,
@@ -188,8 +199,7 @@ class AddPurchaseItemDialog extends StatelessWidget {
             );
 
             var totalAmount = StreamBuilder(
-              stream:
-                  BlocProvider.of<PurchaseCubit>(context).purchaseAmountStream,
+              stream: BlocProvider.of<PurchaseCubit>(context).itemTotalStream,
               builder: (context, snapshot) {
                 final totalAmountController = TextEditingController();
                 totalAmountController.text =

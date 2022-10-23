@@ -5,8 +5,8 @@ import 'package:edar_app/data/model/category.dart';
 import 'package:edar_app/data/model/product.dart';
 import 'package:edar_app/data/model/supplier.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_dropdown.dart';
-import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_text_field.dart';
+import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,11 +25,14 @@ class ProductDialog extends StatelessWidget {
     BlocProvider.of<ProductsCubit>(context).init();
     BlocProvider.of<CategoriesCubit>(context).fetchCategories();
     BlocProvider.of<SuppliersCubit>(context).fetchSuppliers();
+    BlocProvider.of<ProductsCubit>(context).clearError();
     if (product != null) {
       title = 'Update Product';
       BlocProvider.of<ProductsCubit>(context).loadProducts(product!);
       productId = product!.productId;
-    } else {}
+    } else {
+      BlocProvider.of<ProductsCubit>(context).updateProductQuantity("0");
+    }
 
     var productCodeField = StreamBuilder(
       stream: BlocProvider.of<ProductsCubit>(context).productCodeStream,
@@ -84,7 +87,7 @@ class ProductDialog extends StatelessWidget {
             labelText: "Product Quantity",
             hintText: "999.99",
             initialValue:
-                product != null ? product!.productQuantity.toString() : null,
+                product != null ? product!.currentStock.toString() : null,
             inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.allow(RegExp("[.0-9]")),
             ],
@@ -103,8 +106,7 @@ class ProductDialog extends StatelessWidget {
           child: CustomTextField(
               labelText: "Product Unit",
               hintText: "09219999999",
-              initialValue:
-                  product != null ? product!.productUnit.toString() : null,
+              initialValue: product != null ? product!.unit.toString() : null,
               snapshot: snapshot,
               onChanged: (text) {
                 BlocProvider.of<ProductsCubit>(context).updateProductUnit(text);
@@ -220,6 +222,21 @@ class ProductDialog extends StatelessWidget {
             });
       },
     );
+
+    var serviceErrorMessage = StreamBuilder(
+      stream: BlocProvider.of<ProductsCubit>(context).errorStream,
+      builder: (context, snapshot) {
+        return Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+          child: ErrorMessage(
+            snapshot: snapshot,
+            fontSize: 14,
+            height: 20,
+          ),
+        );
+      },
+    );
+
     return AlertDialog(
       scrollable: true,
       title: Text(title),
@@ -258,7 +275,7 @@ class ProductDialog extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      productQuanity,
+                      supplierField,
                       productUnitField,
                     ],
                   ),
@@ -266,10 +283,13 @@ class ProductDialog extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      supplierField,
+                      productQuanity,
                       const SizedBox(width: 200),
                     ],
                   ),
+                  Row(
+                    children: [serviceErrorMessage],
+                  )
                 ],
               ),
             ),

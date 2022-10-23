@@ -9,8 +9,8 @@ part 'purchase_item.g.dart';
 class PurchaseItem {
   final int? purchaseItemId;
   final Product product;
-  final double purchaseAmount;
-  final double batchQuantity;
+  final double itemAmount;
+  final double quantity;
   final double itemTotalAmount;
 
   // Connect the generated [_$PersonFromJson] function to the `fromJson`
@@ -24,8 +24,8 @@ class PurchaseItem {
   const PurchaseItem({
     this.purchaseItemId,
     required this.product,
-    required this.purchaseAmount,
-    required this.batchQuantity,
+    required this.itemAmount,
+    required this.quantity,
     required this.itemTotalAmount,
   });
 

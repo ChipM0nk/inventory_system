@@ -1,15 +1,15 @@
 import 'package:edar_app/cubit/categories/categories_field_mixin.dart';
 import 'package:edar_app/data/model/category.dart';
 import 'package:edar_app/data/repository/category_repository.dart';
+import 'package:edar_app/utils/error_message_mixin.dart';
 import 'package:edar_app/utils/mixin_validations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'categories_state.dart';
 
-@immutable
 class CategoriesCubit extends Cubit<CategoriesState>
-    with ValidationMixin, CategoriesFieldMixin {
+    with ValidationMixin, CategoriesFieldMixin, ErrorMessageMixin {
   final CategoryRepository categoryRepository;
 
   CategoriesCubit({required this.categoryRepository})

@@ -164,8 +164,8 @@ class _ProductPageState extends State<ProductPage> {
             ),
           ),
           onSort: (colIdx, asc) {
-            BlocProvider.of<ProductsCubit>(context).sortProducts(
-                (product) => product.productQuantity, colIdx, asc);
+            BlocProvider.of<ProductsCubit>(context)
+                .sortProducts((product) => product.currentStock, colIdx, asc);
           },
         ),
         DataColumn(
@@ -176,7 +176,7 @@ class _ProductPageState extends State<ProductPage> {
           ),
           onSort: (colIdx, asc) {
             BlocProvider.of<ProductsCubit>(context)
-                .sortProducts((product) => product.productUnit, colIdx, asc);
+                .sortProducts((product) => product.unit, colIdx, asc);
           },
         ),
 

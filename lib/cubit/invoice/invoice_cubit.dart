@@ -4,31 +4,43 @@ import 'package:edar_app/cubit/invoice/invoice_field_mixin.dart';
 import 'package:edar_app/cubit/invoice/invoice_item_field_mixin.dart';
 import 'package:edar_app/data/model/invoice/invoice.dart';
 import 'package:edar_app/data/repository/invoice_repository.dart';
+import 'package:edar_app/utils/error_message_mixin.dart';
 import 'package:edar_app/utils/mixin_validations.dart';
 
 part 'invoice_state.dart';
 
 class InvoiceCubit extends Cubit<InvoiceState>
-    with ValidationMixin, InvoiceItemFieldMixin, InvoiceFieldMixin {
+    with
+        ValidationMixin,
+        InvoiceItemFieldMixin,
+        InvoiceFieldMixin,
+        ErrorMessageMixin {
   final InvoiceRepository invoiceRepository;
 
   InvoiceCubit({required this.invoiceRepository}) : super(InvoiceInitial());
 
-  void fetchInvoice() {
-    invoiceRepository.fetchAll().then((invoice) => {
-          emit(InvoiceLoaded(
-            invoice: invoice,
-            sortIndex: null,
-            sortAscending: true,
-          )),
-        });
+  void reset() {
+    emit(InvoiceInitial());
+  }
+
+  void fetchInvoices() {
+    invoiceRepository
+        .fetchAll()
+        .then((invoice) => {
+              emit(InvoiceLoaded(
+                invoices: invoice,
+                sortIndex: null,
+                sortAscending: true,
+              )),
+            })
+        .onError((error, stackTrace) => updateError('$error'));
   }
 
   void sortInvoice<T>(
       Comparable<T> Function(Invoice) getField, int sortIndex, bool ascending) {
     final currentState = state;
     if (currentState is InvoiceLoaded) {
-      final invoice = currentState.invoice;
+      final invoice = currentState.invoices;
       final filteredData = currentState.filteredData;
 
       final data = filteredData ?? invoice;
@@ -41,14 +53,13 @@ class InvoiceCubit extends Cubit<InvoiceState>
       });
       emit(InvoiceLoaded(
           filteredData: data,
-          invoice: invoice,
+          invoices: invoice,
           sortIndex: sortIndex,
           sortAscending: ascending));
     }
   }
 
   void addInvoice() {
-    emit(AddingInvoice());
     Map<String, dynamic> invoiceObj = getInvoice(null).toJson();
     invoiceRepository.addInvoice(invoiceObj).then((isAdded) {
       if (isAdded) {
@@ -56,23 +67,21 @@ class InvoiceCubit extends Cubit<InvoiceState>
         emit(InvoiceAdded());
         // fetchInvoice();
       } else {
-        emit(InvoiceStateError());
+        updateError(null);
       }
-    });
+    }).onError((error, stackTrace) => updateError('$error'));
   }
 
   void updateInvoice(int invoiceId) {
-    emit(UpdatingInvoice());
     Map<String, dynamic> invoiceObj = getInvoice(invoiceId).toJson();
-    invoiceRepository.udpateInvoice(invoiceObj, invoiceId!).then((isUpdated) {
+    invoiceRepository.udpateInvoice(invoiceObj, invoiceId).then((isUpdated) {
       if (isUpdated) {
         // fetchInvoice();
         emit(InvoiceUpdated());
-        fetchInvoice();
       } else {
-        emit(InvoiceStateError());
+        updateError(null);
       }
-    });
+    }).onError((error, stackTrace) => updateError('$error'));
   }
 
   void deleteInvoice(int invoiceId) {
@@ -81,27 +90,27 @@ class InvoiceCubit extends Cubit<InvoiceState>
     invoiceRepository.deleteInvoice(invoiceId).then((isDeleted) {
       if (isDeleted) {
         emit(InvoiceDeleted());
-        fetchInvoice();
+        // fetchInvoice();
       } else {
-        emit(InvoiceStateError());
+        updateError(null);
       }
-    });
+    }).onError((error, stackTrace) => updateError('$error'));
   }
 
   void searchInvoice(String searchText) {
     final currentState = state;
     if (currentState is InvoiceLoaded) {
-      final data = currentState.invoice;
+      final data = currentState.invoices;
       if (searchText.isEmpty) {
-        emit(InvoiceLoaded(invoice: data, sortAscending: false));
+        emit(InvoiceLoaded(invoices: data, sortAscending: false));
       } else {
         final filteredData = data
             .where((invoice) =>
                 invoice.customerName.contains(searchText) ||
-                invoice.invoiceNumber.contains(searchText))
+                invoice.invoiceNo.contains(searchText))
             .toList();
         emit(InvoiceLoaded(
-            filteredData: filteredData, invoice: data, sortAscending: true));
+            filteredData: filteredData, invoices: data, sortAscending: true));
       }
     }
   }
@@ -109,20 +118,20 @@ class InvoiceCubit extends Cubit<InvoiceState>
   void selectedInvoice(Invoice? invoice) {
     final currentState = state;
     if (currentState is InvoiceLoaded) {
-      final invoice = currentState.invoice;
+      final invoice = currentState.invoices;
       emit(InvoiceLoaded(
-        invoice: invoice,
+        invoices: invoice,
         sortAscending: true,
       ));
     }
   }
 
   loadInvoice(Invoice invoice) {
-    updateInvoiceNumber(invoice.invoiceNumber);
+    updateInvoiceNumber(invoice.invoiceNo);
     updateCustomerName(invoice.customerName);
     invoice.customerAddress ?? updateCustomerAddress(invoice.customerAddress!);
     invoice.contactNo ?? updateCustomerContact(invoice.contactNo!);
-    updateSalesPerson(invoice.salesPerson);
+    // updateSalesPerson(invoice.salesPerson);
     updatePoNumber(invoice.poNumber);
     updatePurchaseDate(invoice.purchaseDate);
     updatePaymentTerm(invoice.paymentTerm);

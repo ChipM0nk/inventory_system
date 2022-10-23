@@ -1,6 +1,6 @@
+import 'package:edar_app/constants/services.dart';
 import 'package:edar_app/data/model/product.dart';
 import 'package:edar_app/data/network/network_service.dart';
-import 'package:edar_app/routing/route_names.dart';
 
 class ProductRepository {
   final NetworkService networkService;
@@ -8,18 +8,19 @@ class ProductRepository {
   ProductRepository({required this.networkService});
 
   Future<List<Product>> fetchAll() async {
-    final objRaw = await networkService.fetchAll(ProductsRoute);
+    final objRaw = await networkService.fetchAll(ProductsService);
     return objRaw.map((e) => Product.fromJson(e)).toList();
   }
 
   Future<bool> addProduct(Map<String, dynamic> productObj) async {
-    final isAdded = await networkService.addItem(productObj, ProductsRoute);
+    final isAdded = await networkService.addItem(productObj, ProductsService);
 
     return isAdded;
   }
 
   Future<bool> deleteProduct(int productId) async {
-    final isDeleted = await networkService.deleteItem(productId, ProductsRoute);
+    final isDeleted =
+        await networkService.deleteItem(productId, ProductsService);
 
     return isDeleted;
   }
@@ -27,7 +28,7 @@ class ProductRepository {
   Future<bool> udpateProduct(
       Map<String, dynamic> productObj, int productId) async {
     final isUpdated =
-        await networkService.udpateItem(productObj, productId, ProductsRoute);
+        await networkService.udpateItem(productObj, productId, ProductsService);
 
     return isUpdated;
   }

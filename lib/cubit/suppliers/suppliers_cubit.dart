@@ -3,26 +3,30 @@ import 'dart:io';
 import 'package:edar_app/cubit/suppliers/suppliers_field_mixin.dart';
 import 'package:edar_app/data/model/supplier.dart';
 import 'package:edar_app/data/repository/supplier_repository.dart';
+import 'package:edar_app/utils/error_message_mixin.dart';
 import 'package:edar_app/utils/mixin_validations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'suppliers_state.dart';
 
 class SuppliersCubit extends Cubit<SuppliersState>
-    with ValidationMixin, SuppliersFieldMixin {
+    with ValidationMixin, SuppliersFieldMixin, ErrorMessageMixin {
   final SupplierRepository supplierRepository;
 
   SuppliersCubit({required this.supplierRepository})
       : super(SuppliersInitial());
 
   void fetchSuppliers() {
-    supplierRepository.fetchAll().then((suppliers) => {
-          emit(SuppliersLoaded(
-            suppliers: suppliers,
-            sortIndex: null,
-            sortAscending: true,
-          )),
-        });
+    supplierRepository
+        .fetchAll()
+        .then((suppliers) => {
+              emit(SuppliersLoaded(
+                suppliers: suppliers,
+                sortIndex: null,
+                sortAscending: true,
+              )),
+            })
+        .onError((error, stackTrace) => updateError('$error'));
   }
 
   void sortSuppliers<T>(Comparable<T> Function(Supplier) getField,
@@ -49,8 +53,6 @@ class SuppliersCubit extends Cubit<SuppliersState>
   }
 
   void addSupplier() {
-    emit(AddingSupplier());
-
     Map<String, dynamic> supplierObj = getSupplier(null).toJson();
 
     print("Add suppplier :::: ${supplierObj}");
@@ -60,14 +62,12 @@ class SuppliersCubit extends Cubit<SuppliersState>
         emit(SupplierAdded());
         fetchSuppliers();
       } else {
-        emit(SupplierStateError());
+        updateError(null);
       }
-    });
+    }).onError((error, stackTrace) => updateError('$error'));
   }
 
   void updateSupplier(int supplierId) {
-    emit(UpdatingSupplier());
-
     Map<String, dynamic> supplierObj = getSupplier(supplierId).toJson();
     print("Update ::: ${supplierObj}");
 
@@ -79,22 +79,25 @@ class SuppliersCubit extends Cubit<SuppliersState>
         emit(SupplierUpdated());
         fetchSuppliers();
       } else {
-        emit(SupplierStateError());
+        updateError(null);
       }
-    });
+    }).onError((error, stackTrace) => updateError('$error'));
   }
 
   void deleteSupplier(int supplierId) {
-    emit(DeletingSupplier());
-
     supplierRepository.deleteSupplier(supplierId).then((isDeleted) {
       if (isDeleted) {
         emit(SupplierDeleted());
         fetchSuppliers();
       } else {
-        emit(SupplierStateError());
+        updateError(null);
       }
-    });
+    }).onError(
+      (error, stackTrace) {
+        print("Error message : ${error}");
+        updateError('$error');
+      },
+    );
   }
 
   void searchSupplier(String searchText) {

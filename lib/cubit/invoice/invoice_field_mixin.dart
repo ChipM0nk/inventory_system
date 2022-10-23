@@ -28,7 +28,7 @@ mixin InvoiceFieldMixin on ValidationMixin {
     _customerNameController = BehaviorSubject<String>();
     _customerAddressController = BehaviorSubject<String>();
     _customerContactController = BehaviorSubject<String>();
-    _salesPersonController = BehaviorSubject<User>();
+    _salesPersonController = BehaviorSubject<String>();
     _poNumberController = BehaviorSubject<String>();
     _purchaseDateController = BehaviorSubject<String>();
     _paymentTermController = BehaviorSubject<String>();
@@ -38,12 +38,6 @@ mixin InvoiceFieldMixin on ValidationMixin {
     _invoiceItemListController = BehaviorSubject<List<InvoiceItem>>();
     _invoiceTotalAmountController = BehaviorSubject<double>();
     _invoiceItemListController.sink.add(initialList);
-
-    //test
-    User salesPerson = const User(
-        username:
-            "23432"); //TODO Change to actual user from localStorage after login
-    _salesPersonController.sink.add(salesPerson);
     _paymentTypeController.sink.add('Cash');
 
     String initialDate =
@@ -92,8 +86,8 @@ mixin InvoiceFieldMixin on ValidationMixin {
     }
   }
 
-  Stream<User> get salesPersonStream => _salesPersonController.stream;
-  updateSalesPerson(User user) {
+  Stream<String> get salesPersonStream => _salesPersonController.stream;
+  updateSalesPerson(String user) {
     _salesPersonController.sink.add(user);
   }
 
@@ -187,14 +181,12 @@ mixin InvoiceFieldMixin on ValidationMixin {
   Stream<double> get totalAmountStream => _invoiceTotalAmountController.stream;
 
   updateTotalAmount(double totalAmount) {
-    print("update amount");
     _invoiceTotalAmountController.sink.add(totalAmount);
   }
 
   calculateTotalAmount(List<InvoiceItem> invoiceItems) {
     double invoiceTotalAmount =
-        invoiceItems.fold(0.0, (sum, element) => sum + element.amount);
-    print("Total Amount: ${invoiceTotalAmount}");
+        invoiceItems.fold(0.0, (sum, element) => sum + element.totalAmount);
     updateTotalAmount(invoiceTotalAmount);
   }
 
@@ -205,9 +197,8 @@ mixin InvoiceFieldMixin on ValidationMixin {
   }
 
   ///invoice item list
-  Stream<bool> get buttonValid => Rx.combineLatest9(
+  Stream<bool> get buttonValid => Rx.combineLatest8(
       customerNameStream,
-      salesPersonStream,
       poNumberStream,
       purchaseDateStream,
       paymentTypeStream,
@@ -215,16 +206,15 @@ mixin InvoiceFieldMixin on ValidationMixin {
       tinNumberStream,
       dueDateStream,
       invoiceItemsStream,
-      (a, b, c, d, e, f, g, h, i) =>
+      (a, b, c, d, e, f, g, h) =>
           true && _invoiceItemListController.value.length > 0);
 
   Invoice getInvoice(int? invoiceId) {
     return Invoice(
-      invoiceNumber: _invoiceNumberController.value,
+      invoiceNo: _invoiceNumberController.value,
       customerName: _customerNameController.value,
       customerAddress: _customerAddressController.value,
       contactNo: _customerContactController.value,
-      salesPerson: _salesPersonController.value,
       poNumber: _poNumberController.value,
       purchaseDate: _purchaseDateController.value,
       paymentType: _paymentTypeController.value,

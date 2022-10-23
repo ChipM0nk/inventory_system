@@ -1,0 +1,43 @@
+{
+    "invoiceNo": "24234234",
+    "customerName": "Alvin",
+    "customerAddress": "Lipa",
+    "contactNo": "32423423",
+    "salesPerson": {
+        "username": "23432"
+    },
+    "poNumber": "23123123",
+    "paymentType": "Cash",
+    "paymentTerm": "Cash",
+    "tinNumber": "123123213",
+    "invoiceItems": [
+        {
+            "sn": 1,
+            "product": {
+                "productId": 115,
+                "productCode": "BWL23",
+                "productName": "Toilet Bowl 23",
+                "productDescription": "dl;kfjdslfkjds",
+                "productPrice": 1199.99,
+                "currentStock": 50,
+                "unit": "pcs",
+                "supplier": {
+                    "supplierId": 109,
+                    "supplierName": "GM",
+                    "supplierAddress": "Sto Tomas",
+                    "supplierEmailAdd": "gm@gmail.com",
+                    "supplierContactNumber": "09324392481"
+                },
+                "category": {
+                    "categoryId": 1,
+                    "categoryCode": "BWL",
+                    "categoryName": "Toilet Bowl"
+                }
+            },
+            "quantity": 2,
+            "price": 1199.99,
+            "totalAmount": 2399.98
+        }
+    ],
+    "totalAmount": 2399.98
+}

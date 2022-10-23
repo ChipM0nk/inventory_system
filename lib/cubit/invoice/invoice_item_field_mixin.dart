@@ -3,7 +3,6 @@
 import 'package:edar_app/data/model/invoice/invoice_item.dart';
 import 'package:edar_app/data/model/product.dart';
 import 'package:edar_app/utils/mixin_validations.dart';
-import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 
 mixin InvoiceItemFieldMixin on ValidationMixin {
@@ -47,11 +46,18 @@ mixin InvoiceItemFieldMixin on ValidationMixin {
   Stream<double> get quantityStream => _quantityController.stream;
   updateQuantity(String fieldValue) {
     if (isFieldDoubleNumeric(fieldValue)) {
-      _quantityController.sink.add(double.parse(fieldValue));
+      double quantity = double.parse(fieldValue);
+      _quantityController.sink.add(quantity);
+
+      Product product = _productController.value;
+      if (product.currentStock < quantity) {
+        _quantityController.sink.addError("Not enough stock");
+      } else {
+        updateInvoiceItemAmount();
+      }
     } else {
       _quantityController.sink.addError("Please enter valid numeric value");
     }
-    updateInvoiceItemAmount();
   }
 
   Stream<double> get priceStream => _priceController.stream;
@@ -78,16 +84,18 @@ mixin InvoiceItemFieldMixin on ValidationMixin {
       quantityStream,
       priceStream,
       invoiceItemAmountStream,
-      (a, b, c, d) => true);
+      (a, b, c, d) =>
+          true &&
+          _productController.value.currentStock >= _quantityController.value);
 
   InvoiceItem getInvoiceItem(int? invoiceItem) {
     return InvoiceItem(
       invoiceitemId: invoiceItem,
-      sn: "1",
+      sn: 1,
       product: _productController.value,
       quantity: _quantityController.value,
       price: _priceController.value,
-      amount: _invoiceItemAmountController.value,
+      totalAmount: _invoiceItemAmountController.value,
     );
   }
 }

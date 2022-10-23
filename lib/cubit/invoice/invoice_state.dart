@@ -5,13 +5,13 @@ abstract class InvoiceState {}
 class InvoiceInitial extends InvoiceState {}
 
 class InvoiceLoaded extends InvoiceState {
-  final List<Invoice> invoice;
+  final List<Invoice> invoices;
   final List<Invoice>? filteredData;
   final int? sortIndex;
   final bool sortAscending;
 
   InvoiceLoaded({
-    required this.invoice,
+    required this.invoices,
     this.filteredData,
     this.sortIndex,
     required this.sortAscending,

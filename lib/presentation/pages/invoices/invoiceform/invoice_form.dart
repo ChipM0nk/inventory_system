@@ -1,22 +1,26 @@
 import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
 
 import 'package:edar_app/data/model/invoice/invoice_item.dart';
-import 'package:edar_app/presentation/pages/sales/sales_datatable.dart';
+import 'package:edar_app/locator.dart';
+import 'package:edar_app/presentation/pages/invoices/invoiceform/invoice_datatable.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_date_picker.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_dropdown.dart';
+import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
+import 'package:edar_app/routing/route_names.dart';
+import 'package:edar_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../widgets/fields/custom_text_field.dart';
+import '../../../widgets/fields/custom_text_field.dart';
 
-class SalesForm extends StatefulWidget {
-  const SalesForm({Key? key}) : super(key: key);
+class InvoiceForm extends StatefulWidget {
+  const InvoiceForm({Key? key}) : super(key: key);
 
   @override
-  State<SalesForm> createState() => _SalesFormState();
+  State<InvoiceForm> createState() => _InvoiceFormState();
 }
 
-class _SalesFormState extends State<SalesForm> {
+class _InvoiceFormState extends State<InvoiceForm> {
   final dateFormat = 'dd-MMM-yy';
   DateTime selectedDate = DateTime.now();
 
@@ -168,71 +172,102 @@ class _SalesFormState extends State<SalesForm> {
               labelText: 'Payment Term');
         });
 
-    return Align(
-      alignment: Alignment.topLeft,
-      child: SizedBox(
-        width: 1000,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
+    var serviceErrorMessage = StreamBuilder(
+      stream: BlocProvider.of<InvoiceCubit>(context).errorStream,
+      builder: (context, snapshot) {
+        return snapshot.hasError
+            ? Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10, bottom: 20),
+                child: ErrorMessage(
+                  snapshot: snapshot,
+                  fontSize: 14,
+                  height: 20,
+                ),
+              )
+            : const SizedBox();
+      },
+    );
+    return BlocBuilder<InvoiceCubit, InvoiceState>(
+      builder: (context, state) {
+        if (state is InvoiceAdded) {
+          print("Invoice Success"); //TODO create a popup for print
+          Future.delayed(const Duration(milliseconds: 500), () {
+            setState(() {
+              locator<NavigationService>().navigateTo(InvoiceFormRoute);
+              BlocProvider.of<InvoiceCubit>(context).reset();
+            });
+          });
+        }
+
+        return Align(
+          alignment: Alignment.topLeft,
+          child: SizedBox(
+            width: 1000,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Column(
                   children: [
-                    invoiceNumber,
-                    customerName,
-                    customerAddressField,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        invoiceNumber,
+                        customerName,
+                        customerAddressField,
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        customerContactNumber,
+                        poNumber,
+                        purchaseDate,
+                        dueDate,
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        tinNumber,
+                        paymentType,
+                        paymentTerm,
+                        const SizedBox(width: 200),
+                      ],
+                    ),
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    customerContactNumber,
-                    poNumber,
-                    purchaseDate,
-                    dueDate,
-                  ],
+                InvoiceDataTable(
+                  deleteInvoiceItem: _deleteItem,
+                  addInvoiceItem: _addItem,
                 ),
+                serviceErrorMessage,
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    tinNumber,
-                    paymentType,
-                    paymentTerm,
-                    const SizedBox(width: 200),
+                    StreamBuilder<bool>(
+                        stream:
+                            BlocProvider.of<InvoiceCubit>(context).buttonValid,
+                        builder: (context, snapshot) {
+                          return ElevatedButton(
+                            onPressed: snapshot.hasData
+                                ? () {
+                                    BlocProvider.of<InvoiceCubit>(context)
+                                        .addInvoice();
+                                  }
+                                : null,
+                            child: const Text("Save"),
+                          );
+                        }),
                   ],
-                ),
+                )
               ],
             ),
-            SalesDataTable(
-              deleteInvoiceItem: _deleteItem,
-              addInvoiceItem: _addItem,
-            ),
-            Row(
-              children: [
-                StreamBuilder<bool>(
-                    stream: BlocProvider.of<InvoiceCubit>(context).buttonValid,
-                    builder: (context, snapshot) {
-                      return ElevatedButton(
-                        onPressed: snapshot.hasData
-                            ? () {
-                                BlocProvider.of<InvoiceCubit>(context)
-                                    .addInvoice();
-                              }
-                            : null,
-                        child: const Text("Save"),
-                      );
-                    }),
-              ],
-            )
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

@@ -1,7 +1,8 @@
 import 'package:edar_app/presentation/pages/category/category_page.dart';
+import 'package:edar_app/presentation/pages/invoices/invoice_page.dart';
 import 'package:edar_app/presentation/pages/product/product_page.dart';
-import 'package:edar_app/presentation/pages/purchase/purchase_form.dart';
-import 'package:edar_app/presentation/pages/sales/sales_form.dart';
+import 'package:edar_app/presentation/pages/purchases/purchaseform/purchase_form.dart';
+import 'package:edar_app/presentation/pages/invoices/invoiceform/invoice_form.dart';
 import 'package:edar_app/presentation/pages/supplier/supplier_page.dart';
 import 'package:edar_app/presentation/widgets/content_card.dart';
 import 'package:edar_app/routing/route_names.dart';
@@ -14,18 +15,20 @@ Route<dynamic> generateRoute(RouteSettings settings) {
   //     MenuItemList.firstWhere((menu) => menu.route == settings.name).page;
   // if (page != null) {}
   switch (settings.name) {
-    case SalesRoute:
-      return _getPageRoute(SalesForm(), settings);
-    case PurchasesRoute:
-      return _getPageRoute(PurchaseForm(), settings);
+    case InvoiceFormRoute:
+      return _getPageRoute(const InvoiceForm(), settings);
+    case InvoicesRoute:
+      return _getPageRoute(const InvoicePage(), settings);
+    case PurchaseFormRoute:
+      return _getPageRoute(const PurchaseForm(), settings);
     case CategoriesRoute:
-      return _getPageRoute(CategoryPage(), settings);
+      return _getPageRoute(const CategoryPage(), settings);
     case SuppliersRoute:
-      return _getPageRoute(SupplierPage(), settings);
+      return _getPageRoute(const SupplierPage(), settings);
     case ProductsRoute:
-      return _getPageRoute(ProductPage(), settings);
+      return _getPageRoute(const ProductPage(), settings);
     default:
-      return _getPageRoute(SalesForm(), settings);
+      return _getPageRoute(const InvoiceForm(), settings);
   }
 }
 

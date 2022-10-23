@@ -8,12 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../data/model/product.dart';
+import '../../../../data/model/product.dart';
 
-class AddItemDialog extends StatelessWidget {
+class InvoiceAddItemDialog extends StatelessWidget {
   final Function(InvoiceItem) addInvoiceItem;
   final InvoiceItem? invoiceItem;
-  const AddItemDialog({
+  const InvoiceAddItemDialog({
     Key? key,
     required this.addInvoiceItem,
     this.invoiceItem,
@@ -40,16 +40,28 @@ class AddItemDialog extends StatelessWidget {
             var productDropdownField = StreamBuilder<Product>(
                 stream: BlocProvider.of<InvoiceCubit>(context).productStream,
                 builder: (context, snapshot) {
-                  final categoryController = TextEditingController();
-                  categoryController.text = snapshot.hasData
-                      ? snapshot.data!.category.categoryName
+                  // final categoryController = TextEditingController();
+                  final currStockController = TextEditingController();
+
+                  currStockController.text = snapshot.hasData
+                      ? snapshot.data!.currentStock.toString()
                       : "";
 
-                  var productCategory = Column(
+                  // var productCategory = Column(
+                  //   children: [
+                  //     CustomTextField(
+                  //       labelText: "Category",
+                  //       controller: categoryController,
+                  //       enabled: false,
+                  //     ),
+                  //   ],
+                  // );
+
+                  var currentStock = Column(
                     children: [
                       CustomTextField(
-                        labelText: "Category",
-                        controller: categoryController,
+                        labelText: "Current Stock",
+                        controller: currStockController,
                         enabled: false,
                       ),
                     ],
@@ -124,7 +136,7 @@ class AddItemDialog extends StatelessWidget {
                                     width: 100, child: Text("Error"));
                               },
                             ),
-                            productCategory,
+                            currentStock,
                           ],
                         );
                       });

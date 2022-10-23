@@ -1,31 +1,68 @@
+// ignore_for_file: depend_on_referenced_packages, unused_import
+
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
+import 'package:edar_app/cubit/auth/auth_field_mixin.dart';
+import 'package:edar_app/data/model/user.dart';
+import 'package:edar_app/data/network/network_service.dart';
+import 'package:edar_app/data/repository/auth_repository.dart';
 import 'package:edar_app/local_storage.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:meta/meta.dart';
+import 'package:edar_app/routing/route_names.dart';
+import 'package:edar_app/utils/error_message_mixin.dart';
+import 'package:edar_app/utils/mixin_validations.dart';
+import 'package:flutter/cupertino.dart';
 
 part 'auth_state.dart';
 
-class AuthCubit extends Cubit<AuthState> {
-  AuthCubit() : super(LoginAuthInitial());
+class AuthCubit extends Cubit<AuthState>
+    with ValidationMixin, ErrorMessageMixin, AuthFieldMixin {
+  User? _user;
+  final AuthRepository authRepository =
+      AuthRepository(networkService: NetworkService());
 
-  final storage = new FlutterSecureStorage();
-  login() async {
-    print("Logged in");
-    await LocalStorage.write("key", "value");
-    authenticate();
+  AuthCubit() : super(AuthInitial());
+  login() {
+    User user = getCredentials();
+    Map<String, dynamic> userObj = user.toJson();
+    authRepository
+        .login(userObj)
+        .then(
+          (jwt) async => {
+            await LocalStorage.write("jwt", jwt),
+            authenticate(),
+          },
+        )
+        .onError(
+          (error, stackTrace) => {updateError('$error')},
+        );
   }
 
-  logout() async {
-    await LocalStorage.deletAll();
+  logout() {
+    LocalStorage.deletAll();
     authenticate();
+    _user = null;
   }
 
-  authenticate() async {
-    String? value = await LocalStorage.read("key");
+  User getUserInfo() {
+    return _user!;
+  }
 
-    if (value == null) {
+  authenticate() {
+    LocalStorage.read("jwt").then((value) => {
+          checkJwt(value),
+        });
+  }
+
+  void checkJwt(String? jwt) {
+    if (jwt == null) {
       emit(AuthenticationFailed());
     } else {
+      String claims = jwt.split(".")[1];
+      claims = utf8.decode(base64Url.decode(claims));
+      Map<String, dynamic> userObj = jsonDecode(claims);
+      User user = User.fromJson(userObj);
+      _user = user;
       emit(AuthenticationSuccess());
     }
   }

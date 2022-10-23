@@ -1,55 +1,59 @@
-import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
 import 'package:edar_app/cubit/products/products_cubit.dart';
-import 'package:edar_app/data/model/invoice/invoice_item.dart';
-import 'package:edar_app/presentation/pages/sales/add_item_dialog.dart';
+import 'package:edar_app/cubit/purchases/purchase_cubit.dart';
+import 'package:edar_app/data/model/purchase/purchase_item.dart';
+import 'package:edar_app/data/model/supplier.dart';
+import 'package:edar_app/presentation/pages/purchases/purchaseform/add_purchase_item_dialog.dart';
+
 import 'package:edar_app/presentation/utils/util.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_label_text_field.dart';
 import 'package:edar_app/presentation/widgets/fields/numeric_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SalesDataTable extends StatelessWidget {
-  const SalesDataTable({
-    required this.deleteInvoiceItem,
-    required this.addInvoiceItem,
+class PurchaseDatatable extends StatelessWidget {
+  const PurchaseDatatable({
+    required this.deletePurchaseItem,
+    required this.addPurchaseItem,
     super.key,
   });
-  final Function(InvoiceItem) deleteInvoiceItem;
-  final Function(InvoiceItem) addInvoiceItem;
+  final Function(PurchaseItem) deletePurchaseItem;
+  final Function(PurchaseItem) addPurchaseItem;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 1000,
+      width: 900,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          StreamBuilder<List<InvoiceItem>>(
-            stream: BlocProvider.of<InvoiceCubit>(context).invoiceItemsStream,
+          StreamBuilder<List<PurchaseItem>>(
+            stream: BlocProvider.of<PurchaseCubit>(context).purchaseItemsStream,
             builder: (context, snapshot) {
-              var invoiceItemList = BlocProvider.of<InvoiceCubit>(context)
-                  .getInvoiceItems()
-                  .map((iv) => DataRow(cells: [
-                        DataCell(SizedBox(
-                            width: 180, child: Text(iv.product.productName))),
+              var listDataRows = BlocProvider.of<PurchaseCubit>(context)
+                  .getPurchaseItems()
+                  .map(
+                    (iv) => DataRow(
+                      cells: [
                         DataCell(SizedBox(
                           width: 260,
                           child: Tooltip(
                               message: iv.product.productDescription,
                               child: Text(
-                                iv.product.productDescription,
+                                iv.product.productName,
                                 overflow: TextOverflow.ellipsis,
                               )),
                         )),
                         DataCell(SizedBox(
                             width: 100,
-                            child: NumericText(text: iv.price.toString()))),
+                            child:
+                                NumericText(text: iv.itemAmount.toString()))),
                         DataCell(SizedBox(
-                            width: 60, child: Text(iv.quantity.toString()))),
-                        DataCell(SizedBox(
-                            width: 50, child: Text(iv.product.productUnit))),
+                            width: 100, child: Text(iv.quantity.toString()))),
                         DataCell(SizedBox(
                             width: 100,
-                            child: NumericText(text: iv.amount.toString()))),
+                            child: NumericText(
+                                text: iv.itemTotalAmount.toString()))),
                         DataCell(SizedBox(
                           width: 10,
                           child: IconButton(
@@ -59,17 +63,16 @@ class SalesDataTable extends StatelessWidget {
                               size: 15,
                               color: Colors.red,
                             ),
-                            onPressed: () => deleteInvoiceItem(iv),
+                            onPressed: () => deletePurchaseItem(iv),
                           ),
                         )),
-                      ]))
+                      ],
+                    ),
+                  )
                   .toList();
 
-              const emptyList = [
+              const emptyDataRow = [
                 DataRow(cells: [
-                  DataCell(SizedBox(
-                    width: 180,
-                  )),
                   DataCell(SizedBox(
                     width: 260,
                   )),
@@ -77,10 +80,7 @@ class SalesDataTable extends StatelessWidget {
                     width: 100,
                   )),
                   DataCell(SizedBox(
-                    width: 60,
-                  )),
-                  DataCell(SizedBox(
-                    width: 50,
+                    width: 100,
                   )),
                   DataCell(SizedBox(
                     width: 100,
@@ -91,7 +91,7 @@ class SalesDataTable extends StatelessWidget {
                 ])
               ];
 
-              return SingleChildScrollView(
+              var singleChildScrollView = SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: DataTable(
                   headingRowHeight: 30,
@@ -113,7 +113,7 @@ class SalesDataTable extends StatelessWidget {
                       label: SizedBox(
                         width: 180,
                         child: Text(
-                          'Product Name',
+                          'Product',
                           style: TextStyle(
                               fontStyle: FontStyle.italic,
                               fontWeight: FontWeight.bold),
@@ -124,7 +124,7 @@ class SalesDataTable extends StatelessWidget {
                       label: SizedBox(
                         width: 260,
                         child: Text(
-                          'Product Description',
+                          'Purchase Amount',
                           style: TextStyle(
                               fontStyle: FontStyle.italic,
                               fontWeight: FontWeight.bold),
@@ -135,29 +135,7 @@ class SalesDataTable extends StatelessWidget {
                       label: SizedBox(
                         width: 100,
                         child: Text(
-                          'Price',
-                          style: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    DataColumn(
-                      label: SizedBox(
-                        width: 60,
-                        child: Text(
                           'Quantity',
-                          style: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    DataColumn(
-                      label: SizedBox(
-                        width: 50,
-                        child: Text(
-                          'Unit',
                           style: TextStyle(
                               fontStyle: FontStyle.italic,
                               fontWeight: FontWeight.bold),
@@ -187,41 +165,52 @@ class SalesDataTable extends StatelessWidget {
                       ),
                     ),
                   ],
-                  rows: BlocProvider.of<InvoiceCubit>(context)
-                          .getInvoiceItems()
+                  rows: BlocProvider.of<PurchaseCubit>(context)
+                          .getPurchaseItems()
                           .isEmpty
-                      ? emptyList
-                      : invoiceItemList,
+                      ? emptyDataRow
+                      : listDataRows,
                 ),
               );
+              return singleChildScrollView;
             },
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              GestureDetector(
-                child: const Icon(
-                  Icons.add_box_outlined,
-                  color: Colors.green,
-                  size: 25,
-                ),
-                onTap: () {
-                  showDialog(
-                      barrierDismissible: false,
-                      context: context,
-                      builder: (_) {
-                        return MultiBlocProvider(
-                          providers: [
-                            BlocProvider.value(
-                                value: context.read<ProductsCubit>()),
-                            BlocProvider.value(
-                                value: context.read<InvoiceCubit>()),
-                          ],
-                          child: AddItemDialog(addInvoiceItem: addInvoiceItem),
-                        );
-                      });
-                },
-              ),
+              StreamBuilder<Supplier>(
+                  stream:
+                      BlocProvider.of<PurchaseCubit>(context).supplierStream,
+                  builder: (context, snapshot) {
+                    bool enabled = snapshot.hasData;
+
+                    return GestureDetector(
+                      child: Icon(
+                        Icons.add_box_outlined,
+                        color: enabled ? Colors.green : Colors.grey,
+                        size: 25,
+                      ),
+                      onTap: () {
+                        enabled
+                            ? showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (_) {
+                                  return MultiBlocProvider(
+                                    providers: [
+                                      BlocProvider.value(
+                                          value: context.read<ProductsCubit>()),
+                                      BlocProvider.value(
+                                          value: context.read<PurchaseCubit>()),
+                                    ],
+                                    child: AddPurchaseItemDialog(
+                                        addPurchaseItem: addPurchaseItem),
+                                  );
+                                })
+                            : null;
+                      },
+                    );
+                  }),
               Row(
                 children: [
                   const Text(
@@ -232,7 +221,7 @@ class SalesDataTable extends StatelessWidget {
                     height: 60,
                     width: 120,
                     child: StreamBuilder<double>(
-                      stream: BlocProvider.of<InvoiceCubit>(context)
+                      stream: BlocProvider.of<PurchaseCubit>(context)
                           .totalAmountStream,
                       builder: (context, snapshot) {
                         final totalAmountController = TextEditingController();

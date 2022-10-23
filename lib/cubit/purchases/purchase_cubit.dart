@@ -2,14 +2,23 @@ import 'package:edar_app/cubit/purchases/purchase_field_mixin.dart';
 import 'package:edar_app/cubit/purchases/purchase_item_field_mixin.dart';
 import 'package:edar_app/data/model/purchase/purchase.dart';
 import 'package:edar_app/data/repository/purchase_repository.dart';
+import 'package:edar_app/utils/error_message_mixin.dart';
 import 'package:edar_app/utils/mixin_validations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'purchase_state.dart';
 
 class PurchaseCubit extends Cubit<PurchaseState>
-    with ValidationMixin, PurchaseFieldMixin, PurchaseItemFieldMixin {
+    with
+        ValidationMixin,
+        PurchaseFieldMixin,
+        PurchaseItemFieldMixin,
+        ErrorMessageMixin {
   final PurchaseRepository purchaseRepository;
+
+  void reset() {
+    emit(PurchaseInitial());
+  }
 
   PurchaseCubit({required this.purchaseRepository}) : super(PurchaseInitial());
 
@@ -47,25 +56,19 @@ class PurchaseCubit extends Cubit<PurchaseState>
   }
 
   void addPurchase() {
-    emit(AddingPurchase());
-
     Map<String, dynamic> purchaseObj = getPurchase(null).toJson();
 
-    print("Add suppplier :::: ${purchaseObj}");
     purchaseRepository.addPurchase(purchaseObj).then((isAdded) {
       if (isAdded) {
         // fetchPurchase();
         emit(PurchaseAdded());
-        fetchPurchase();
       } else {
-        emit(PurchasetateError());
+        updateError(null);
       }
-    });
+    }).onError((error, stackTrace) => updateError('$error'));
   }
 
   void updatePurchase(int purchaseId) {
-    emit(UpdatingPurchase());
-
     Map<String, dynamic> purchaseObj = getPurchase(purchaseId).toJson();
     print("Update ::: ${purchaseObj}");
 
@@ -77,22 +80,20 @@ class PurchaseCubit extends Cubit<PurchaseState>
         emit(PurchaseUpdated());
         fetchPurchase();
       } else {
-        emit(PurchasetateError());
+        updateError(null);
       }
-    });
+    }).onError((error, stackTrace) => updateError('$error'));
   }
 
   void deletePurchase(int purchaseId) {
-    emit(DeletingPurchase());
-
     purchaseRepository.deletePurchase(purchaseId).then((isDeleted) {
       if (isDeleted) {
         emit(PurchaseDeleted());
         fetchPurchase();
       } else {
-        emit(PurchasetateError());
+        updateError(null);
       }
-    });
+    }).onError((error, stackTrace) => updateError('$error'));
   }
 
   void searchPurchase(String searchText) {

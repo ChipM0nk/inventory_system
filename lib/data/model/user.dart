@@ -9,8 +9,8 @@ class User {
   final int? userId;
   final String username;
   final String? password;
-  @JsonKey(ignore: true)
   final String? confirmPassword;
+  final String? token;
   final List<String>? menuList;
 
   // Connect the generated [_$PersonFromJson] function to the `fromJson`
@@ -22,6 +22,7 @@ class User {
     required this.username,
     this.password,
     this.confirmPassword,
+    this.token,
     this.menuList,
   });
 

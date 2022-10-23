@@ -15,6 +15,7 @@ class SupplierDialog extends StatelessWidget {
     String title = 'Add Supplier';
     int? supplierId;
     BlocProvider.of<SuppliersCubit>(context).init();
+    BlocProvider.of<SuppliersCubit>(context).clearError();
 
     if (supplier != null) {
       BlocProvider.of<SuppliersCubit>(context).loadSuppliers(supplier!);
@@ -28,6 +29,7 @@ class SupplierDialog extends StatelessWidget {
         return CustomTextField(
             labelText: "Supplier Name",
             hintText: "GM",
+            autofocus: true,
             width: 300,
             initialValue:
                 supplier != null ? supplier!.supplierName.toString() : null,
@@ -92,6 +94,21 @@ class SupplierDialog extends StatelessWidget {
             });
       },
     );
+
+    var serviceErrorMessage = StreamBuilder(
+      stream: BlocProvider.of<SuppliersCubit>(context).errorStream,
+      builder: (context, snapshot) {
+        return Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+          child: ErrorMessage(
+            snapshot: snapshot,
+            fontSize: 14,
+            height: 20,
+          ),
+        );
+      },
+    );
+
     return AlertDialog(
       scrollable: true,
       title: Text(title),
@@ -111,6 +128,7 @@ class SupplierDialog extends StatelessWidget {
                     supplierEmailAddField,
                     supplierContactField,
                     supplierAddressField,
+                    serviceErrorMessage,
                   ],
                 ),
               ],

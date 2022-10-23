@@ -1,18 +1,16 @@
-import 'package:edar_app/data/model/category.dart';
+import 'package:edar_app/data/model/invoice/invoice.dart';
 import 'package:flutter/material.dart';
 
 typedef OnRowSelect = void Function(int index);
 typedef OnDeleteClick = void Function(int index);
-typedef OnItemClick = void Function(Category category);
+typedef OnItemClick = void Function(Invoice invoice);
 
-class CategoryData extends DataTableSource {
-  final List<Category> data;
-  final OnDeleteClick onDeleteClick;
+class InvoiceData extends DataTableSource {
+  final List<Invoice> data;
   final OnItemClick onItemClick;
 
-  CategoryData({
+  InvoiceData({
     required this.data,
-    required this.onDeleteClick,
     required this.onItemClick,
   });
 
@@ -34,20 +32,29 @@ class CategoryData extends DataTableSource {
       selected: false,
       cells: <DataCell>[
         DataCell(
-          Text(dataItem.categoryCode),
+          Text(dataItem.invoiceNo),
           onTap: () => onItemClick(dataItem),
         ),
         DataCell(
-          Text(dataItem.categoryName),
+          Text(dataItem.customerName),
           onTap: () => onItemClick(dataItem),
         ),
-        // DataCell(Text('${dataItem.categoryId}')),
         DataCell(
-            const Icon(
-              Icons.delete,
-              color: Color.fromARGB(255, 92, 13, 6),
-            ),
-            onTap: () => onDeleteClick(dataItem.categoryId!)),
+          Text(dataItem.contactNo.toString()),
+          onTap: () => onItemClick(dataItem),
+        ),
+        DataCell(
+          Text(dataItem.purchaseDate),
+          onTap: () => onItemClick(dataItem),
+        ),
+        DataCell(
+          Text(dataItem.totalAmount.toString()),
+          onTap: () => onItemClick(dataItem),
+        ),
+        DataCell(
+          Text(dataItem.salesPerson ?? dataItem.salesPerson!),
+          onTap: () => onItemClick(dataItem),
+        ),
       ],
     );
   }

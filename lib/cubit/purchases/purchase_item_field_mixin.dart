@@ -71,8 +71,8 @@ mixin PurchaseItemFieldMixin on ValidationMixin {
     return PurchaseItem(
       purchaseItemId: purchaseItemId,
       product: _productController.value,
-      purchaseAmount: _purchaseAmountController.value,
-      batchQuantity: _batchQuantityController.value,
+      itemAmount: _purchaseAmountController.value,
+      quantity: _batchQuantityController.value,
       itemTotalAmount: _itemTotalController.value,
     );
   }

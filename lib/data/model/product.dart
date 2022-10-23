@@ -14,8 +14,8 @@ class Product {
   final String productName;
   final String productDescription;
   final double productPrice;
-  final double productQuantity;
-  final String productUnit;
+  final double currentStock;
+  final String unit;
   final Supplier supplier;
   final Category category;
 
@@ -25,8 +25,8 @@ class Product {
     required this.productName,
     required this.productDescription,
     required this.productPrice,
-    required this.productQuantity,
-    required this.productUnit,
+    required this.currentStock,
+    required this.unit,
     required this.supplier,
     required this.category,
   });

@@ -8,17 +8,24 @@ var MenuItemList = [
   CustomMenuItem(
       sideNavigationBarItem: const SideNavigationBarItem(
         icon: Icons.point_of_sale,
-        label: 'Sales Form',
+        label: 'Invoice Form',
       ),
       // page: const SalesForm(),
-      route: SalesRoute),
+      route: InvoiceFormRoute),
+  CustomMenuItem(
+      sideNavigationBarItem: const SideNavigationBarItem(
+        icon: Icons.point_of_sale,
+        label: 'Invoices',
+      ),
+      // page: const SalesForm(),
+      route: InvoicesRoute),
   CustomMenuItem(
       sideNavigationBarItem: const SideNavigationBarItem(
         icon: Icons.shopping_bag_outlined,
         label: 'Purchase Form',
       ),
       // page: const SupplierPage(),
-      route: PurchasesRoute),
+      route: PurchaseFormRoute),
   CustomMenuItem(
       sideNavigationBarItem: const SideNavigationBarItem(
         icon: Icons.category,

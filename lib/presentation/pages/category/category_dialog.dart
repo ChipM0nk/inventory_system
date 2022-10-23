@@ -15,6 +15,7 @@ class CategoryDialog extends StatelessWidget {
     String title = 'Add Category';
     int? categoryId;
     BlocProvider.of<CategoriesCubit>(context).init();
+    BlocProvider.of<CategoriesCubit>(context).clearError();
 
     if (category != null) {
       BlocProvider.of<CategoriesCubit>(context).loadCategory(category!);

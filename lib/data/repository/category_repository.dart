@@ -1,6 +1,6 @@
+import 'package:edar_app/constants/services.dart';
 import 'package:edar_app/data/model/category.dart';
 import 'package:edar_app/data/network/network_service.dart';
-import 'package:edar_app/routing/route_names.dart';
 
 class CategoryRepository {
   final NetworkService networkService;
@@ -8,19 +8,20 @@ class CategoryRepository {
   CategoryRepository({required this.networkService});
 
   Future<List<Category>> fetchAll() async {
-    final objRaw = await networkService.fetchAll(CategoriesRoute);
+    final objRaw = await networkService.fetchAll(CategoriesService);
     return objRaw.map((e) => Category.fromJson(e)).toList();
   }
 
   Future<bool> addCategory(Map<String, dynamic> categoryObj) async {
-    final isAdded = await networkService.addItem(categoryObj, CategoriesRoute);
+    final isAdded =
+        await networkService.addItem(categoryObj, CategoriesService);
 
     return isAdded;
   }
 
   Future<bool> deleteCategory(int categoryId) async {
     final isDeleted =
-        await networkService.deleteItem(categoryId, CategoriesRoute);
+        await networkService.deleteItem(categoryId, CategoriesService);
 
     return isDeleted;
   }
@@ -28,7 +29,7 @@ class CategoryRepository {
   Future<bool> udpateCategory(
       Map<String, dynamic> categoryObj, int categoryId) async {
     final isUpdated = await networkService.udpateItem(
-        categoryObj, categoryId, CategoriesRoute);
+        categoryObj, categoryId, CategoriesService);
 
     return isUpdated;
   }

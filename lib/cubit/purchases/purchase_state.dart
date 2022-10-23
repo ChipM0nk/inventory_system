@@ -18,19 +18,15 @@ class PurchaseLoaded extends PurchaseState {
 }
 
 //Add
-class AddingPurchase extends PurchaseState {}
 
 class PurchaseAdded extends PurchaseState {}
 
 //delete
-class DeletingPurchase extends PurchaseState {}
 
 class PurchaseDeleted extends PurchaseState {}
 
 //update
-class UpdatingPurchase extends PurchaseState {}
 
 class PurchaseUpdated extends PurchaseState {}
 
 //error
-class PurchasetateError extends PurchaseState {}

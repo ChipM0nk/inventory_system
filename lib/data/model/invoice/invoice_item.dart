@@ -7,14 +7,12 @@ part 'invoice_item.g.dart';
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
 @immutable
 class InvoiceItem {
-  @JsonKey(name: "id")
-  @JsonKey(name: "invoiceItemId")
   final int? invoiceitemId;
-  final String sn;
+  final int sn;
   final Product product;
   final double quantity;
   final double price;
-  final double amount;
+  final double totalAmount;
 
   const InvoiceItem({
     this.invoiceitemId,
@@ -22,7 +20,7 @@ class InvoiceItem {
     required this.product,
     required this.quantity,
     required this.price,
-    required this.amount,
+    required this.totalAmount,
   });
 
   // Connect the generated [_$PersonFromJson] function to the `fromJson`

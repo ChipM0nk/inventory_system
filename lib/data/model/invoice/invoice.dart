@@ -8,14 +8,12 @@ part 'invoice.g.dart';
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
 @immutable
 class Invoice {
-  @JsonKey(name: "id")
-  @JsonKey(name: "invoiceId")
   final int? invoiceId;
-  final String invoiceNumber;
+  final String invoiceNo;
   final String customerName;
   final String? customerAddress;
   final String? contactNo;
-  final User salesPerson;
+  final String? salesPerson;
   final String poNumber;
   final String purchaseDate;
   final String paymentType;
@@ -27,11 +25,11 @@ class Invoice {
 
   const Invoice({
     this.invoiceId,
-    required this.invoiceNumber,
+    required this.invoiceNo,
     required this.customerName,
     this.customerAddress,
     this.contactNo,
-    required this.salesPerson,
+    this.salesPerson,
     required this.poNumber,
     required this.purchaseDate,
     required this.paymentType,

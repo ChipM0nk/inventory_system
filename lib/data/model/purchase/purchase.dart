@@ -1,5 +1,4 @@
 // ignore: depend_on_referenced_packages
-import 'package:edar_app/data/model/product.dart';
 import 'package:edar_app/data/model/purchase/purchase_item.dart';
 import 'package:edar_app/data/model/supplier.dart';
 import 'package:flutter/material.dart';

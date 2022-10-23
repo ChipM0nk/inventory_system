@@ -7,12 +7,12 @@ part of 'invoice_item.dart';
 // **************************************************************************
 
 InvoiceItem _$InvoiceItemFromJson(Map<String, dynamic> json) => InvoiceItem(
-      invoiceitemId: json['id'] as int?,
-      sn: json['sn'] as String,
+      invoiceitemId: json['invoiceitemId'] as int?,
+      sn: json['sn'] as int,
       product: Product.fromJson(json['product'] as Map<String, dynamic>),
       quantity: (json['quantity'] as num).toDouble(),
       price: (json['price'] as num).toDouble(),
-      amount: (json['amount'] as num).toDouble(),
+      totalAmount: (json['totalAmount'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$InvoiceItemToJson(InvoiceItem instance) {
@@ -24,11 +24,11 @@ Map<String, dynamic> _$InvoiceItemToJson(InvoiceItem instance) {
     }
   }
 
-  writeNotNull('id', instance.invoiceitemId);
+  writeNotNull('invoiceitemId', instance.invoiceitemId);
   val['sn'] = instance.sn;
   val['product'] = instance.product.toJson();
   val['quantity'] = instance.quantity;
   val['price'] = instance.price;
-  val['amount'] = instance.amount;
+  val['totalAmount'] = instance.totalAmount;
   return val;
 }

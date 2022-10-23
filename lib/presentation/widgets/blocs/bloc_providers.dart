@@ -16,9 +16,11 @@ import '../../../data/repository/category_repository.dart';
 class BlocProviders {
   static getBlockProvider(String route) {
     switch (route) {
-      case SalesRoute:
-        print("Sales form page loaded");
-        return _getSalesFormBlockProvider();
+      case InvoiceFormRoute:
+      case InvoicesRoute:
+        print("Sales form/page loaded");
+        return _getInvoiceFormBlockProvider();
+      case PurchaseFormRoute:
       case PurchasesRoute:
         print("Purchase loaded");
         return _getPurchaseBlocProvider();
@@ -37,7 +39,7 @@ class BlocProviders {
     }
   }
 
-  static List<BlocProvider> _getSalesFormBlockProvider() {
+  static List<BlocProvider> _getInvoiceFormBlockProvider() {
     //TODO Change later
     InvoiceRepository invoiceRepository =
         InvoiceRepository(networkService: NetworkService());

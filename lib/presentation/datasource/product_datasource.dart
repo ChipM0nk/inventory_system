@@ -71,12 +71,12 @@ class ProductData extends DataTableSource {
           SizedBox(
               width: 60,
               child: Text(
-                dataItem.productQuantity.toString(),
+                dataItem.currentStock.toString(),
               )),
           onTap: () => onItemClick(dataItem),
         ),
         DataCell(
-          Text(dataItem.productUnit),
+          Text(dataItem.unit),
           onTap: () => onItemClick(dataItem),
         ),
 

@@ -1,6 +1,7 @@
-const String SalesRoute = '/sales';
-const String PurchasesRoute = "/purchase";
-const String CategoriesRoute = '/category';
-const String SuppliersRoute = "/supplier";
-const String ProductsRoute = "/product";
-const String InvoicesRoute = "/invoice";
+const String InvoiceFormRoute = "/admin/invoiceform";
+const String PurchaseFormRoute = "/admin/purchaseform";
+const String InvoicesRoute = "/admin/invoices";
+const String PurchasesRoute = "/admin/purchases";
+const String CategoriesRoute = '/admin/category';
+const String SuppliersRoute = "/admin/supplier";
+const String ProductsRoute = "/admin/product";

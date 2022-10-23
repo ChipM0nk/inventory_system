@@ -4,13 +4,17 @@ import 'package:edar_app/cubit/suppliers/suppliers_cubit.dart';
 import 'package:edar_app/data/model/purchase/purchase_item.dart';
 import 'package:edar_app/data/model/supplier.dart';
 
-import 'package:edar_app/presentation/pages/purchase/purchase_datatable.dart';
+import 'package:edar_app/presentation/pages/purchases/purchaseform/purchase_datatable.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_date_picker.dart';
+import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
+import 'package:edar_app/routing/route_names.dart';
+import 'package:edar_app/services/navigation_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../widgets/fields/custom_text_field.dart';
+import '../../../../locator.dart';
+import '../../../widgets/fields/custom_text_field.dart';
 
 class PurchaseForm extends StatefulWidget {
   const PurchaseForm({Key? key}) : super(key: key);
@@ -99,6 +103,10 @@ class _PurchaseFormState extends State<PurchaseForm> {
                             .toLowerCase()
                             .contains(textEditingValue.text.toLowerCase());
                       });
+                      if (matches.isEmpty) {
+                        BlocProvider.of<PurchaseCubit>(context)
+                            .updateSupplier(null);
+                      }
                       return matches;
                     }
                   },
@@ -126,72 +134,102 @@ class _PurchaseFormState extends State<PurchaseForm> {
             },
           );
         });
+    var serviceErrorMessage = StreamBuilder(
+      stream: BlocProvider.of<PurchaseCubit>(context).errorStream,
+      builder: (context, snapshot) {
+        return snapshot.hasError
+            ? Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10, bottom: 20),
+                child: ErrorMessage(
+                  snapshot: snapshot,
+                  fontSize: 14,
+                  height: 20,
+                ),
+              )
+            : const SizedBox();
+      },
+    );
 
-    return Align(
-      alignment: Alignment.topLeft,
-      child: SizedBox(
-        width: 1000,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
+    return BlocBuilder<PurchaseCubit, PurchaseState>(
+      builder: (context, state) {
+        if (state is PurchaseAdded) {
+          print("Purchase Success"); //TODO create a popup for print
+          Future.delayed(const Duration(milliseconds: 500), () {
+            setState(() {
+              locator<NavigationService>().navigateTo(PurchaseFormRoute);
+              BlocProvider.of<PurchaseCubit>(context).reset();
+            });
+          });
+        }
+
+        return Align(
+          alignment: Alignment.topLeft,
+          child: SizedBox(
+            width: 1000,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Column(
                   children: [
-                    supplierFinderField,
-                    purchaseNo,
-                    const SizedBox(width: 200),
-                    const SizedBox(width: 200),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        supplierFinderField,
+                        purchaseNo,
+                        const SizedBox(width: 200),
+                        const SizedBox(width: 200),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        batchCode,
+                        purchaseDate,
+                        const SizedBox(width: 200),
+                        const SizedBox(width: 200),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [],
+                    ),
                   ],
                 ),
+                PurchaseDatatable(
+                  deletePurchaseItem: _deleteItem,
+                  addPurchaseItem: _addItem,
+                ),
+                serviceErrorMessage,
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    purchaseDate,
-                    batchCode,
-                    const SizedBox(width: 200),
-                    const SizedBox(width: 200),
+                    StreamBuilder<bool>(
+                        stream: BlocProvider.of<PurchaseCubit>(context)
+                            .saveButtonValid,
+                        builder: (context, snapshot) {
+                          return ElevatedButton(
+                            onPressed: snapshot.hasData &&
+                                    BlocProvider.of<PurchaseCubit>(context)
+                                        .getPurchaseItems()
+                                        .isNotEmpty
+                                ? () {
+                                    BlocProvider.of<PurchaseCubit>(context)
+                                        .addPurchase();
+                                  }
+                                : null,
+                            child: const Text("Save"),
+                          );
+                        }),
                   ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [],
-                ),
+                )
               ],
             ),
-            PurchaseDatatable(
-              deletePurchaseItem: _deleteItem,
-              addPurchaseItem: _addItem,
-            ),
-            Row(
-              children: [
-                StreamBuilder<bool>(
-                    stream:
-                        BlocProvider.of<PurchaseCubit>(context).saveButtonValid,
-                    builder: (context, snapshot) {
-                      return ElevatedButton(
-                        onPressed: snapshot.hasData &&
-                                BlocProvider.of<PurchaseCubit>(context)
-                                    .getPurchaseItems()
-                                    .isNotEmpty
-                            ? () {
-                                BlocProvider.of<PurchaseCubit>(context)
-                                    .addPurchase();
-                              }
-                            : null,
-                        child: const Text("Save"),
-                      );
-                    }),
-              ],
-            )
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

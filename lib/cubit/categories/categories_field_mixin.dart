@@ -8,13 +8,12 @@ mixin CategoriesFieldMixin on ValidationMixin {
   //streams and validations
   late var _categoryCodeController;
   late var _categoryNameController;
-  late var _errorController;
 
   init() {
     print("init"); //TODO Change this later to proper dispose
+
     _categoryCodeController = BehaviorSubject<String>();
     _categoryNameController = BehaviorSubject<String>();
-    _errorController = BehaviorSubject<String>();
   }
 
   Stream<String> get categoryCodeStream => _categoryCodeController.stream;
@@ -36,12 +35,6 @@ mixin CategoriesFieldMixin on ValidationMixin {
       _categoryNameController.sink
           .addError("Please enter text with length greater than 4");
     }
-  }
-
-  Stream<String> get errorStream => _errorController.stream;
-  updateError(String? errorMessage) {
-    errorMessage = errorMessage ?? "Error encountered";
-    _errorController.sink.addError(errorMessage);
   }
 
   Stream<bool> get buttonValid =>

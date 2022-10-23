@@ -111,16 +111,15 @@ mixin ProductsFieldMixin on ValidationMixin {
         : null;
   }
 
-  Stream<bool> get buttonValid => Rx.combineLatest8(
+  Stream<bool> get buttonValid => Rx.combineLatest7(
       productCodeStream,
       productNameStream,
       productDescriptionStream,
-      productQuantityStream,
       productUnitStream,
       productPriceStream,
       productSupplierStream,
       productCategoryStream,
-      (a, b, c, d, e, f, g, h) => true);
+      (a, b, c, d, e, f, g) => true);
 
   Product getProduct(int? productId) {
     return Product(
@@ -129,8 +128,8 @@ mixin ProductsFieldMixin on ValidationMixin {
       productName: _productNameController.value,
       productDescription: _productDescriptionController.value,
       productPrice: _productPriceController.value,
-      productQuantity: _productQuantityController.value,
-      productUnit: _productUnitController.value,
+      currentStock: _productQuantityController.value,
+      unit: _productUnitController.value,
       supplier: _productSupplierController.value,
       category: _productCategoryController.value,
     );

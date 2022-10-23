@@ -7,12 +7,12 @@ part of 'invoice.dart';
 // **************************************************************************
 
 Invoice _$InvoiceFromJson(Map<String, dynamic> json) => Invoice(
-      invoiceId: json['id'] as int?,
-      invoiceNumber: json['invoiceNumber'] as String,
+      invoiceId: json['invoiceId'] as int?,
+      invoiceNo: json['invoiceNo'] as String,
       customerName: json['customerName'] as String,
       customerAddress: json['customerAddress'] as String?,
       contactNo: json['contactNo'] as String?,
-      salesPerson: User.fromJson(json['salesPerson'] as Map<String, dynamic>),
+      salesPerson: json['salesPerson'] as String,
       poNumber: json['poNumber'] as String,
       purchaseDate: json['purchaseDate'] as String,
       paymentType: json['paymentType'] as String,
@@ -34,12 +34,12 @@ Map<String, dynamic> _$InvoiceToJson(Invoice instance) {
     }
   }
 
-  writeNotNull('id', instance.invoiceId);
-  val['invoiceNumber'] = instance.invoiceNumber;
+  writeNotNull('invoiceId', instance.invoiceId);
+  val['invoiceNo'] = instance.invoiceNo;
   val['customerName'] = instance.customerName;
   writeNotNull('customerAddress', instance.customerAddress);
   writeNotNull('contactNo', instance.contactNo);
-  val['salesPerson'] = instance.salesPerson.toJson();
+  val['salesPerson'] = instance.salesPerson;
   val['poNumber'] = instance.poNumber;
   val['purchaseDate'] = instance.purchaseDate;
   val['paymentType'] = instance.paymentType;

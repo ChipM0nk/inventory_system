@@ -1,13 +1,14 @@
 import 'package:edar_app/cubit/products/products_field_mixin.dart';
 import 'package:edar_app/data/model/product.dart';
 import 'package:edar_app/data/repository/product_repository.dart';
+import 'package:edar_app/utils/error_message_mixin.dart';
 import 'package:edar_app/utils/mixin_validations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'products_state.dart';
 
 class ProductsCubit extends Cubit<ProductsState>
-    with ValidationMixin, ProductsFieldMixin {
+    with ValidationMixin, ProductsFieldMixin, ErrorMessageMixin {
   final ProductRepository productRepository;
 
   ProductsCubit({required this.productRepository}) : super(ProductsInitial());
@@ -15,13 +16,16 @@ class ProductsCubit extends Cubit<ProductsState>
   void fetchProducts() {
     print("Fetch products");
 
-    productRepository.fetchAll().then((products) => {
-          emit(ProductsLoaded(
-            products: products,
-            sortIndex: null,
-            sortAscending: true,
-          )),
-        });
+    productRepository
+        .fetchAll()
+        .then((products) => {
+              emit(ProductsLoaded(
+                products: products,
+                sortIndex: null,
+                sortAscending: true,
+              )),
+            })
+        .onError((error, stackTrace) => updateError('$error'));
   }
 
   void sortProducts<T>(
@@ -49,50 +53,56 @@ class ProductsCubit extends Cubit<ProductsState>
   }
 
   void addProduct() {
-    emit(AddingProduct());
-
     Map<String, dynamic> productObj = getProduct(null).toJson();
 
-    print("Add suppplier :::: ${productObj}");
     productRepository.addProduct(productObj).then((isAdded) {
       if (isAdded) {
-        // fetchProducts();
         emit(ProductAdded());
         fetchProducts();
       } else {
-        emit(ProductStateError());
+        updateError(null);
       }
-    });
+    }).onError(
+      (error, stackTrace) {
+        print("Error message : ${error}");
+        updateError('$error');
+      },
+    );
   }
 
   void updateProduct(int productId) {
-    emit(UpdatingProduct());
-
     Map<String, dynamic> productObj = getProduct(productId).toJson();
     print("Update ::: ${productObj}");
 
     productRepository.udpateProduct(productObj, productId!).then((isUpdated) {
       if (isUpdated) {
-        // fetchProducts();
         emit(ProductUpdated());
         fetchProducts();
       } else {
-        emit(ProductStateError());
+        updateError(null);
       }
-    });
+    }).onError(
+      (error, stackTrace) {
+        print("Error message : ${error}");
+        updateError('$error');
+      },
+    );
   }
 
   void deleteProduct(int productId) {
-    emit(DeletingProduct());
-
     productRepository.deleteProduct(productId).then((isDeleted) {
       if (isDeleted) {
         emit(ProductDeleted());
         fetchProducts();
       } else {
-        emit(ProductStateError());
+        updateError(null);
       }
-    });
+    }).onError(
+      (error, stackTrace) {
+        print("Error message : ${error}");
+        updateError('$error');
+      },
+    );
   }
 
   void searchProduct(String searchText) {
@@ -134,8 +144,8 @@ class ProductsCubit extends Cubit<ProductsState>
     updateProductName(product.productName);
     updateProductDecription(product.productDescription);
     updateProductPrice(product.productPrice.toString());
-    updateProductQuantity(product.productQuantity.toString());
-    updateProductUnit(product.productUnit);
+    updateProductQuantity(product.currentStock.toString());
+    updateProductUnit(product.unit);
     updateProductSupplier(product.supplier);
     updateProductCategory(product.category);
   }

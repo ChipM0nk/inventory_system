@@ -2,16 +2,35 @@
 
 import 'dart:convert';
 
-import 'package:edar_app/constants/strings.dart';
+import 'package:edar_app/constants/constants.dart';
+import 'package:edar_app/local_storage.dart';
 import 'package:http/http.dart';
 
 class NetworkService {
+  Future<dynamic> authenticate(Map<String, dynamic> userObj) async {
+    String url = "$BASE_URL/authenticate/";
+
+    final response = await post(Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(userObj));
+    dynamic respObj = jsonDecode(response.body);
+    if (respObj['code'] == '000') {
+      dynamic respBody = respObj['body'];
+      return respBody;
+    }
+
+    throw Exception(respObj['message']);
+  }
+
   Future<List<dynamic>> fetchAll(String serviceName) async {
     try {
       String url = "$BASE_URL$serviceName/all";
-      final response = await get(Uri.parse(url));
+
+      final response = await get(Uri.parse(url), headers: {
+        'Authorization': "Bearer ${await LocalStorage.read("jwt")}"
+      });
       dynamic respObj = jsonDecode(response.body);
-      print(respObj);
+      print(json.encode(respObj));
       if (respObj['code'] == '000') {
         List<dynamic> respBody = respObj['body'];
         return respBody;
@@ -31,9 +50,12 @@ class NetworkService {
     // try {
     print("Adding item");
     String url = "$BASE_URL$serviceName/add";
-
+    print(addObj);
     final response = await post(Uri.parse(url),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': "Bearer ${await LocalStorage.read("jwt")}",
+        },
         body: jsonEncode(addObj));
     dynamic respObj = jsonDecode(response.body);
     if (respObj['code'] == '000') {
@@ -41,49 +63,41 @@ class NetworkService {
     }
     print('Error Code: ${respObj["code"]}');
     throw Exception(respObj['message']);
-    // } catch (e) {
-    //   print("Error encountered: ${e}");
-    // }
-    // return false;
   }
 
   Future<bool> udpateItem(
       Map<String, dynamic> categoryObj, int id, String serviceName) async {
-    try {
-      print("Updating item");
-      String url = "$BASE_URL$serviceName/update";
+    print("Updating item");
+    String url = "$BASE_URL$serviceName/update";
 
-      final response = await patch(Uri.parse(url),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode(categoryObj));
-      dynamic respObj = jsonDecode(response.body);
-      if (respObj['code'] == '000') {
-        return true;
-      }
-      throw Exception(respObj['message']);
-    } catch (e) {
-      print("Error encountered: ${e}");
+    final response = await patch(Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': "Bearer ${await LocalStorage.read("jwt")}",
+        },
+        body: jsonEncode(categoryObj));
+    dynamic respObj = jsonDecode(response.body);
+    if (respObj['code'] == '000') {
+      return true;
     }
-    return false;
+    throw Exception(respObj['message']);
   }
 
   Future<bool> deleteItem(int id, String serviceName) async {
-    try {
-      print("Adding item");
-      String url = "$BASE_URL$serviceName/delete/$id";
+    print("Deleting item");
+    String url = "$BASE_URL$serviceName/delete/$id";
 
-      final response = await delete(
-        Uri.parse(url),
-        headers: {'Content-Type': 'application/json'},
-      );
-      dynamic respObj = jsonDecode(response.body);
-      if (respObj['code'] == '000') {
-        return true;
-      }
-      throw Exception(respObj['message']);
-    } catch (e) {
-      print("Error encountered: $e");
+    final response = await delete(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': "Bearer ${await LocalStorage.read("jwt")}",
+      },
+    );
+    dynamic respObj = jsonDecode(response.body);
+    if (respObj['code'] == '000') {
+      return true;
     }
-    return false;
+    throw Exception(respObj['message']);
   }
 }

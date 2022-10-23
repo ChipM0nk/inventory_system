@@ -27,7 +27,6 @@ mixin PurchaseFieldMixin on ValidationMixin {
 
     // _purchaseItemListController.sink.add(initialList);
     updatePurchaseItemList(initialList);
-    updateBatchCode("034304402");
     String initialDate =
         DateFormat('dd-MMM-yy').format(DateTime.now()); //default
     updatePurchaseDate(initialDate);
@@ -118,9 +117,8 @@ mixin PurchaseFieldMixin on ValidationMixin {
   }
 
   calculateTotalAmount(List<PurchaseItem> purchaseItems) {
-    double purchaseTotalAmount =
-        purchaseItems.fold(0.0, (sum, element) => sum + element.purchaseAmount);
-    print("Total Amount: ${purchaseTotalAmount}");
+    double purchaseTotalAmount = purchaseItems.fold(
+        0.0, (sum, element) => sum + element.itemTotalAmount);
     updateTotalAmount(purchaseTotalAmount);
   }
 
