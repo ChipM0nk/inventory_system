@@ -74,9 +74,14 @@ class CustomTextField extends StatelessWidget {
               enabled: enabled,
               decoration: InputDecoration(
                 labelText: labelText,
+                labelStyle: TextStyle(
+                  color: enabled ? Colors.grey : Colors.black,
+                ),
                 border: const OutlineInputBorder(),
                 hintText: hintText,
                 contentPadding: const EdgeInsets.all(10),
+                disabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black)),
                 hintStyle: getHintTextStyle(context, true, enabled),
               ),
               keyboardType: textInputType,

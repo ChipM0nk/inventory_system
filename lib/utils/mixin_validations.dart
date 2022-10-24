@@ -18,3 +18,8 @@ mixin ValidationMixin {
     return double.tryParse(s) != null;
   }
 }
+
+/// Define an extension:
+extension Ex on double {
+  double toPrecision(int n) => double.parse(toStringAsFixed(n));
+}

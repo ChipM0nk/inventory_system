@@ -113,7 +113,7 @@ mixin PurchaseFieldMixin on ValidationMixin {
   //set format
   Stream<double> get totalAmountStream => _totalAmountController.stream;
   updateTotalAmount(double amount) {
-    _totalAmountController.sink.add(amount);
+    _totalAmountController.sink.add(amount.toPrecision(2));
   }
 
   calculateTotalAmount(List<PurchaseItem> purchaseItems) {

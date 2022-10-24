@@ -2,7 +2,6 @@
 
 import 'package:edar_app/data/model/invoice/invoice.dart';
 import 'package:edar_app/data/model/invoice/invoice_item.dart';
-import 'package:edar_app/data/model/user.dart';
 import 'package:edar_app/utils/mixin_validations.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
@@ -181,7 +180,7 @@ mixin InvoiceFieldMixin on ValidationMixin {
   Stream<double> get totalAmountStream => _invoiceTotalAmountController.stream;
 
   updateTotalAmount(double totalAmount) {
-    _invoiceTotalAmountController.sink.add(totalAmount);
+    _invoiceTotalAmountController.sink.add(totalAmount.toPrecision(2));
   }
 
   calculateTotalAmount(List<InvoiceItem> invoiceItems) {

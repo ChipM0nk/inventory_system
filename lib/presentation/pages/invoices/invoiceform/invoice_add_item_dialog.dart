@@ -187,13 +187,14 @@ class InvoiceAddItemDialog extends StatelessWidget {
               },
             );
 
-            var totalAmount = StreamBuilder(
+            var totalAmount = StreamBuilder<double>(
               stream: BlocProvider.of<InvoiceCubit>(context)
                   .invoiceItemAmountStream,
               builder: (context, snapshot) {
                 final totalAmountController = TextEditingController();
-                totalAmountController.text =
-                    snapshot.hasData ? snapshot.data.toString() : "0.0";
+                totalAmountController.text = snapshot.hasData
+                    ? snapshot.data!.toStringAsFixed(2)
+                    : "0.0";
                 return Column(
                   children: [
                     CustomTextField(

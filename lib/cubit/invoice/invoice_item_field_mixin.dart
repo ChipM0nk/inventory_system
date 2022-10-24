@@ -76,7 +76,7 @@ mixin InvoiceItemFieldMixin on ValidationMixin {
     double itemAmount =
         (_quantityController.hasValue ? _quantityController.value : 0.0) *
             (_priceController.hasValue ? _priceController.value : 0.0);
-    _invoiceItemAmountController.sink.add(itemAmount);
+    _invoiceItemAmountController.sink.add(itemAmount.toPrecision(2));
   }
 
   Stream<bool> get buttonValidInvoiceItem => Rx.combineLatest4(

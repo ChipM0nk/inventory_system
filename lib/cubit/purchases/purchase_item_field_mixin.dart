@@ -57,7 +57,7 @@ mixin PurchaseItemFieldMixin on ValidationMixin {
         (_purchaseAmountController.hasValue
             ? _purchaseAmountController.value
             : 0.0);
-    _itemTotalController.sink.add(total);
+    _itemTotalController.sink.add(total.toPrecision(2));
   }
 
   Stream<bool> get buttonValidPurchaseItem => Rx.combineLatest4(

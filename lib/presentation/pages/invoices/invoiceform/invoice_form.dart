@@ -1,10 +1,16 @@
 import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
+import 'package:edar_app/cubit/products/products_cubit.dart';
+import 'package:edar_app/data/model/invoice/invoice.dart';
 
 import 'package:edar_app/data/model/invoice/invoice_item.dart';
 import 'package:edar_app/locator.dart';
-import 'package:edar_app/presentation/pages/invoices/invoiceform/invoice_datatable.dart';
+import 'package:edar_app/presentation/pages/invoices/invoice_dialog.dart';
+import 'package:edar_app/presentation/pages/invoices/invoice_item_table.dart';
+import 'package:edar_app/presentation/pages/invoices/invoiceform/invoice_add_item_dialog.dart';
+import 'package:edar_app/presentation/utils/util.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_date_picker.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_dropdown.dart';
+import 'package:edar_app/presentation/widgets/fields/custom_label_text_field.dart';
 import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
 import 'package:edar_app/routing/route_names.dart';
 import 'package:edar_app/services/navigation_service.dart';
@@ -224,8 +230,8 @@ class _InvoiceFormState extends State<InvoiceForm> {
                       children: [
                         customerContactNumber,
                         poNumber,
-                        purchaseDate,
-                        dueDate,
+                        paymentType,
+                        paymentTerm,
                       ],
                     ),
                     Row(
@@ -233,17 +239,101 @@ class _InvoiceFormState extends State<InvoiceForm> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         tinNumber,
-                        paymentType,
-                        paymentTerm,
+                        purchaseDate,
+                        dueDate,
                         const SizedBox(width: 200),
                       ],
                     ),
                   ],
                 ),
-                InvoiceDataTable(
-                  deleteInvoiceItem: _deleteItem,
-                  addInvoiceItem: _addItem,
-                ),
+                StreamBuilder<List<InvoiceItem>>(
+                    stream: BlocProvider.of<InvoiceCubit>(context)
+                        .invoiceItemsStream,
+                    builder: (context, snapshot) {
+                      return SizedBox(
+                        width: 1000,
+                        child: Column(
+                          children: [
+                            InvoiceItemTable(
+                              invoiceItems:
+                                  BlocProvider.of<InvoiceCubit>(context)
+                                      .getInvoiceItems(),
+                              deleteInvoiceItem: _deleteItem,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                GestureDetector(
+                                  child: const Icon(
+                                    Icons.add_box_outlined,
+                                    color: Colors.green,
+                                    size: 25,
+                                  ),
+                                  onTap: () {
+                                    showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (_) {
+                                          return MultiBlocProvider(
+                                            providers: [
+                                              BlocProvider.value(
+                                                  value: context
+                                                      .read<ProductsCubit>()),
+                                              BlocProvider.value(
+                                                  value: context
+                                                      .read<InvoiceCubit>()),
+                                            ],
+                                            child: InvoiceAddItemDialog(
+                                                addInvoiceItem: _addItem),
+                                          );
+                                        });
+                                  },
+                                ),
+                                Row(
+                                  children: [
+                                    const Text(
+                                      'Total Amount: ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18),
+                                    ),
+                                    SizedBox(
+                                      height: 60,
+                                      width: 120,
+                                      child: StreamBuilder<double>(
+                                        stream: BlocProvider.of<InvoiceCubit>(
+                                                context)
+                                            .totalAmountStream,
+                                        builder: (context, snapshot) {
+                                          final totalAmountController =
+                                              TextEditingController();
+
+                                          totalAmountController.text =
+                                              snapshot.hasData
+                                                  ? Util.convertToCurrency(
+                                                          snapshot.data!)
+                                                      .toString()
+                                                  : "0.0";
+
+                                          return SizedBox(
+                                            height: 30,
+                                            child: CustomLabelTextField(
+                                              fontSize: 18,
+                                              enabled: false,
+                                              controller: totalAmountController,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
                 serviceErrorMessage,
                 Row(
                   children: [
@@ -254,11 +344,10 @@ class _InvoiceFormState extends State<InvoiceForm> {
                           return ElevatedButton(
                             onPressed: snapshot.hasData
                                 ? () {
-                                    BlocProvider.of<InvoiceCubit>(context)
-                                        .addInvoice();
+                                    _openInvoiceDialog();
                                   }
                                 : null,
-                            child: const Text("Save"),
+                            child: const Text("Review"),
                           );
                         }),
                   ],
@@ -269,5 +358,20 @@ class _InvoiceFormState extends State<InvoiceForm> {
         );
       },
     );
+  }
+
+  void _openInvoiceDialog() {
+    Invoice invoice = BlocProvider.of<InvoiceCubit>(context).getInvoice(null);
+    showDialog(
+        context: context,
+        builder: (_) {
+          return BlocProvider.value(
+            value: context.read<InvoiceCubit>(),
+            child: InvoiceDialog(
+              invoice: invoice,
+              flgAddInvoice: true,
+            ),
+          );
+        });
   }
 }
