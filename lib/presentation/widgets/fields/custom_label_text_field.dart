@@ -14,6 +14,7 @@ class CustomLabelTextField extends StatelessWidget {
     this.height = 30,
     this.enabled = true,
     this.inputFormatters,
+    this.initialValue,
   });
 
   final TextEditingController? controller;
@@ -23,6 +24,8 @@ class CustomLabelTextField extends StatelessWidget {
   final double? width;
   final double? height;
   final bool enabled;
+  final String? initialValue;
+
   final List<TextInputFormatter>? inputFormatters;
 
   TextStyle getHintTextStyle(context, hint, enabled) {
@@ -57,6 +60,7 @@ class CustomLabelTextField extends StatelessWidget {
               controller: controller,
               onChanged: onChanged,
               inputFormatters: inputFormatters,
+              initialValue: initialValue,
               style: getHintTextStyle(context, false, enabled),
             ),
           ),

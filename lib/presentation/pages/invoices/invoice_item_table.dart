@@ -101,10 +101,13 @@ class InvoiceItemTable extends StatelessWidget {
         ),
         dataRowHeight: 20,
         border: TableBorder.all(
-            width: 1.0,
-            style: BorderStyle.solid,
-            borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+          width: 1.0,
+          style: BorderStyle.solid,
+          // borderRadius: const BorderRadius.only(
+          //   topLeft: Radius.circular(10),
+          //   topRight: Radius.circular(10),
+          // ),
+        ),
         columns: <DataColumn>[
           const DataColumn(
             label: SizedBox(
