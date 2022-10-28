@@ -18,6 +18,8 @@ class InvoiceLoaded extends InvoiceState {
   });
 }
 
+class InvoiceLoading extends InvoiceState {}
+
 //Add
 class AddingInvoice extends InvoiceState {}
 

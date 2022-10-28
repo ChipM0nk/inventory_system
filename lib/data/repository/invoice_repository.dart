@@ -7,6 +7,12 @@ class InvoiceRepository {
 
   InvoiceRepository({required this.networkService});
 
+  Future<List<Invoice>> fetchWithParam(Map<String, dynamic> paramObj) async {
+    final objRaw =
+        await networkService.fetchWithParam(InvoicesService, paramObj);
+    return objRaw.map((e) => Invoice.fromJson(e)).toList();
+  }
+
   Future<List<Invoice>> fetchAll() async {
     final objRaw = await networkService.fetchAll(InvoicesService);
     return objRaw.map((e) => Invoice.fromJson(e)).toList();

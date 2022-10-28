@@ -14,8 +14,8 @@ class CustomDatePicker extends StatelessWidget {
     this.initialValue,
     this.width = 200,
     this.height = 30,
-    this.nullable = false,
     required this.dateFormat,
+    this.snapshot,
   });
 
   final FormFieldValidator? validator; //TODO Remove later
@@ -26,8 +26,8 @@ class CustomDatePicker extends StatelessWidget {
   final String? initialValue;
   final double? width;
   final double? height;
-  final bool nullable;
   final String dateFormat;
+  final AsyncSnapshot<Object?>? snapshot;
 
   TextStyle getHintTextStyle(context, hint) {
     return TextStyle(
@@ -40,11 +40,12 @@ class CustomDatePicker extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextEditingController controller = TextEditingController();
     DateTime selectedDate = DateTime.now();
+
     if (initialValue != null) {
       controller.text = initialValue!;
-      selectedDate = DateFormat(dateFormat).parse(initialValue!);
-    } else if (initialValue == null && nullable) {
-      controller.text = "";
+      if (initialValue!.isNotEmpty) {
+        selectedDate = DateFormat(dateFormat).parse(initialValue!);
+      }
     } else {
       String formattedDate = DateFormat(dateFormat).format(selectedDate);
       controller.text = formattedDate;
@@ -73,7 +74,11 @@ class CustomDatePicker extends StatelessWidget {
             child: TextFormField(
               decoration: InputDecoration(
                 labelText: labelText,
-                border: const OutlineInputBorder(),
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: snapshot != null && snapshot!.hasError
+                            ? Colors.red
+                            : Colors.grey)),
                 contentPadding: const EdgeInsets.all(10),
                 hintStyle: getHintTextStyle(context, true),
                 suffixIcon: IconButton(

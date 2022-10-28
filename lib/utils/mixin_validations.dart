@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+
+@immutable
 mixin ValidationMixin {
   bool isFieldEmpty(String fieldValue) => fieldValue.trim().isEmpty;
 

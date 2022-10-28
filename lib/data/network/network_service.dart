@@ -25,6 +25,7 @@ class NetworkService {
   Future<List<dynamic>> fetchWithParam(
       String serviceName, Map<String, dynamic> paramObj) async {
     try {
+      print("Parameter :${json.encode(paramObj)}");
       String url = "$BASE_URL$serviceName/all/param";
 
       final response = await post(Uri.parse(url),

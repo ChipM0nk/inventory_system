@@ -10,6 +10,7 @@ import 'package:edar_app/utils/mixin_validations.dart';
 
 part 'invoice_state.dart';
 
+// ignore: must_be_immutable
 class InvoiceCubit extends Cubit<InvoiceState>
     with
         ValidationMixin,
@@ -26,11 +27,27 @@ class InvoiceCubit extends Cubit<InvoiceState>
   }
 
   void fetchInvoices() {
+    emit(InvoiceLoading());
     invoiceRepository
         .fetchAll()
-        .then((invoice) => {
+        .then((invoices) => {
               emit(InvoiceLoaded(
-                invoices: invoice,
+                invoices: invoices,
+                sortIndex: null,
+                sortAscending: true,
+              )),
+            })
+        .onError((error, stackTrace) => updateError('$error'));
+  }
+
+  void fetchInvoicesWithParam() {
+    emit(InvoiceLoading());
+    Map<String, dynamic> paramObj = getParam()!.toJson();
+    invoiceRepository
+        .fetchWithParam(paramObj)
+        .then((invoices) => {
+              emit(InvoiceLoaded(
+                invoices: invoices,
                 sortIndex: null,
                 sortAscending: true,
               )),
