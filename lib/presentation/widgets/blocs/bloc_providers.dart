@@ -22,7 +22,7 @@ class BlocProviders {
         return _getInvoiceFormBlockProvider();
       case PurchaseFormRoute:
       case PurchasesRoute:
-        print("Purchase loaded");
+        print("Purchase form/page loaded");
         return _getPurchaseBlocProvider();
       case CategoriesRoute:
         print("Category page loaded");

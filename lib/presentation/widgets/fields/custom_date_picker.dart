@@ -14,6 +14,7 @@ class CustomDatePicker extends StatelessWidget {
     this.initialValue,
     this.width = 200,
     this.height = 30,
+    this.nullable = false,
     required this.dateFormat,
   });
 
@@ -25,6 +26,7 @@ class CustomDatePicker extends StatelessWidget {
   final String? initialValue;
   final double? width;
   final double? height;
+  final bool nullable;
   final String dateFormat;
 
   TextStyle getHintTextStyle(context, hint) {
@@ -37,12 +39,13 @@ class CustomDatePicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextEditingController controller = TextEditingController();
-    late DateTime selectedDate;
+    DateTime selectedDate = DateTime.now();
     if (initialValue != null) {
       controller.text = initialValue!;
       selectedDate = DateFormat(dateFormat).parse(initialValue!);
+    } else if (initialValue == null && nullable) {
+      controller.text = "";
     } else {
-      selectedDate = DateTime.now();
       String formattedDate = DateFormat(dateFormat).format(selectedDate);
       controller.text = formattedDate;
     }

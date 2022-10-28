@@ -6,16 +6,16 @@ import 'package:edar_app/utils/mixin_validations.dart';
 import 'package:rxdart/rxdart.dart';
 
 mixin PurchaseItemFieldMixin on ValidationMixin {
-  late var _productController;
-  late var _purchaseAmountController;
-  late var _batchQuantityController;
-  late var _itemTotalController;
+  final _productController = BehaviorSubject<Product>();
+  final _purchaseAmountController = BehaviorSubject<double>();
+  final _batchQuantityController = BehaviorSubject<double>();
+  final _itemTotalController = BehaviorSubject<double>();
 
   initItem() {
-    _productController = BehaviorSubject<Product>();
-    _purchaseAmountController = BehaviorSubject<double>();
-    _batchQuantityController = BehaviorSubject<double>();
-    _itemTotalController = BehaviorSubject<double>();
+    _productController.sink.addError("");
+    _purchaseAmountController.sink.addError("");
+    _batchQuantityController.sink.addError("");
+    _itemTotalController.sink.addError("");
   }
 
   Stream<Product> get productStream => _productController.stream;

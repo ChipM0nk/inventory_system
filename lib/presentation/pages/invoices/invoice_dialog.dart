@@ -1,9 +1,12 @@
 import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
 import 'package:edar_app/data/model/invoice/invoice.dart';
 import 'package:edar_app/presentation/pages/invoices/datagrid/invoice_item_datagrid.dart';
-import 'package:edar_app/presentation/widgets/fields/custom_text_field.dart';
+import 'package:edar_app/presentation/widgets/custom_elevated_button.dart';
+import 'package:edar_app/presentation/widgets/custom_inline_label.dart';
+import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class InvoiceDialog extends StatelessWidget {
   final Invoice invoice;
@@ -17,6 +20,87 @@ class InvoiceDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var stackHeaderRows = <StackedHeaderRow>[
+      StackedHeaderRow(cells: [
+        StackedHeaderCell(
+            columnNames: ['prodname', 'proddesc', 'price', 'qty', 'total'],
+            child: Container(
+              color: Colors.grey[100],
+              child: Padding(
+                padding: const EdgeInsets.only(top: 15, left: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(children: [
+                          CustomInlineLabel(
+                              label: "Invoice No: ", value: invoice.invoiceNo),
+                          CustomInlineLabel(
+                              label: "PO Number: ", value: invoice.poNumber),
+                        ]),
+                        Row(children: [
+                          CustomInlineLabel(
+                              label: "Customer Name: ",
+                              value: invoice.customerName),
+                          CustomInlineLabel(
+                              width: 600,
+                              label: "Customer Address: ",
+                              value: invoice.customerAddress),
+                        ]),
+                        Row(children: [
+                          CustomInlineLabel(
+                              label: "Contact No: ", value: invoice.contactNo),
+                          CustomInlineLabel(
+                              label: "TIN Number: ", value: invoice.tinNumber),
+                        ]),
+                        Row(children: [
+                          CustomInlineLabel(
+                              label: "Payment Type: ",
+                              value: invoice.paymentType),
+                          CustomInlineLabel(
+                              label: "Payment Term: ",
+                              value: invoice.paymentTerm),
+                        ]),
+                        Row(children: [
+                          CustomInlineLabel(
+                              label: "Purchase Date: ",
+                              value: invoice.purchaseDate),
+                          CustomInlineLabel(
+                              label: "Due Date: ", value: invoice.dueDate),
+                        ]),
+                        Row(children: [
+                          CustomInlineLabel(
+                              width: 600,
+                              label: "Remarks: ",
+                              value: invoice.remarks),
+                        ])
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ))
+      ]),
+    ];
+
+    var serviceErrorMessage = StreamBuilder(
+      stream: BlocProvider.of<InvoiceCubit>(context).errorStream,
+      builder: (context, snapshot) {
+        return snapshot.hasError
+            ? Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: ErrorMessage(
+                  snapshot: snapshot,
+                  fontSize: 14,
+                  height: 20,
+                ),
+              )
+            : const SizedBox();
+      },
+    );
     return BlocBuilder<InvoiceCubit, InvoiceState>(
       builder: (context, state) {
         if (state is InvoiceAdded) {
@@ -24,109 +108,37 @@ class InvoiceDialog extends StatelessWidget {
         }
         return AlertDialog(
           title: const Text("Invoice Details"),
-          content: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: SizedBox(
-              width: 1000,
-              height: 450,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomTextField(
-                        initialValue: invoice.invoiceNo.toString(),
-                        labelText: "Invoice No",
-                        enabled: false,
+          content: Column(
+            children: [
+              SizedBox(
+                width: 1000,
+                height: 540,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 500,
+                      child: InvoiceItemDataGrid(
+                        invoiceItems: invoice.invoiceItems,
+                        summaryTotal: invoice.totalAmount,
+                        stackHeaderRows: stackHeaderRows,
+                        editable: false,
                       ),
-                      CustomTextField(
-                        initialValue: invoice.customerName.toString(),
-                        labelText: "Customer Name",
-                        enabled: false,
-                      ),
-                      CustomTextField(
-                        initialValue: invoice.customerAddress.toString(),
-                        labelText: "Customer Address",
-                        width: 465,
-                        enabled: false,
-                      )
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomTextField(
-                        initialValue: invoice.contactNo,
-                        labelText: "Contact Number",
-                        enabled: false,
-                      ),
-                      CustomTextField(
-                        initialValue: invoice.poNumber,
-                        labelText: "PO Number",
-                        enabled: false,
-                      ),
-                      CustomTextField(
-                        initialValue: invoice.paymentType,
-                        labelText: "Payment Type",
-                        enabled: false,
-                      ),
-                      CustomTextField(
-                        initialValue: invoice.paymentTerm,
-                        labelText: "Payment Term",
-                        enabled: false,
-                      )
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomTextField(
-                        initialValue: invoice.tinNumber,
-                        labelText: "TIN Number",
-                        enabled: false,
-                      ),
-                      CustomTextField(
-                        initialValue: invoice.purchaseDate,
-                        labelText: "Purchase Date",
-                        enabled: false,
-                      ),
-                      CustomTextField(
-                        initialValue: invoice.dueDate,
-                        labelText: "Due Date",
-                        enabled: false,
-                      ),
-                      const SizedBox(width: 200),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      SizedBox(
-                          height: 250,
-                          child: InvoiceItemDataGrid(invoice: invoice)),
-                    ],
-                  ),
-                ],
+                    ),
+                    serviceErrorMessage,
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
-          actionsPadding: const EdgeInsets.all(40),
+          actionsPadding: const EdgeInsets.only(bottom: 40),
           actions: [
             Center(
               child: SizedBox(
-                width: 200,
+                width: 170,
                 height: 70,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF08B578),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
+                child: CustomElevatedButton(
                   onPressed: flgAddInvoice
                       ? () {
                           BlocProvider.of<InvoiceCubit>(context).addInvoice();

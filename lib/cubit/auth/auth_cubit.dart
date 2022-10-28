@@ -59,7 +59,7 @@ class AuthCubit extends Cubit<AuthState>
       emit(AuthenticationFailed());
     } else {
       String claims = jwt.split(".")[1];
-      claims = utf8.decode(base64Url.decode(claims));
+      claims = utf8.decode(base64Url.decode(base64.normalize(claims)));
       Map<String, dynamic> userObj = jsonDecode(claims);
       User user = User.fromJson(userObj);
       _user = user;

@@ -9,25 +9,25 @@ import 'package:rxdart/rxdart.dart';
 mixin ProductsFieldMixin on ValidationMixin {
   //streams and validations
 
-  late var _productNameController;
-  late var _productCodeController;
-  late var _productDescriptionController;
-  late var _productPriceController;
-  late var _productQuantityController;
-  late var _productUnitController;
-  late var _productSupplierController;
-  late var _productCategoryController;
+  final _productNameController = BehaviorSubject<String>();
+  final _productCodeController = BehaviorSubject<String>();
+  final _productDescriptionController = BehaviorSubject<String>();
+  final _productPriceController = BehaviorSubject<double>();
+  final _productQuantityController = BehaviorSubject<double>();
+  final _productUnitController = BehaviorSubject<String>();
+  final _productSupplierController = BehaviorSubject<Supplier>();
+  final _productCategoryController = BehaviorSubject<Category>();
 
   init() {
     print("init");
-    _productNameController = BehaviorSubject<String>();
-    _productCodeController = BehaviorSubject<String>();
-    _productDescriptionController = BehaviorSubject<String>();
-    _productPriceController = BehaviorSubject<double>();
-    _productQuantityController = BehaviorSubject<double>();
-    _productUnitController = BehaviorSubject<String>();
-    _productSupplierController = BehaviorSubject<Supplier>();
-    _productCategoryController = BehaviorSubject<Category>();
+    _productNameController.sink.addError("");
+    _productCodeController.sink.addError("");
+    _productDescriptionController.sink.addError("");
+    _productPriceController.sink.addError("");
+    _productQuantityController.sink.addError("");
+    _productUnitController.sink.addError("");
+    _productSupplierController.sink.addError("");
+    _productCategoryController.sink.addError("");
   }
 
   Stream<String> get productNameStream => _productNameController.stream;

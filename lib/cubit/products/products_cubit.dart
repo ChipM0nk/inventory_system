@@ -19,6 +19,7 @@ class ProductsCubit extends Cubit<ProductsState>
     productRepository
         .fetchAll()
         .then((products) => {
+              print("Loading Products.."),
               emit(ProductsLoaded(
                 products: products,
                 sortIndex: null,

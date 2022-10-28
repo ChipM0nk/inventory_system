@@ -1,17 +1,13 @@
 import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
-import 'package:edar_app/cubit/products/products_cubit.dart';
 import 'package:edar_app/data/model/invoice/invoice.dart';
 
 import 'package:edar_app/data/model/invoice/invoice_item.dart';
 import 'package:edar_app/locator.dart';
+import 'package:edar_app/presentation/pages/invoices/datagrid/invoice_item_datagrid.dart';
 import 'package:edar_app/presentation/pages/invoices/invoice_dialog.dart';
-import 'package:edar_app/presentation/pages/invoices/invoice_item_table.dart';
-import 'package:edar_app/presentation/pages/invoices/invoiceform/invoice_add_item_dialog.dart';
-import 'package:edar_app/presentation/utils/util.dart';
+import 'package:edar_app/presentation/widgets/custom_elevated_button.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_date_picker.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_dropdown.dart';
-import 'package:edar_app/presentation/widgets/fields/custom_label_text_field.dart';
-import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
 import 'package:edar_app/routing/route_names.dart';
 import 'package:edar_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
@@ -178,21 +174,17 @@ class _InvoiceFormState extends State<InvoiceForm> {
               labelText: 'Payment Term');
         });
 
-    var serviceErrorMessage = StreamBuilder(
-      stream: BlocProvider.of<InvoiceCubit>(context).errorStream,
-      builder: (context, snapshot) {
-        return snapshot.hasError
-            ? Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10, bottom: 20),
-                child: ErrorMessage(
-                  snapshot: snapshot,
-                  fontSize: 14,
-                  height: 20,
-                ),
-              )
-            : const SizedBox();
-      },
-    );
+    var remarks = StreamBuilder<String>(
+        stream: BlocProvider.of<InvoiceCubit>(context).remarksStream,
+        builder: (context, snapshot) {
+          return CustomTextField(
+              snapshot: snapshot,
+              onChanged: (text) {
+                BlocProvider.of<InvoiceCubit>(context).updateRemarks(text);
+              },
+              labelText: 'Remarks');
+        });
+
     return BlocBuilder<InvoiceCubit, InvoiceState>(
       builder: (context, state) {
         if (state is InvoiceAdded) {
@@ -241,7 +233,7 @@ class _InvoiceFormState extends State<InvoiceForm> {
                         tinNumber,
                         purchaseDate,
                         dueDate,
-                        const SizedBox(width: 200),
+                        remarks,
                       ],
                     ),
                   ],
@@ -252,102 +244,44 @@ class _InvoiceFormState extends State<InvoiceForm> {
                     builder: (context, snapshot) {
                       return SizedBox(
                         width: 1000,
+                        height: 350,
                         child: Column(
                           children: [
-                            InvoiceItemTable(
+                            InvoiceItemDataGrid(
                               invoiceItems:
                                   BlocProvider.of<InvoiceCubit>(context)
                                       .getInvoiceItems(),
+                              summaryTotal:
+                                  BlocProvider.of<InvoiceCubit>(context)
+                                      .getTotal(), //TO Update
+                              editable: true,
+                              addInvoiceItem: _addItem,
                               deleteInvoiceItem: _deleteItem,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                GestureDetector(
-                                  child: const Icon(
-                                    Icons.add_box_outlined,
-                                    color: Colors.green,
-                                    size: 25,
-                                  ),
-                                  onTap: () {
-                                    showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (_) {
-                                          return MultiBlocProvider(
-                                            providers: [
-                                              BlocProvider.value(
-                                                  value: context
-                                                      .read<ProductsCubit>()),
-                                              BlocProvider.value(
-                                                  value: context
-                                                      .read<InvoiceCubit>()),
-                                            ],
-                                            child: InvoiceAddItemDialog(
-                                                addInvoiceItem: _addItem),
-                                          );
-                                        });
-                                  },
-                                ),
-                                Row(
-                                  children: [
-                                    const Text(
-                                      'Total Amount: ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18),
-                                    ),
-                                    SizedBox(
-                                      height: 60,
-                                      width: 120,
-                                      child: StreamBuilder<double>(
-                                        stream: BlocProvider.of<InvoiceCubit>(
-                                                context)
-                                            .totalAmountStream,
-                                        builder: (context, snapshot) {
-                                          final totalAmountController =
-                                              TextEditingController();
-
-                                          totalAmountController.text =
-                                              snapshot.hasData
-                                                  ? Util.convertToCurrency(
-                                                          snapshot.data!)
-                                                      .toString()
-                                                  : "0.0";
-
-                                          return SizedBox(
-                                            height: 30,
-                                            child: CustomLabelTextField(
-                                              fontSize: 18,
-                                              enabled: false,
-                                              controller: totalAmountController,
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    )
-                                  ],
-                                )
-                              ],
                             ),
                           ],
                         ),
                       );
                     }),
-                serviceErrorMessage,
                 Row(
                   children: [
                     StreamBuilder<bool>(
                         stream:
                             BlocProvider.of<InvoiceCubit>(context).buttonValid,
                         builder: (context, snapshot) {
-                          return ElevatedButton(
-                            onPressed: snapshot.hasData
-                                ? () {
-                                    _openInvoiceDialog();
-                                  }
-                                : null,
-                            child: const Text("Review"),
+                          return SizedBox(
+                            height: 50,
+                            width: 150,
+                            child: CustomElevatedButton(
+                              onPressed: snapshot.hasData
+                                  ? () {
+                                      _openInvoiceDialog();
+                                    }
+                                  : null,
+                              child: const Text("REVIEW",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15)),
+                            ),
                           );
                         }),
                   ],
@@ -362,6 +296,7 @@ class _InvoiceFormState extends State<InvoiceForm> {
 
   void _openInvoiceDialog() {
     Invoice invoice = BlocProvider.of<InvoiceCubit>(context).getInvoice(null);
+    BlocProvider.of<InvoiceCubit>(context).clearError();
     showDialog(
         context: context,
         builder: (_) {

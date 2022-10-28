@@ -13,7 +13,9 @@ class Purchase {
   final String purchaseDate;
   final String batchCode;
   final Supplier supplier;
+  final String? remarks;
   final List<PurchaseItem> purchaseItems;
+  final String? staff;
   final double totalAmount;
 
   // Connect the generated [_$PersonFromJson] function to the `fromJson`
@@ -29,7 +31,9 @@ class Purchase {
     required this.purchaseDate,
     required this.batchCode,
     required this.supplier,
+    this.remarks,
     required this.purchaseItems,
+    this.staff,
     required this.totalAmount,
   });
 

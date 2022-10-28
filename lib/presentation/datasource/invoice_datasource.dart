@@ -52,7 +52,7 @@ class InvoiceData extends DataTableSource {
           onTap: () => onItemClick(dataItem),
         ),
         DataCell(
-          Text(dataItem.salesPerson ?? dataItem.salesPerson!),
+          Text(dataItem.staff ?? dataItem.staff!),
           onTap: () => onItemClick(dataItem),
         ),
       ],

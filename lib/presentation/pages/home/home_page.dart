@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   ConstrainedBox(
                     constraints:
-                        const BoxConstraints(maxWidth: 1200, maxHeight: 775),
+                        const BoxConstraints(maxWidth: 1200, maxHeight: 750),
                     child: Row(
                       children: [
                         SideNavigationBar(

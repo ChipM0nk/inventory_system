@@ -2,6 +2,7 @@ import 'package:edar_app/constants/text_field_formats.dart';
 import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
 import 'package:edar_app/cubit/products/products_cubit.dart';
 import 'package:edar_app/data/model/invoice/invoice_item.dart';
+import 'package:edar_app/presentation/widgets/custom_elevated_button.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_text_field.dart';
 import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class InvoiceAddItemDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<InvoiceCubit>(context).itemInit();
+    BlocProvider.of<InvoiceCubit>(context).initItem();
     BlocProvider.of<ProductsCubit>(context).fetchProducts();
     return AlertDialog(
       scrollable: true,
@@ -226,8 +227,7 @@ class InvoiceAddItemDialog extends StatelessWidget {
             stream:
                 BlocProvider.of<InvoiceCubit>(context).buttonValidInvoiceItem,
             builder: (context, snapshot) {
-              return ElevatedButton(
-                  child: const Text("Submit"),
+              return CustomElevatedButton(
                   onPressed: snapshot.hasData
                       ? () {
                           InvoiceItem invoiceItem =
@@ -236,13 +236,14 @@ class InvoiceAddItemDialog extends StatelessWidget {
                           addInvoiceItem(invoiceItem);
                           Navigator.of(context).pop();
                         }
-                      : null);
+                      : null,
+                  child: const Text("Submit"));
             }),
-        ElevatedButton(
-            child: const Text("Cancel"),
-            onPressed: () {
-              Navigator.of(context).pop();
-            })
+        // CustomElevatedButton(
+        //     child: const Text("Cancel"),
+        //     onPressed: () {
+        //       Navigator.of(context).pop();
+        //     })
       ],
     );
   }

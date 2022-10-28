@@ -1,80 +1,43 @@
-import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
-import 'package:edar_app/data/model/invoice/invoice.dart';
-import 'package:edar_app/presentation/datasource/invoice_datasource.dart';
-import 'package:edar_app/presentation/pages/invoices/invoice_dialog.dart';
+import 'package:edar_app/cubit/purchases/purchase_cubit.dart';
+import 'package:edar_app/data/model/purchase/purchase.dart';
+import 'package:edar_app/presentation/datasource/purchase_datasource.dart';
+import 'package:edar_app/presentation/pages/purchases/purchase_dialog.dart';
 import 'package:edar_app/presentation/widgets/custom_paginated_datatable.dart';
-import 'package:edar_app/presentation/widgets/fields/custom_date_picker.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class InvoicePage extends StatefulWidget {
-  const InvoicePage({Key? key}) : super(key: key);
+class PurchasePage extends StatefulWidget {
+  const PurchasePage({Key? key}) : super(key: key);
 
   @override
-  State<InvoicePage> createState() => _InvoicePageState();
+  State<PurchasePage> createState() => _PurchasePageState();
 }
 
-class _InvoicePageState extends State<InvoicePage> {
+class _PurchasePageState extends State<PurchasePage> {
   final searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    const dateFormat = 'dd-MMM-yy';
-    var dateFrom = Column(
-      children: [
-        CustomDatePicker(
-          labelText: "Date From",
-          width: 130,
-          onChanged: (dateTime) {
-            BlocProvider.of<InvoiceCubit>(context).updateDateFrom(dateTime);
-          },
-          dateFormat: dateFormat,
-          nullable: true,
-        ),
-      ],
-    );
-
-    var dateTo = Column(
-      children: [
-        CustomDatePicker(
-          labelText: "Date To",
-          width: 130,
-          onChanged: (dateTime) {
-            BlocProvider.of<InvoiceCubit>(context).updateDateTo(dateTime);
-          },
-          dateFormat: dateFormat,
-          nullable: true,
-        ),
-      ],
-    );
     return SizedBox(
         width: 1500,
         height: 1000,
-        child: BlocBuilder<InvoiceCubit, InvoiceState>(
+        child: BlocBuilder<PurchaseCubit, PurchaseState>(
           builder: (context, state) {
-            print("Invoice state is $state");
-            if (state is! InvoiceLoaded) {
-              if (state is InvoiceInitial) {
-                BlocProvider.of<InvoiceCubit>(context).fetchInvoices();
+            print("Purchase state is $state");
+            if (state is! PurchaseLoaded) {
+              if (state is PurchaseInitial) {
+                BlocProvider.of<PurchaseCubit>(context).fetchPurchases();
               }
               return const Center(child: CircularProgressIndicator());
             }
 
-            InvoiceData invoiceData = InvoiceData(
-                data: state.filteredData ?? state.invoices,
-                onItemClick: _openInvoiceDialog);
+            PurchaseData purchaseData = PurchaseData(
+                data: state.filteredData ?? state.purchases,
+                onItemClick: _openPurchaseDialog);
             return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    width: 300,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [dateFrom, dateFrom],
-                    ),
-                  ),
                   SizedBox(
                     width: 500,
                     child: Row(
@@ -88,8 +51,8 @@ class _InvoicePageState extends State<InvoicePage> {
                                 hintText: 'Search',
                               ),
                               onChanged: (value) => {
-                                    BlocProvider.of<InvoiceCubit>(context)
-                                        .searchInvoice(value),
+                                    BlocProvider.of<PurchaseCubit>(context)
+                                        .searchPurchase(value),
                                   }),
                         ),
                         const SizedBox(
@@ -103,13 +66,13 @@ class _InvoicePageState extends State<InvoicePage> {
                     child: SizedBox(
                       width: 1200,
                       child: CustomPaginatedDataTable(
-                          header: const Text("Invoice"),
-                          dataColumns: dataColumns(invoiceData),
-                          rowsPerPage: 10,
+                          header: const Text("Purchases"),
+                          dataColumns: dataColumns(purchaseData),
                           dataRowHeight: 40,
+                          rowsPerPage: 10,
                           sortAscending: state.sortAscending,
                           sortIndex: state.sortIndex,
-                          source: invoiceData),
+                          source: purchaseData),
                     ),
                   ),
                 ]);
@@ -117,32 +80,32 @@ class _InvoicePageState extends State<InvoicePage> {
         ));
   }
 
-  List<DataColumn> dataColumns(InvoiceData data) => <DataColumn>[
+  List<DataColumn> dataColumns(PurchaseData data) => <DataColumn>[
         DataColumn(
           label: const Text(
-            'Invoice No',
+            'Purchase No',
             style: TextStyle(
                 fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
           onSort: (colIdx, asc) {
-            BlocProvider.of<InvoiceCubit>(context)
-                .sortInvoice((invoice) => invoice.invoiceNo, colIdx, asc);
+            BlocProvider.of<PurchaseCubit>(context)
+                .sortPurchase((purchase) => purchase.purchaseNo, colIdx, asc);
           },
         ),
         DataColumn(
           label: const Text(
-            'Customer Name',
+            'Batch Code',
             style: TextStyle(
                 fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
           onSort: (colIdx, asc) {
-            BlocProvider.of<InvoiceCubit>(context)
-                .sortInvoice((invoice) => invoice.customerName, colIdx, asc);
+            BlocProvider.of<PurchaseCubit>(context)
+                .sortPurchase((purchase) => purchase.batchCode, colIdx, asc);
           },
         ),
         const DataColumn(
             label: Text(
-          'Contact No',
+          'Supplier',
           style: TextStyle(
               fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
         )),
@@ -153,8 +116,8 @@ class _InvoicePageState extends State<InvoicePage> {
                 fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
           onSort: (colIdx, asc) {
-            BlocProvider.of<InvoiceCubit>(context)
-                .sortInvoice((invoice) => invoice.purchaseDate, colIdx, asc);
+            BlocProvider.of<PurchaseCubit>(context)
+                .sortPurchase((purchase) => purchase.purchaseDate, colIdx, asc);
           },
         ),
         const DataColumn(
@@ -173,14 +136,14 @@ class _InvoicePageState extends State<InvoicePage> {
         ),
       ];
 
-  void _openInvoiceDialog(Invoice invoice) {
+  void _openPurchaseDialog(Purchase purchase) {
     searchController.clear();
     showDialog(
         context: context,
         builder: (_) {
           return BlocProvider.value(
-            value: context.read<InvoiceCubit>(),
-            child: InvoiceDialog(invoice: invoice),
+            value: context.read<PurchaseCubit>(),
+            child: PurchaseDialog(purchase: purchase),
           );
         });
   }

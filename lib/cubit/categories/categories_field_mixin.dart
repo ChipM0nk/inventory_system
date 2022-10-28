@@ -2,19 +2,14 @@
 
 import 'package:edar_app/data/model/category.dart';
 import 'package:edar_app/utils/mixin_validations.dart';
+import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
+@immutable
 mixin CategoriesFieldMixin on ValidationMixin {
   //streams and validations
-  late var _categoryCodeController;
-  late var _categoryNameController;
-
-  init() {
-    print("init"); //TODO Change this later to proper dispose
-
-    _categoryCodeController = BehaviorSubject<String>();
-    _categoryNameController = BehaviorSubject<String>();
-  }
+  final _categoryCodeController = BehaviorSubject<String>();
+  final _categoryNameController = BehaviorSubject<String>();
 
   Stream<String> get categoryCodeStream => _categoryCodeController.stream;
   updateCategoryCode(String fieldValue) {
@@ -35,6 +30,12 @@ mixin CategoriesFieldMixin on ValidationMixin {
       _categoryNameController.sink
           .addError("Please enter text with length greater than 4");
     }
+  }
+
+  init() {
+    print("init");
+    _categoryCodeController.sink.addError("");
+    _categoryNameController.sink.addError("");
   }
 
   Stream<bool> get buttonValid =>

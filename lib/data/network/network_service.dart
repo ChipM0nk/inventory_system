@@ -22,6 +22,31 @@ class NetworkService {
     throw Exception(respObj['message']);
   }
 
+  Future<List<dynamic>> fetchWithParam(
+      String serviceName, Map<String, dynamic> paramObj) async {
+    try {
+      String url = "$BASE_URL$serviceName/all/param";
+
+      final response = await post(Uri.parse(url),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': "Bearer ${await LocalStorage.read("jwt")}",
+          },
+          body: jsonEncode(paramObj));
+      dynamic respObj = jsonDecode(response.body);
+      print(json.encode(respObj));
+      if (respObj['code'] == '000') {
+        List<dynamic> respBody = respObj['body'];
+        return respBody;
+      }
+
+      throw Exception(respObj['message']);
+    } catch (e) {
+      print("Error: ${e}");
+    }
+    return [];
+  }
+
   Future<List<dynamic>> fetchAll(String serviceName) async {
     try {
       String url = "$BASE_URL$serviceName/all";

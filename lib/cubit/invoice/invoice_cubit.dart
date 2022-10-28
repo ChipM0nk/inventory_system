@@ -2,6 +2,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:edar_app/cubit/invoice/invoice_field_mixin.dart';
 import 'package:edar_app/cubit/invoice/invoice_item_field_mixin.dart';
+import 'package:edar_app/cubit/invoice/invoice_search_param_mixin.dart';
 import 'package:edar_app/data/model/invoice/invoice.dart';
 import 'package:edar_app/data/repository/invoice_repository.dart';
 import 'package:edar_app/utils/error_message_mixin.dart';
@@ -12,6 +13,7 @@ part 'invoice_state.dart';
 class InvoiceCubit extends Cubit<InvoiceState>
     with
         ValidationMixin,
+        InvoiceSearchParamMixin,
         InvoiceItemFieldMixin,
         InvoiceFieldMixin,
         ErrorMessageMixin {
@@ -144,9 +146,5 @@ class InvoiceCubit extends Cubit<InvoiceState>
   loadProduct() {
     print("null : ${getProduct() == null}");
     emit(InvoiceItemDialogOpened());
-  }
-
-  testProduct() {
-    print("testnull : ${getProduct() == null}");
   }
 }

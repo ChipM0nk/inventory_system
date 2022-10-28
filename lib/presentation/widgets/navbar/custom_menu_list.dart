@@ -14,18 +14,25 @@ var MenuItemList = [
       route: InvoiceFormRoute),
   CustomMenuItem(
       sideNavigationBarItem: const SideNavigationBarItem(
-        icon: Icons.point_of_sale,
+        icon: Icons.shopping_basket,
+        label: 'Purchase Form',
+      ),
+      // page: const SupplierPage(),
+      route: PurchaseFormRoute),
+  CustomMenuItem(
+      sideNavigationBarItem: const SideNavigationBarItem(
+        icon: Icons.shop_2,
         label: 'Invoices',
       ),
       // page: const SalesForm(),
       route: InvoicesRoute),
   CustomMenuItem(
       sideNavigationBarItem: const SideNavigationBarItem(
-        icon: Icons.shopping_bag_outlined,
-        label: 'Purchase Form',
+        icon: Icons.shopping_cart_checkout,
+        label: 'Purchases',
       ),
       // page: const SupplierPage(),
-      route: PurchaseFormRoute),
+      route: PurchasesRoute),
   CustomMenuItem(
       sideNavigationBarItem: const SideNavigationBarItem(
         icon: Icons.category,

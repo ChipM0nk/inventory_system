@@ -3,21 +3,23 @@
 import 'package:edar_app/data/model/invoice/invoice_item.dart';
 import 'package:edar_app/data/model/product.dart';
 import 'package:edar_app/utils/mixin_validations.dart';
+import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
+@immutable
 mixin InvoiceItemFieldMixin on ValidationMixin {
-  late var _snController;
-  late var _productController;
-  late var _quantityController;
-  late var _priceController;
-  late var _invoiceItemAmountController;
+  final _snController = BehaviorSubject<String>();
+  final _productController = BehaviorSubject<Product>();
+  final _quantityController = BehaviorSubject<double>();
+  final _priceController = BehaviorSubject<double>();
+  final _invoiceItemAmountController = BehaviorSubject<double>();
 
-  itemInit() {
-    _snController = BehaviorSubject<String>();
-    _productController = BehaviorSubject<Product>();
-    _quantityController = BehaviorSubject<double>();
-    _priceController = BehaviorSubject<double>();
-    _invoiceItemAmountController = BehaviorSubject<double>();
+  initItem() {
+    _snController.sink.addError("");
+    _productController.sink.addError("");
+    _quantityController.sink.addError("");
+    _priceController.sink.addError("");
+    _invoiceItemAmountController.sink.addError("");
   }
 
   Stream<String> get snStream => _snController.stream;

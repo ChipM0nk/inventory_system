@@ -22,7 +22,7 @@ class PurchaseCubit extends Cubit<PurchaseState>
 
   PurchaseCubit({required this.purchaseRepository}) : super(PurchaseInitial());
 
-  void fetchPurchase() {
+  void fetchPurchases() {
     purchaseRepository.fetchAll().then((purchase) => {
           emit(PurchaseLoaded(
             purchases: purchase,
@@ -78,7 +78,7 @@ class PurchaseCubit extends Cubit<PurchaseState>
       if (isUpdated) {
         // fetchPurchase();
         emit(PurchaseUpdated());
-        fetchPurchase();
+        fetchPurchases();
       } else {
         updateError(null);
       }
@@ -89,7 +89,7 @@ class PurchaseCubit extends Cubit<PurchaseState>
     purchaseRepository.deletePurchase(purchaseId).then((isDeleted) {
       if (isDeleted) {
         emit(PurchaseDeleted());
-        fetchPurchase();
+        fetchPurchases();
       } else {
         updateError(null);
       }

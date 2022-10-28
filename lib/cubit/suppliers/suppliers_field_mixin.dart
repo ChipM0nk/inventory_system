@@ -5,16 +5,16 @@ import 'package:rxdart/rxdart.dart';
 mixin SuppliersFieldMixin on ValidationMixin {
   //streams and validations
 
-  late var _supplierNameController;
-  late var _supplierAddressController;
-  late var _supplierEmailAddController;
-  late var _supplierContactNumController;
+  final _supplierNameController = BehaviorSubject<String>();
+  final _supplierAddressController = BehaviorSubject<String>();
+  final _supplierEmailAddController = BehaviorSubject<String>();
+  final _supplierContactNumController = BehaviorSubject<String>();
 
   init() {
-    _supplierNameController = BehaviorSubject<String>();
-    _supplierAddressController = BehaviorSubject<String>();
-    _supplierEmailAddController = BehaviorSubject<String>();
-    _supplierContactNumController = BehaviorSubject<String>();
+    _supplierNameController.sink.addError("");
+    _supplierAddressController.sink.addError("");
+    _supplierEmailAddController.sink.addError("");
+    _supplierContactNumController.sink.addError("");
   }
 
   Stream<String> get supplierNameStream => _supplierNameController.stream;

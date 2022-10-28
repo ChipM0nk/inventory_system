@@ -4,6 +4,7 @@ import 'package:edar_app/cubit/purchases/purchase_cubit.dart';
 import 'package:edar_app/data/model/product.dart';
 import 'package:edar_app/data/model/purchase/purchase_item.dart';
 import 'package:edar_app/data/model/supplier.dart';
+import 'package:edar_app/presentation/widgets/custom_elevated_button.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_text_field.dart';
 import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
 import 'package:flutter/material.dart';
@@ -11,10 +12,10 @@ import 'package:flutter/services.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AddPurchaseItemDialog extends StatelessWidget {
+class PurchaseAddItemDialog extends StatelessWidget {
   final Function(PurchaseItem) addPurchaseItem;
   final PurchaseItem? purchaseItem;
-  const AddPurchaseItemDialog({
+  const PurchaseAddItemDialog({
     super.key,
     required this.addPurchaseItem,
     this.purchaseItem,
@@ -31,6 +32,7 @@ class AddPurchaseItemDialog extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: BlocBuilder<PurchaseCubit, PurchaseState>(
           builder: (context, state) {
+            print("Building dialog");
             final TextEditingController priceController =
                 TextEditingController();
             final TextEditingController quantityController =
@@ -235,7 +237,7 @@ class AddPurchaseItemDialog extends StatelessWidget {
             stream:
                 BlocProvider.of<PurchaseCubit>(context).buttonValidPurchaseItem,
             builder: (context, snapshot) {
-              return ElevatedButton(
+              return CustomElevatedButton(
                   onPressed: snapshot.hasData
                       ? () {
                           PurchaseItem purchaseItem =
@@ -247,11 +249,6 @@ class AddPurchaseItemDialog extends StatelessWidget {
                       : null,
                   child: const Text("Submit"));
             }),
-        ElevatedButton(
-            child: const Text("Cancel"),
-            onPressed: () {
-              Navigator.of(context).pop();
-            })
       ],
     );
   }

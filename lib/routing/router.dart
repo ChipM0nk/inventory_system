@@ -1,6 +1,7 @@
 import 'package:edar_app/presentation/pages/category/category_page.dart';
 import 'package:edar_app/presentation/pages/invoices/invoice_page.dart';
 import 'package:edar_app/presentation/pages/product/product_page.dart';
+import 'package:edar_app/presentation/pages/purchases/purchase_page.dart';
 import 'package:edar_app/presentation/pages/purchases/purchaseform/purchase_form.dart';
 import 'package:edar_app/presentation/pages/invoices/invoiceform/invoice_form.dart';
 import 'package:edar_app/presentation/pages/supplier/supplier_page.dart';
@@ -21,6 +22,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(const InvoicePage(), settings);
     case PurchaseFormRoute:
       return _getPageRoute(const PurchaseForm(), settings);
+    case PurchasesRoute:
+      return _getPageRoute(const PurchasePage(), settings);
     case CategoriesRoute:
       return _getPageRoute(const CategoryPage(), settings);
     case SuppliersRoute:
@@ -28,7 +31,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case ProductsRoute:
       return _getPageRoute(const ProductPage(), settings);
     default:
-      return _getPageRoute(const InvoiceForm(), settings);
+      return _getPageRoute(const InvoiceForm(), settings); //change to home
   }
 }
 

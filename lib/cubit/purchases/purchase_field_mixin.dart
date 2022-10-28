@@ -4,26 +4,28 @@ import 'package:edar_app/data/model/purchase/purchase.dart';
 import 'package:edar_app/data/model/purchase/purchase_item.dart';
 import 'package:edar_app/data/model/supplier.dart';
 import 'package:edar_app/utils/mixin_validations.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 
+@immutable
 mixin PurchaseFieldMixin on ValidationMixin {
-  late var _purchaseNoController;
-  late var _purchaseDateController;
-  late var _batchCodeController;
-  late var _supplierController;
-  late var _purchaseItemListController;
-  late var _totalAmountController;
+  final _purchaseNoController = BehaviorSubject<String>();
+  final _purchaseDateController = BehaviorSubject<String>();
+  final _batchCodeController = BehaviorSubject<String>();
+  final _supplierController = BehaviorSubject<Supplier>();
+  final _remarksController = BehaviorSubject<String>();
+  final _purchaseItemListController = BehaviorSubject<List<PurchaseItem>>();
+  final _totalAmountController = BehaviorSubject<double>();
 
   init() {
     List<PurchaseItem> initialList = [];
 
-    _purchaseNoController = BehaviorSubject<String>();
-    _purchaseDateController = BehaviorSubject<String>();
-    _batchCodeController = BehaviorSubject<String>();
-    _purchaseItemListController = BehaviorSubject<List<PurchaseItem>>();
-    _supplierController = BehaviorSubject<Supplier>();
-    _totalAmountController = BehaviorSubject<double>();
+    _purchaseNoController.sink.addError("");
+    _batchCodeController.sink.addError("");
+    _remarksController.sink.addError("");
+    _supplierController.sink.addError("");
+    _totalAmountController.sink.addError("");
 
     // _purchaseItemListController.sink.add(initialList);
     updatePurchaseItemList(initialList);
@@ -80,6 +82,12 @@ mixin PurchaseFieldMixin on ValidationMixin {
     updateTotalAmount(0.0);
   }
 
+//set format
+  Stream<String> get remarksStream => _remarksController.stream;
+  updateRemarks(String remarks) {
+    _remarksController.sink.add(remarks);
+  }
+
   List<PurchaseItem> getPurchaseItems() {
     return _purchaseItemListController.hasValue
         ? _purchaseItemListController.value
@@ -122,6 +130,10 @@ mixin PurchaseFieldMixin on ValidationMixin {
     updateTotalAmount(purchaseTotalAmount);
   }
 
+  double getTotal() {
+    return _totalAmountController.value;
+  }
+
   Stream<bool> get saveButtonValid => Rx.combineLatest5(
       purchaseNoStream,
       purchaseDateStream,
@@ -137,6 +149,7 @@ mixin PurchaseFieldMixin on ValidationMixin {
       purchaseDate: _purchaseDateController.value,
       batchCode: _batchCodeController.value,
       supplier: _supplierController.value,
+      remarks: _remarksController.valueOrNull,
       purchaseItems: _purchaseItemListController.value,
       totalAmount: _totalAmountController.value,
     );

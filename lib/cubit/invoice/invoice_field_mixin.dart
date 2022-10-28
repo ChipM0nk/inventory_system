@@ -3,39 +3,42 @@
 import 'package:edar_app/data/model/invoice/invoice.dart';
 import 'package:edar_app/data/model/invoice/invoice_item.dart';
 import 'package:edar_app/utils/mixin_validations.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 
+@immutable
 mixin InvoiceFieldMixin on ValidationMixin {
-  late var _invoiceNumberController;
-  late var _customerNameController;
-  late var _customerAddressController;
-  late var _customerContactController;
-  late var _salesPersonController;
-  late var _poNumberController;
-  late var _purchaseDateController;
-  late var _paymentTypeController;
-  late var _paymentTermController;
-  late var _tinNumberController;
-  late var _dueDateController;
-  late var _invoiceItemListController;
-  late var _invoiceTotalAmountController;
+  final _invoiceNumberController = BehaviorSubject<String>();
+  final _customerNameController = BehaviorSubject<String>();
+  final _customerAddressController = BehaviorSubject<String>();
+  final _customerContactController = BehaviorSubject<String>();
+  final _salesPersonController = BehaviorSubject<String>();
+  final _poNumberController = BehaviorSubject<String>();
+  final _purchaseDateController = BehaviorSubject<String>();
+  final _paymentTypeController = BehaviorSubject<String>();
+  final _paymentTermController = BehaviorSubject<String>();
+  final _tinNumberController = BehaviorSubject<String>();
+  final _dueDateController = BehaviorSubject<String>();
+  final _remarksController = BehaviorSubject<String>();
+  final _invoiceItemListController = BehaviorSubject<List<InvoiceItem>>();
+  final _invoiceTotalAmountController = BehaviorSubject<double>();
 
   init() {
     List<InvoiceItem> initialList = [];
-    _invoiceNumberController = BehaviorSubject<String>();
-    _customerNameController = BehaviorSubject<String>();
-    _customerAddressController = BehaviorSubject<String>();
-    _customerContactController = BehaviorSubject<String>();
-    _salesPersonController = BehaviorSubject<String>();
-    _poNumberController = BehaviorSubject<String>();
-    _purchaseDateController = BehaviorSubject<String>();
-    _paymentTermController = BehaviorSubject<String>();
-    _paymentTypeController = BehaviorSubject<String>();
-    _tinNumberController = BehaviorSubject<String>();
-    _dueDateController = BehaviorSubject<String>();
-    _invoiceItemListController = BehaviorSubject<List<InvoiceItem>>();
-    _invoiceTotalAmountController = BehaviorSubject<double>();
+    _invoiceNumberController.sink.addError("");
+    _customerNameController.sink.addError("");
+    _customerAddressController.sink.addError("");
+    _customerContactController.sink.addError("");
+    _salesPersonController.sink.addError("");
+    _poNumberController.sink.addError("");
+    _purchaseDateController.sink.addError("");
+    _paymentTermController.sink.addError("");
+    _paymentTypeController.sink.addError("");
+    _tinNumberController.sink.addError("");
+    _dueDateController.sink.addError("");
+    _remarksController.sink.addError("");
+
     _invoiceItemListController.sink.add(initialList);
     _paymentTypeController.sink.add('Cash');
 
@@ -43,6 +46,7 @@ mixin InvoiceFieldMixin on ValidationMixin {
         DateFormat('dd-MMM-yy').format(DateTime.now()); //default
     updatePurchaseDate(initialDate);
     updateDueDate(initialDate);
+    updateTotalAmount(0.00);
   }
 
   Stream<String> get invoiceNumberStream => _invoiceNumberController.stream;
@@ -141,11 +145,16 @@ mixin InvoiceFieldMixin on ValidationMixin {
     _dueDateController.sink.add(dateTime);
   }
 
+  Stream<String> get remarksStream => _remarksController.stream;
+  updateRemarks(String remarks) {
+    _remarksController.sink.add(remarks);
+  }
+
   /// Invoice Item List
   Stream<List<InvoiceItem>> get invoiceItemsStream =>
       _invoiceItemListController.stream;
   updateInvoiceItems(List<InvoiceItem> invoiceItems) {
-    _dueDateController.sink.add(invoiceItems);
+    _invoiceItemListController.sink.add(invoiceItems);
   }
 
   List<InvoiceItem> getInvoiceItems() {
@@ -220,8 +229,13 @@ mixin InvoiceFieldMixin on ValidationMixin {
       paymentTerm: _paymentTermController.value,
       tinNumber: _tinNumberController.value,
       dueDate: _dueDateController.value,
+      remarks: _remarksController.valueOrNull,
       invoiceItems: _invoiceItemListController.value,
       totalAmount: _invoiceTotalAmountController.value,
     );
+  }
+
+  double getTotal() {
+    return _invoiceTotalAmountController.value;
   }
 }

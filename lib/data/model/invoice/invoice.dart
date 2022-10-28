@@ -13,13 +13,14 @@ class Invoice {
   final String customerName;
   final String? customerAddress;
   final String? contactNo;
-  final String? salesPerson;
+  final String? staff;
   final String poNumber;
   final String purchaseDate;
   final String paymentType;
   final String paymentTerm;
   final String tinNumber;
   final String dueDate;
+  final String? remarks;
   final List<InvoiceItem> invoiceItems;
   final double totalAmount;
 
@@ -29,13 +30,14 @@ class Invoice {
     required this.customerName,
     this.customerAddress,
     this.contactNo,
-    this.salesPerson,
+    this.staff,
     required this.poNumber,
     required this.purchaseDate,
     required this.paymentType,
     required this.paymentTerm,
     required this.tinNumber,
     required this.dueDate,
+    this.remarks,
     required this.invoiceItems,
     required this.totalAmount,
   });

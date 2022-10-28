@@ -1,31 +1,32 @@
-import 'package:edar_app/data/model/invoice/invoice_item.dart';
+import 'package:edar_app/data/model/purchase/purchase_item.dart';
 import 'package:edar_app/presentation/utils/util.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-class InvoiceItemGridDataSource extends DataGridSource {
-  List<DataGridRow> _invoiceItems = [];
+class PurchaseItemGridDataSource extends DataGridSource {
+  List<DataGridRow> _purchaseItems = [];
   final bool editable;
-  final Function(InvoiceItem)? deleteInvoiceItem;
-  InvoiceItemGridDataSource(
-      {required List<InvoiceItem> invoiceItems,
+  final Function(PurchaseItem)? deletePurchaseItem;
+  PurchaseItemGridDataSource(
+      {required List<PurchaseItem> purchaseItems,
       this.editable = false,
-      this.deleteInvoiceItem}) {
-    _invoiceItems = invoiceItems
+      this.deletePurchaseItem}) {
+    _purchaseItems = purchaseItems
         .map<DataGridRow>(
           (e) => DataGridRow(
             cells: [
-              DataGridCell<InvoiceItem>(columnName: "prodname", value: e),
+              DataGridCell<PurchaseItem>(columnName: "prodname", value: e),
               DataGridCell<String>(
                   columnName: "proddesc", value: e.product.productDescription),
               DataGridCell<String>(
                   columnName: "price",
-                  value: 'PHP ${Util.convertToCurrency(e.price).toString()}'),
+                  value:
+                      'PHP ${Util.convertToCurrency(e.itemAmount).toString()}'),
               DataGridCell<double>(columnName: "qty", value: e.quantity),
               DataGridCell<String>(
                   columnName: "total",
                   value:
-                      'PHP ${Util.convertToCurrency(e.totalAmount).toString()}'),
+                      'PHP ${Util.convertToCurrency(e.itemTotalAmount).toString()}'),
             ],
           ),
         )
@@ -33,7 +34,7 @@ class InvoiceItemGridDataSource extends DataGridSource {
   }
 
   @override
-  List<DataGridRow> get rows => _invoiceItems;
+  List<DataGridRow> get rows => _purchaseItems;
   @override
   DataGridRowAdapter? buildRow(DataGridRow row) {
     return DataGridRowAdapter(
@@ -57,16 +58,14 @@ class InvoiceItemGridDataSource extends DataGridSource {
                     children: [
                       editable
                           ? IconButton(
-                              padding: const EdgeInsets.only(right: 15),
-                              constraints: const BoxConstraints(
-                                  maxHeight: 20, maxWidth: 20),
+                              padding: EdgeInsets.zero,
                               icon: const Icon(
                                 Icons.delete,
-                                size: 20,
+                                size: 15,
                                 color: Colors.red,
                               ),
                               onPressed: () =>
-                                  deleteInvoiceItem!(dataGridCell.value))
+                                  deletePurchaseItem!(dataGridCell.value))
                           : const SizedBox(width: 0),
                       Text(dataGridCell.value.product.productName.toString()),
                     ],
