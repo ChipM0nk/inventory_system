@@ -1,19 +1,22 @@
+import 'package:edar_app/common/mixins/search_param_mixin.dart';
 import 'package:edar_app/cubit/purchases/purchase_field_mixin.dart';
 import 'package:edar_app/cubit/purchases/purchase_item_field_mixin.dart';
 import 'package:edar_app/data/model/purchase/purchase.dart';
 import 'package:edar_app/data/repository/purchase_repository.dart';
-import 'package:edar_app/utils/error_message_mixin.dart';
-import 'package:edar_app/utils/mixin_validations.dart';
+import 'package:edar_app/common/mixins/error_message_mixin.dart';
+import 'package:edar_app/common/mixins/mixin_validations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'purchase_state.dart';
 
+// ignore: must_be_immutable
 class PurchaseCubit extends Cubit<PurchaseState>
     with
         ValidationMixin,
         PurchaseFieldMixin,
         PurchaseItemFieldMixin,
-        ErrorMessageMixin {
+        ErrorMessageMixin,
+        SearchParamMixin {
   final PurchaseRepository purchaseRepository;
 
   void reset() {
@@ -30,6 +33,21 @@ class PurchaseCubit extends Cubit<PurchaseState>
             sortAscending: true,
           )),
         });
+  }
+
+  void fetchPurchasesWithParam() {
+    emit(PurchaseLoading());
+    Map<String, dynamic> paramObj = getParam()!.toJson();
+    purchaseRepository
+        .fetchWithParam(paramObj)
+        .then((purchases) => {
+              emit(PurchaseLoaded(
+                purchases: purchases,
+                sortIndex: null,
+                sortAscending: true,
+              )),
+            })
+        .onError((error, stackTrace) => updateError('$error'));
   }
 
   void sortPurchase<T>(Comparable<T> Function(Purchase) getField, int sortIndex,

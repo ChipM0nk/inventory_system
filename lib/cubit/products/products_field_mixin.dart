@@ -3,7 +3,7 @@
 import 'package:edar_app/data/model/category.dart';
 import 'package:edar_app/data/model/product.dart';
 import 'package:edar_app/data/model/supplier.dart';
-import 'package:edar_app/utils/mixin_validations.dart';
+import 'package:edar_app/common/mixins/mixin_validations.dart';
 import 'package:rxdart/rxdart.dart';
 
 mixin ProductsFieldMixin on ValidationMixin {

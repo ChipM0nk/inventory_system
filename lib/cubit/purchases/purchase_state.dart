@@ -17,6 +17,8 @@ class PurchaseLoaded extends PurchaseState {
       required this.sortAscending});
 }
 
+class PurchaseLoading extends PurchaseState {}
+
 //Add
 
 class PurchaseAdded extends PurchaseState {}

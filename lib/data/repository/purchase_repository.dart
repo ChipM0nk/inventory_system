@@ -7,6 +7,12 @@ class PurchaseRepository {
 
   PurchaseRepository({required this.networkService});
 
+  Future<List<Purchase>> fetchWithParam(Map<String, dynamic> paramObj) async {
+    final objRaw =
+        await networkService.fetchWithParam(PurchasesService, paramObj);
+    return objRaw.map((e) => Purchase.fromJson(e)).toList();
+  }
+
   Future<List<Purchase>> fetchAll() async {
     final objRaw = await networkService.fetchAll(PurchasesService);
 

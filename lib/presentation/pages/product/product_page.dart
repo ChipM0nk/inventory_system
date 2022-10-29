@@ -19,86 +19,82 @@ class _ProductPageState extends State<ProductPage> {
   final searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 1800,
-      height: 1300,
-      child: BlocBuilder<ProductsCubit, ProductsState>(
-        builder: (context, state) {
-          if (state is! ProductsLoaded) {
-            if (state is ProductsInitial) {
-              BlocProvider.of<ProductsCubit>(context).fetchProducts();
-            }
-            return const Center(child: CircularProgressIndicator());
+    return BlocBuilder<ProductsCubit, ProductsState>(
+      builder: (context, state) {
+        if (state is! ProductsLoaded) {
+          if (state is ProductsInitial) {
+            BlocProvider.of<ProductsCubit>(context).fetchProducts();
           }
+          return const Center(child: CircularProgressIndicator());
+        }
 
-          ProductData productData = ProductData(
-              data: state.filteredData ?? state.products,
-              onDeleteClick: _deleteProduct,
-              onItemClick: _openUpdateProductDialog);
-          return Column(children: [
-            Row(
-              children: [
-                Expanded(
-                  // height: 20,
-                  // width: 450,
-                  child: TextField(
-                      controller: searchController,
-                      decoration: const InputDecoration(
-                        hintText: 'Search',
-                      ),
-                      onChanged: (value) => {
-                            BlocProvider.of<ProductsCubit>(context)
-                                .searchProduct(value),
-                          }),
-                ),
-                const SizedBox(
-                  width: 30,
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (_) {
-                          searchController.clear();
-                          return BlocProvider.value(
-                            value: context.read<ProductsCubit>(),
-                            child: MultiBlocProvider(providers: [
-                              BlocProvider.value(
-                                  value: context.read<ProductsCubit>()),
-                              BlocProvider.value(
-                                  value: context.read<CategoriesCubit>()),
-                              BlocProvider.value(
-                                  value: context.read<SuppliersCubit>()),
-                            ], child: ProductDialog()),
-                          );
-                        });
-                  },
-                  child: const Text("Add Product"),
-                ),
-              ],
-            ),
-            Align(
-              alignment: Alignment.topLeft,
-              child: SizedBox(
-                width: 1200,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: CustomPaginatedDataTable(
-                    header: const Text("Products"),
-                    dataRowHeight: 40,
-                    columnSpacing: 30,
-                    dataColumns: dataColumns(productData),
-                    rowsPerPage: 10,
-                    sortAscending: state.sortAscending,
-                    sortIndex: state.sortIndex,
-                    source: productData,
-                  ),
+        ProductData productData = ProductData(
+            data: state.filteredData ?? state.products,
+            onDeleteClick: _deleteProduct,
+            onItemClick: _openUpdateProductDialog);
+        return Column(children: [
+          Row(
+            children: [
+              Expanded(
+                // height: 20,
+                // width: 450,
+                child: TextField(
+                    controller: searchController,
+                    decoration: const InputDecoration(
+                      hintText: 'Search',
+                    ),
+                    onChanged: (value) => {
+                          BlocProvider.of<ProductsCubit>(context)
+                              .searchProduct(value),
+                        }),
+              ),
+              const SizedBox(
+                width: 30,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (_) {
+                        searchController.clear();
+                        return BlocProvider.value(
+                          value: context.read<ProductsCubit>(),
+                          child: MultiBlocProvider(providers: [
+                            BlocProvider.value(
+                                value: context.read<ProductsCubit>()),
+                            BlocProvider.value(
+                                value: context.read<CategoriesCubit>()),
+                            BlocProvider.value(
+                                value: context.read<SuppliersCubit>()),
+                          ], child: ProductDialog()),
+                        );
+                      });
+                },
+                child: const Text("Add Product"),
+              ),
+            ],
+          ),
+          Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              width: 1200,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: CustomPaginatedDataTable(
+                  header: const Text("Products"),
+                  dataRowHeight: 40,
+                  columnSpacing: 30,
+                  dataColumns: dataColumns(productData),
+                  rowsPerPage: 10,
+                  sortAscending: state.sortAscending,
+                  sortIndex: state.sortIndex,
+                  source: productData,
                 ),
               ),
             ),
-          ]);
-        },
-      ),
+          ),
+        ]);
+      },
     );
   }
 

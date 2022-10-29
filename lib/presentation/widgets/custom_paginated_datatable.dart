@@ -19,26 +19,24 @@ class CustomPaginatedDataTable extends StatelessWidget {
     required this.sortAscending,
     required this.rowsPerPage,
     this.header,
-    this.dataRowHeight = 50,
-    this.columnSpacing = 50,
+    this.dataRowHeight = 40,
+    this.columnSpacing = 40,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scrollbar(
-      child: PaginatedDataTable(
-        header: header,
-        showCheckboxColumn: false,
-        dataRowHeight: dataRowHeight,
-        columnSpacing: columnSpacing,
-        horizontalMargin: 10,
-        rowsPerPage: rowsPerPage,
-        sortColumnIndex: sortIndex,
-        sortAscending: sortAscending,
-        showFirstLastButtons: true,
-        columns: dataColumns,
-        source: source,
-      ),
+    return PaginatedDataTable(
+      header: header,
+      showCheckboxColumn: false,
+      dataRowHeight: dataRowHeight,
+      columnSpacing: columnSpacing,
+      horizontalMargin: 10,
+      rowsPerPage: rowsPerPage,
+      sortColumnIndex: sortIndex,
+      sortAscending: sortAscending,
+      showFirstLastButtons: true,
+      columns: dataColumns,
+      source: source,
     );
   }
 }

@@ -58,111 +58,107 @@ class _InvoicePageState extends State<InvoicePage> {
             ],
           );
         });
-    return SizedBox(
-        width: 1500,
-        height: 1000,
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 400,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    dateFrom,
-                    dateTo,
-                    StreamBuilder<bool>(
-                        stream: BlocProvider.of<InvoiceCubit>(context)
-                            .filterButtonValid,
-                        builder: (context, snapshot) {
-                          return CustomElevatedButton(
-                            child: const Text("Filter"),
-                            onPressed: snapshot.hasData
-                                ? () {
-                                    BlocProvider.of<InvoiceCubit>(context)
-                                        .fetchInvoicesWithParam();
-                                  }
-                                : null,
-                          );
-                        }),
-                    StreamBuilder<bool>(
-                        stream: BlocProvider.of<InvoiceCubit>(context)
-                            .filterButtonValid,
-                        builder: (context, snapshot) {
-                          return CustomElevatedButton(
-                            child: const Text("Reset"),
-                            onPressed: snapshot.hasData
-                                ? () {
-                                    BlocProvider.of<InvoiceCubit>(context)
-                                        .initSearch();
-                                    BlocProvider.of<InvoiceCubit>(context)
-                                        .fetchInvoices();
-                                  }
-                                : null,
-                          );
-                        }),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: 500,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      height: 20,
-                      width: 350,
-                      child: TextField(
-                          controller: searchController,
-                          decoration: const InputDecoration(
-                            hintText: 'Search',
-                          ),
-                          onChanged: (value) => {
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 400,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                dateFrom,
+                dateTo,
+                StreamBuilder<bool>(
+                    stream: BlocProvider.of<InvoiceCubit>(context)
+                        .filterButtonValid,
+                    builder: (context, snapshot) {
+                      return CustomElevatedButton(
+                        onPressed: snapshot.hasData
+                            ? () {
                                 BlocProvider.of<InvoiceCubit>(context)
-                                    .searchInvoice(value),
-                              }),
-                    ),
-                    const SizedBox(
-                      width: 30,
-                    ),
-                  ],
+                                    .fetchInvoicesWithParam();
+                              }
+                            : null,
+                        child: const Text("Filter"),
+                      );
+                    }),
+                StreamBuilder<bool>(
+                    stream: BlocProvider.of<InvoiceCubit>(context)
+                        .filterButtonValid,
+                    builder: (context, snapshot) {
+                      return CustomElevatedButton(
+                        onPressed: snapshot.hasData
+                            ? () {
+                                BlocProvider.of<InvoiceCubit>(context)
+                                    .initSearch();
+                                BlocProvider.of<InvoiceCubit>(context)
+                                    .fetchInvoices();
+                              }
+                            : null,
+                        child: const Text("Reset"),
+                      );
+                    }),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 500,
+            child: Row(
+              children: [
+                SizedBox(
+                  height: 20,
+                  width: 350,
+                  child: TextField(
+                      controller: searchController,
+                      decoration: const InputDecoration(
+                        hintText: 'Search',
+                      ),
+                      onChanged: (value) => {
+                            BlocProvider.of<InvoiceCubit>(context)
+                                .searchInvoice(value),
+                          }),
                 ),
-              ),
-              Align(
-                alignment: Alignment.topLeft,
-                child: SizedBox(
-                  width: 1200,
-                  child: BlocBuilder<InvoiceCubit, InvoiceState>(
-                    builder: (context, state) {
-                      print("Invoice state is $state");
-                      if (state is! InvoiceLoaded) {
-                        if (state is InvoiceInitial) {
-                          BlocProvider.of<InvoiceCubit>(context)
-                              .fetchInvoices();
-                        }
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      InvoiceData invoiceData = InvoiceData(
-                          data: state.filteredData ?? state.invoices,
-                          onItemClick: _openInvoiceDialog);
-                      return CustomPaginatedDataTable(
-                          header: BlocProvider.of<InvoiceCubit>(context)
-                                      .getParam() ==
+                const SizedBox(
+                  width: 30,
+                ),
+              ],
+            ),
+          ),
+          Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              width: 1200,
+              child: BlocBuilder<InvoiceCubit, InvoiceState>(
+                builder: (context, state) {
+                  print("Invoice state is $state");
+                  if (state is! InvoiceLoaded) {
+                    if (state is InvoiceInitial) {
+                      BlocProvider.of<InvoiceCubit>(context).fetchInvoices();
+                    }
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  InvoiceData invoiceData = InvoiceData(
+                      data: state.filteredData ?? state.invoices,
+                      onItemClick: _openInvoiceDialog);
+                  return CustomPaginatedDataTable(
+                      header:
+                          BlocProvider.of<InvoiceCubit>(context).getParam() ==
                                   null
                               ? const Text("Invoice (Top 50 records only)")
                               : const Text("Invoice"),
-                          dataColumns: dataColumns(invoiceData),
-                          rowsPerPage: 10,
-                          dataRowHeight: 40,
-                          sortAscending: state.sortAscending,
-                          sortIndex: state.sortIndex,
-                          source: invoiceData);
-                    },
-                  ),
-                ),
+                      dataColumns: dataColumns(invoiceData),
+                      rowsPerPage: 10,
+                      dataRowHeight: 40,
+                      sortAscending: state.sortAscending,
+                      sortIndex: state.sortIndex,
+                      source: invoiceData);
+                },
               ),
-            ]));
+            ),
+          ),
+        ]);
   }
 
   List<DataColumn> dataColumns(InvoiceData data) => <DataColumn>[

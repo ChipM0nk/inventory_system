@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:edar_app/cubit/suppliers/suppliers_field_mixin.dart';
 import 'package:edar_app/data/model/supplier.dart';
 import 'package:edar_app/data/repository/supplier_repository.dart';
-import 'package:edar_app/utils/error_message_mixin.dart';
-import 'package:edar_app/utils/mixin_validations.dart';
+import 'package:edar_app/common/mixins/error_message_mixin.dart';
+import 'package:edar_app/common/mixins/mixin_validations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'suppliers_state.dart';

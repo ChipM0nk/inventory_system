@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 
 @immutable
-mixin InvoiceSearchParamMixin {
+mixin SearchParamMixin {
   final _dateFromController = BehaviorSubject<String>();
   final _dateToController = BehaviorSubject<String>();
   static const dateFormat = 'dd-MMM-yy';

@@ -1,3 +1,4 @@
+import 'package:edar_app/presentation/widgets/navbar/header.dart';
 import 'package:flutter/material.dart';
 
 import 'blocs/generic_provider.dart';
@@ -11,20 +12,23 @@ class ContentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return SizedBox(
       // width: 1000,
-      // height: 750,
-      child: Card(
-        child: Align(
-          alignment: Alignment.topRight,
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: GenericProvider(
-              route: route,
-              child: child,
+      height: MediaQuery.of(context).size.height,
+      child: Column(
+        children: [
+          // const Header(),
+          Container(
+            color: Colors.grey[100],
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: GenericProvider(route: route, child: child),
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

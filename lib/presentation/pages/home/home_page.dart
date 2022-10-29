@@ -2,7 +2,6 @@ import 'package:edar_app/cubit/auth/auth_cubit.dart';
 import 'package:edar_app/locator.dart';
 import 'package:edar_app/presentation/widgets/navbar/custom_menu_Item.dart';
 import 'package:edar_app/presentation/widgets/navbar/custom_menu_list.dart';
-import 'package:edar_app/presentation/widgets/navbar/header.dart';
 import 'package:edar_app/routing/route_names.dart';
 import 'package:edar_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +22,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     // });
+
+    print("Height : ${MediaQuery.of(context).size.height}");
     BlocProvider.of<AuthCubit>(context).authenticate();
     final initialInvoiceMenuList = CustomMenuItem(
         sideNavigationBarItem: const SideNavigationBarItem(
@@ -51,72 +52,91 @@ class _HomePageState extends State<HomePage> {
 
       child: MaterialApp(
         home: Scaffold(
-          appBar: AppBar(
-            title: const Align(
-              alignment: Alignment.topLeft,
-              child: Header(),
-            ),
-            backgroundColor: Colors.green.shade900,
-          ),
+          // appBar: AppBar(
+          //   title: const Align(
+          //     alignment: Alignment.topLeft,
+          //     child: Header(),
+          //   ),
+          //   backgroundColor: Colors.green.shade900,
+          // ),
           body: BlocBuilder<AuthCubit, AuthState>(
             builder: (context, state) {
-              return ListView(
-                children: [
-                  ConstrainedBox(
-                    constraints:
-                        const BoxConstraints(maxWidth: 1200, maxHeight: 750),
-                    child: Row(
-                      children: [
-                        SideNavigationBar(
-                          theme: SideNavigationBarTheme(
-                            backgroundColor: Colors.green.shade900,
-                            togglerTheme:
-                                SideNavigationBarTogglerTheme.standard(),
-                            itemTheme: const SideNavigationBarItemTheme(
-                              unselectedItemColor: Colors.white,
+              return Scrollbar(
+                child: ListView(
+                  children: [
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width,
+                        maxHeight: MediaQuery.of(context).size.height,
+                      ),
+                      child: Row(
+                        children: [
+                          SideNavigationBar(
+                            header: SideNavigationBarHeader(
+                              title: Text(""),
+                              subtitle: Text(""),
+                              image: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Image.asset("/images/edar_logo.jpg"),
+                                    // Divider(),
+                                    // Text("login"),
+                                  ]),
                             ),
-                            dividerTheme:
-                                SideNavigationBarDividerTheme.standard(),
-                          ),
-                          selectedIndex: selectedIndex,
-                          items: userMenuList
-                              .map((menuItem) => menuItem.sideNavigationBarItem)
-                              .toList(),
-                          onTap: (index) {
-                            print(
-                                "Navigating to : ${userMenuList[index].route}");
-                            locator<NavigationService>()
-                                .navigateTo(userMenuList[index].route);
-                            setState(() {
-                              selectedIndex = index;
-                            });
-                          },
-                          toggler: SideBarToggler(
-                              expandIcon: Icons.keyboard_arrow_right,
-                              shrinkIcon: Icons.keyboard_arrow_left,
-                              onToggle: () {
-                                print('Toggle');
-                              }),
-                        ),
-                        Expanded(
-                          child: BlocBuilder<AuthCubit, AuthState>(
-                            builder: (context, state) {
-                              if (state is! AuthenticationSuccess) {
-                                return const Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                      "Not Allowed"), //TODO Create actual page
-                                );
-                              }
-
-                              return widget.child;
+                            theme: SideNavigationBarTheme(
+                              backgroundColor: Colors.white,
+                              togglerTheme:
+                                  SideNavigationBarTogglerTheme.standard(),
+                              itemTheme: SideNavigationBarItemTheme(
+                                unselectedItemColor: Colors.grey[900],
+                              ),
+                              dividerTheme:
+                                  SideNavigationBarDividerTheme.standard(),
+                            ),
+                            selectedIndex: selectedIndex,
+                            items: userMenuList
+                                .map((menuItem) =>
+                                    menuItem.sideNavigationBarItem)
+                                .toList(),
+                            onTap: (index) {
+                              print(
+                                  "Navigating to : ${userMenuList[index].route}");
+                              locator<NavigationService>()
+                                  .navigateTo(userMenuList[index].route);
+                              setState(() {
+                                selectedIndex = index;
+                              });
                             },
+                            toggler: SideBarToggler(
+                                expandIcon: Icons.keyboard_arrow_right,
+                                shrinkIcon: Icons.keyboard_arrow_left,
+                                onToggle: () {
+                                  print('Toggle');
+                                }),
                           ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
+                          Expanded(
+                            child: BlocBuilder<AuthCubit, AuthState>(
+                              builder: (context, state) {
+                                if (state is! AuthenticationSuccess) {
+                                  return const Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Text(
+                                        "Not Allowed"), //TODO Create actual page
+                                  );
+                                }
+
+                                return Container(
+                                    color: Colors.grey[100],
+                                    child: widget.child);
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               );
             },
           ),

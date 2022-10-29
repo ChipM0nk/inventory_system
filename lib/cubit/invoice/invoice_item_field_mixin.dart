@@ -2,7 +2,7 @@
 
 import 'package:edar_app/data/model/invoice/invoice_item.dart';
 import 'package:edar_app/data/model/product.dart';
-import 'package:edar_app/utils/mixin_validations.dart';
+import 'package:edar_app/common/mixins/mixin_validations.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 

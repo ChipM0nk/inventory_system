@@ -17,74 +17,70 @@ class _SupplierPageState extends State<SupplierPage> {
   final searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 1800,
-      height: 1300,
-      child: BlocBuilder<SuppliersCubit, SuppliersState>(
-        builder: (context, state) {
-          if (state is! SuppliersLoaded) {
-            if (state is SuppliersInitial) {
-              BlocProvider.of<SuppliersCubit>(context).fetchSuppliers();
-            }
-            return const Center(child: CircularProgressIndicator());
+    return BlocBuilder<SuppliersCubit, SuppliersState>(
+      builder: (context, state) {
+        if (state is! SuppliersLoaded) {
+          if (state is SuppliersInitial) {
+            BlocProvider.of<SuppliersCubit>(context).fetchSuppliers();
           }
+          return const Center(child: CircularProgressIndicator());
+        }
 
-          SupplierData supplierData = SupplierData(
-              data: state.filteredData ?? state.suppliers,
-              onDeleteClick: _deleteSupplier,
-              onItemClick: _openUpdateSupplierDialog);
-          return Column(children: [
-            Row(
-              children: [
-                SizedBox(
-                  height: 20,
-                  width: 450,
-                  child: TextField(
-                      controller: searchController,
-                      decoration: const InputDecoration(
-                        hintText: 'Search',
-                      ),
-                      onChanged: (value) => {
-                            BlocProvider.of<SuppliersCubit>(context)
-                                .searchSupplier(value),
-                          }),
-                ),
-                const SizedBox(
-                  width: 30,
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (_) {
-                          searchController.clear();
-                          return BlocProvider.value(
-                            value: context.read<SuppliersCubit>(),
-                            child: SupplierDialog(),
-                          );
-                        });
-                  },
-                  child: const Text("Add Supplier"),
-                ),
-              ],
-            ),
-            Align(
-              alignment: Alignment.topLeft,
-              child: SizedBox(
-                width: 800,
-                child: CustomPaginatedDataTable(
-                  header: const Text("Suppliers"),
-                  dataColumns: dataColumns(supplierData),
-                  rowsPerPage: 10,
-                  sortAscending: state.sortAscending,
-                  sortIndex: state.sortIndex,
-                  source: supplierData,
-                ),
+        SupplierData supplierData = SupplierData(
+            data: state.filteredData ?? state.suppliers,
+            onDeleteClick: _deleteSupplier,
+            onItemClick: _openUpdateSupplierDialog);
+        return Column(children: [
+          Row(
+            children: [
+              SizedBox(
+                height: 20,
+                width: 450,
+                child: TextField(
+                    controller: searchController,
+                    decoration: const InputDecoration(
+                      hintText: 'Search',
+                    ),
+                    onChanged: (value) => {
+                          BlocProvider.of<SuppliersCubit>(context)
+                              .searchSupplier(value),
+                        }),
+              ),
+              const SizedBox(
+                width: 30,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (_) {
+                        searchController.clear();
+                        return BlocProvider.value(
+                          value: context.read<SuppliersCubit>(),
+                          child: SupplierDialog(),
+                        );
+                      });
+                },
+                child: const Text("Add Supplier"),
+              ),
+            ],
+          ),
+          Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              width: 800,
+              child: CustomPaginatedDataTable(
+                header: const Text("Suppliers"),
+                dataColumns: dataColumns(supplierData),
+                rowsPerPage: 10,
+                sortAscending: state.sortAscending,
+                sortIndex: state.sortIndex,
+                source: supplierData,
               ),
             ),
-          ]);
-        },
-      ),
+          ),
+        ]);
+      },
     );
   }
 

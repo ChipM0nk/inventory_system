@@ -109,23 +109,27 @@ class Header extends StatelessWidget {
             },
         child: const Text("Logout"));
 
-    return SizedBox(
-      width: 1280,
-      child: Expanded(
-          child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text("EDAR"),
-          BlocBuilder<AuthCubit, AuthState>(
-            builder: (context, state) {
-              if (state is AuthenticationSuccess) {
-                return logOut;
-              }
-              return logIn;
-            },
-          ),
-        ],
-      )),
+    return Container(
+      color: const Color(0xFF08B578),
+      child: SizedBox(
+        width: 1280,
+        height: 60,
+        child: Expanded(
+            child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(),
+            BlocBuilder<AuthCubit, AuthState>(
+              builder: (context, state) {
+                if (state is AuthenticationSuccess) {
+                  return logOut;
+                }
+                return logIn;
+              },
+            ),
+          ],
+        )),
+      ),
     );
   }
 }

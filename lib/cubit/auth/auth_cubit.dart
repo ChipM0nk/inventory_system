@@ -9,8 +9,8 @@ import 'package:edar_app/data/network/network_service.dart';
 import 'package:edar_app/data/repository/auth_repository.dart';
 import 'package:edar_app/local_storage.dart';
 import 'package:edar_app/routing/route_names.dart';
-import 'package:edar_app/utils/error_message_mixin.dart';
-import 'package:edar_app/utils/mixin_validations.dart';
+import 'package:edar_app/common/mixins/error_message_mixin.dart';
+import 'package:edar_app/common/mixins/mixin_validations.dart';
 import 'package:flutter/cupertino.dart';
 
 part 'auth_state.dart';

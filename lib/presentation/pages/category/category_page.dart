@@ -18,79 +18,78 @@ class _CategoryPageState extends State<CategoryPage> {
   final searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        width: 1500,
-        height: 1000,
-        child: BlocBuilder<CategoriesCubit, CategoriesState>(
-          builder: (context, state) {
-            if (state is! CategoriesLoaded) {
-              if (state is CategoriesInitial) {
-                BlocProvider.of<CategoriesCubit>(context).fetchCategories();
-              }
-              return const Center(child: CircularProgressIndicator());
-            }
+    return BlocBuilder<CategoriesCubit, CategoriesState>(
+      builder: (context, state) {
+        if (state is! CategoriesLoaded) {
+          if (state is CategoriesInitial) {
+            BlocProvider.of<CategoriesCubit>(context).fetchCategories();
+          }
+          return const Center(child: CircularProgressIndicator());
+        }
 
-            CategoryData categoryData = CategoryData(
-                data: state.filteredData ?? state.categories,
-                onDeleteClick: _deleteCategory,
-                onItemClick: _openUpdateCategoryDialog);
-            return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
+        CategoryData categoryData = CategoryData(
+            data: state.filteredData ?? state.categories,
+            onDeleteClick: _deleteCategory,
+            onItemClick: _openUpdateCategoryDialog);
+        return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 500,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      height: 20,
+                      width: 350,
+                      child: TextField(
+                          controller: searchController,
+                          decoration: const InputDecoration(
+                            hintText: 'Search',
+                          ),
+                          onChanged: (value) => {
+                                BlocProvider.of<CategoriesCubit>(context)
+                                    .searchCategory(value),
+                              }),
+                    ),
+                    const SizedBox(
+                      width: 30,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (_) {
+                              searchController.clear();
+                              return BlocProvider.value(
+                                value: context.read<CategoriesCubit>(),
+                                child: CategoryDialog(),
+                              );
+                            });
+                      },
+                      child: const Text("Add Category"),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: SizedBox(
                     width: 500,
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          height: 20,
-                          width: 350,
-                          child: TextField(
-                              controller: searchController,
-                              decoration: const InputDecoration(
-                                hintText: 'Search',
-                              ),
-                              onChanged: (value) => {
-                                    BlocProvider.of<CategoriesCubit>(context)
-                                        .searchCategory(value),
-                                  }),
-                        ),
-                        const SizedBox(
-                          width: 30,
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (_) {
-                                  searchController.clear();
-                                  return BlocProvider.value(
-                                    value: context.read<CategoriesCubit>(),
-                                    child: CategoryDialog(),
-                                  );
-                                });
-                          },
-                          child: const Text("Add Category"),
-                        ),
-                      ],
-                    ),
+                    child: CustomPaginatedDataTable(
+                        header: const Text("Categories"),
+                        dataColumns: dataColumns(categoryData),
+                        rowsPerPage: 10,
+                        sortAscending: state.sortAscending,
+                        sortIndex: state.sortIndex,
+                        source: categoryData),
                   ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: SizedBox(
-                      width: 500,
-                      child: CustomPaginatedDataTable(
-                          header: const Text("Categories"),
-                          dataColumns: dataColumns(categoryData),
-                          rowsPerPage: 10,
-                          sortAscending: state.sortAscending,
-                          sortIndex: state.sortIndex,
-                          source: categoryData),
-                    ),
-                  ),
-                ]);
-          },
-        ));
+                ),
+              ),
+            ]);
+      },
+    );
   }
 
   List<DataColumn> dataColumns(CategoryData data) => <DataColumn>[

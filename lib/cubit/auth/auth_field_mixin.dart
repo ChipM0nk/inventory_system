@@ -1,16 +1,16 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
 import 'package:edar_app/data/model/user.dart';
-import 'package:edar_app/utils/mixin_validations.dart';
+import 'package:edar_app/common/mixins/mixin_validations.dart';
 import 'package:rxdart/rxdart.dart';
 
 mixin AuthFieldMixin on ValidationMixin {
-  late var _usernameController;
-  late var _passwordController;
+  final _usernameController = BehaviorSubject<String>();
+  final _passwordController = BehaviorSubject<String>();
 
   init() {
-    _usernameController = BehaviorSubject<String>();
-    _passwordController = BehaviorSubject<String>();
+    _usernameController.sink.addError("");
+    _passwordController.sink.addError("");
   }
 
   Stream<String> get usernameStream => _usernameController.stream;
