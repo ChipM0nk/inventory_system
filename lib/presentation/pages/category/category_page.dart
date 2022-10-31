@@ -2,6 +2,7 @@ import 'package:edar_app/cubit/categories/categories_cubit.dart';
 import 'package:edar_app/data/model/category.dart';
 import 'package:edar_app/presentation/datasource/category_datasource.dart';
 import 'package:edar_app/presentation/pages/category/category_dialog.dart';
+import 'package:edar_app/presentation/widgets/custom_elevated_button.dart';
 import 'package:edar_app/presentation/widgets/custom_paginated_datatable.dart';
 
 import 'package:flutter/material.dart';
@@ -35,6 +36,7 @@ class _CategoryPageState extends State<CategoryPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 55),
               SizedBox(
                 width: 500,
                 child: Row(
@@ -55,7 +57,7 @@ class _CategoryPageState extends State<CategoryPage> {
                     const SizedBox(
                       width: 30,
                     ),
-                    ElevatedButton(
+                    CustomElevatedButton(
                       onPressed: () {
                         showDialog(
                             context: context,
@@ -72,19 +74,17 @@ class _CategoryPageState extends State<CategoryPage> {
                   ],
                 ),
               ),
-              Container(
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: SizedBox(
-                    width: 500,
-                    child: CustomPaginatedDataTable(
-                        header: const Text("Categories"),
-                        dataColumns: dataColumns(categoryData),
-                        rowsPerPage: 10,
-                        sortAscending: state.sortAscending,
-                        sortIndex: state.sortIndex,
-                        source: categoryData),
-                  ),
+              Align(
+                alignment: Alignment.topLeft,
+                child: SizedBox(
+                  width: 500,
+                  child: CustomPaginatedDataTable(
+                      header: const Text("Categories"),
+                      dataColumns: dataColumns(categoryData),
+                      rowsPerPage: 10,
+                      sortAscending: state.sortAscending,
+                      sortIndex: state.sortIndex,
+                      source: categoryData),
                 ),
               ),
             ]);

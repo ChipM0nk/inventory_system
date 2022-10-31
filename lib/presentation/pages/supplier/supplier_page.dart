@@ -2,6 +2,7 @@ import 'package:edar_app/cubit/suppliers/suppliers_cubit.dart';
 import 'package:edar_app/data/model/supplier.dart';
 import 'package:edar_app/presentation/datasource/supplier_datasource.dart';
 import 'package:edar_app/presentation/pages/supplier/supplier_dialog.dart';
+import 'package:edar_app/presentation/widgets/custom_elevated_button.dart';
 import 'package:edar_app/presentation/widgets/custom_paginated_datatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,11 +32,12 @@ class _SupplierPageState extends State<SupplierPage> {
             onDeleteClick: _deleteSupplier,
             onItemClick: _openUpdateSupplierDialog);
         return Column(children: [
+          const SizedBox(height: 55),
           Row(
             children: [
               SizedBox(
                 height: 20,
-                width: 450,
+                width: 350,
                 child: TextField(
                     controller: searchController,
                     decoration: const InputDecoration(
@@ -49,7 +51,7 @@ class _SupplierPageState extends State<SupplierPage> {
               const SizedBox(
                 width: 30,
               ),
-              ElevatedButton(
+              CustomElevatedButton(
                 onPressed: () {
                   showDialog(
                       context: context,

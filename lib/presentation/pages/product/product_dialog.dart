@@ -105,7 +105,7 @@ class ProductDialog extends StatelessWidget {
           padding: const EdgeInsets.only(left: 0, right: 0),
           child: CustomTextField(
               labelText: "Product Unit",
-              hintText: "09219999999",
+              hintText: "pcs",
               initialValue: product != null ? product!.unit.toString() : null,
               snapshot: snapshot,
               onChanged: (text) {

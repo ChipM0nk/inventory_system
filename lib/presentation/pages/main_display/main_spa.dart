@@ -2,6 +2,7 @@ import 'package:edar_app/cubit/auth/auth_cubit.dart';
 import 'package:edar_app/locator.dart';
 import 'package:edar_app/presentation/widgets/navbar/custom_menu_Item.dart';
 import 'package:edar_app/presentation/widgets/navbar/custom_menu_list.dart';
+import 'package:edar_app/presentation/widgets/navbar/header.dart';
 import 'package:edar_app/routing/route_names.dart';
 import 'package:edar_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     // });
 
-    print("Height : ${MediaQuery.of(context).size.height}");
     BlocProvider.of<AuthCubit>(context).authenticate();
     final initialInvoiceMenuList = CustomMenuItem(
         sideNavigationBarItem: const SideNavigationBarItem(
@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage> {
         route: InvoiceFormRoute);
 
     List<CustomMenuItem> userMenuList = [initialInvoiceMenuList];
+
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthenticationSuccess) {
@@ -52,22 +53,24 @@ class _HomePageState extends State<HomePage> {
 
       child: MaterialApp(
         home: Scaffold(
-          // appBar: AppBar(
-          //   title: const Align(
-          //     alignment: Alignment.topLeft,
-          //     child: Header(),
-          //   ),
-          //   backgroundColor: Colors.green.shade900,
-          // ),
+          appBar: AppBar(
+            title: const Align(
+              alignment: Alignment.topLeft,
+              child: Header(),
+            ),
+            backgroundColor: Colors.green.shade900,
+          ),
           body: BlocBuilder<AuthCubit, AuthState>(
             builder: (context, state) {
               return Scrollbar(
                 child: ListView(
+                  shrinkWrap: true,
                   children: [
+                    // Header(),
                     ConstrainedBox(
                       constraints: BoxConstraints(
                         maxWidth: MediaQuery.of(context).size.width,
-                        maxHeight: MediaQuery.of(context).size.height,
+                        maxHeight: MediaQuery.of(context).size.height - 60,
                       ),
                       child: Row(
                         children: [
@@ -79,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Image.asset("/images/edar_logo.jpg"),
+                                    Image.asset("images/edar_logo.jpg"),
                                     // Divider(),
                                     // Text("login"),
                                   ]),
@@ -89,7 +92,8 @@ class _HomePageState extends State<HomePage> {
                               togglerTheme:
                                   SideNavigationBarTogglerTheme.standard(),
                               itemTheme: SideNavigationBarItemTheme(
-                                unselectedItemColor: Colors.grey[900],
+                                unselectedItemColor: Colors.grey[700],
+                                selectedItemColor: Colors.green[900],
                               ),
                               dividerTheme:
                                   SideNavigationBarDividerTheme.standard(),

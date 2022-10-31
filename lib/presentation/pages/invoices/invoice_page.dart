@@ -146,8 +146,8 @@ class _InvoicePageState extends State<InvoicePage> {
                       header:
                           BlocProvider.of<InvoiceCubit>(context).getParam() ==
                                   null
-                              ? const Text("Invoice (Top 50 records only)")
-                              : const Text("Invoice"),
+                              ? const Text("(E) Invoice (Top 50 records only)")
+                              : const Text("(E) Invoice"),
                       dataColumns: dataColumns(invoiceData),
                       rowsPerPage: 10,
                       dataRowHeight: 40,

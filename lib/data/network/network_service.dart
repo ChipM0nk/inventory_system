@@ -35,7 +35,7 @@ class NetworkService {
           },
           body: jsonEncode(paramObj));
       dynamic respObj = jsonDecode(response.body);
-      print(json.encode(respObj));
+      // print(json.encode(respObj));
       if (respObj['code'] == '000') {
         List<dynamic> respBody = respObj['body'];
         return respBody;
@@ -56,7 +56,7 @@ class NetworkService {
         'Authorization': "Bearer ${await LocalStorage.read("jwt")}"
       });
       dynamic respObj = jsonDecode(response.body);
-      print(json.encode(respObj));
+      // print(json.encode(respObj));
       if (respObj['code'] == '000') {
         List<dynamic> respBody = respObj['body'];
         return respBody;
