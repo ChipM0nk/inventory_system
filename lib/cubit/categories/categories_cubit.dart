@@ -22,7 +22,6 @@ class CategoriesCubit extends Cubit<CategoriesState>
 
   //action methods
   void fetchCategories() {
-    print("Fetch categories");
     categoryRepository
         .fetchAll()
         .then((categories) => {
@@ -32,7 +31,7 @@ class CategoriesCubit extends Cubit<CategoriesState>
                 sortAscending: true,
               )),
             })
-        .onError((error, stackTrace) => updateError('$error'));
+        .onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 
   void sortCategories<T>(Comparable<T> Function(Category) getField,
@@ -70,12 +69,11 @@ class CategoriesCubit extends Cubit<CategoriesState>
         emit(CategoryAdded());
         fetchCategories();
       } else {
-        updateError(null);
+        updateError(null, null);
       }
     }).onError(
       (error, stackTrace) {
-        print("Error message : ${error}");
-        updateError('$error');
+        updateError('$error', stackTrace);
       },
     );
   }
@@ -91,9 +89,9 @@ class CategoriesCubit extends Cubit<CategoriesState>
         emit(CategoryUpdated());
         fetchCategories();
       } else {
-        updateError(null);
+        updateError(null, null);
       }
-    }).onError((error, stackTrace) => updateError('$error'));
+    }).onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 
   void deleteCategory(int categoryId) {
@@ -102,9 +100,9 @@ class CategoriesCubit extends Cubit<CategoriesState>
         emit(CategoryDeleted());
         fetchCategories();
       } else {
-        updateError(null);
+        updateError(null, null);
       }
-    }).onError((error, stackTrace) => updateError('$error'));
+    }).onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 
   void searchCategory(String searchText) {

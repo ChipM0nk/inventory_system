@@ -12,9 +12,11 @@ import 'package:edar_app/routing/route_names.dart';
 import 'package:edar_app/common/mixins/error_message_mixin.dart';
 import 'package:edar_app/common/mixins/mixin_validations.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:logger/logger.dart';
 
 part 'auth_state.dart';
 
+// ignore: must_be_immutable
 class AuthCubit extends Cubit<AuthState>
     with ValidationMixin, ErrorMessageMixin, AuthFieldMixin {
   User? _user;
@@ -29,12 +31,16 @@ class AuthCubit extends Cubit<AuthState>
         .login(userObj)
         .then(
           (jwt) async => {
+            print("Writing JWT to local storage"),
             await LocalStorage.write("jwt", jwt),
+            print("Writing JWT to local storage success"),
             authenticate(),
           },
         )
         .onError(
-          (error, stackTrace) => {updateError('$error')},
+          (error, stackTrace) => {
+            updateError('$error', stackTrace),
+          },
         );
   }
 
@@ -49,6 +55,7 @@ class AuthCubit extends Cubit<AuthState>
   }
 
   authenticate() {
+    print("Running authenticate() method");
     LocalStorage.read("jwt").then((value) => {
           checkJwt(value),
         });
@@ -58,10 +65,17 @@ class AuthCubit extends Cubit<AuthState>
     if (jwt == null) {
       emit(AuthenticationFailed());
     } else {
+      print("Running checkJwt() method");
       String claims = jwt.split(".")[1];
+      print("Fetching claims..");
       claims = utf8.decode(base64Url.decode(base64.normalize(claims)));
+      print("Fetching claims success..");
+      print("JSON Decode claims..");
       Map<String, dynamic> userObj = jsonDecode(claims);
+      print("JSON Decode claims success..");
+      print("Extractiong user");
       User user = User.fromJson(userObj);
+      print("Extractiong user success");
       _user = user;
       emit(AuthenticationSuccess());
     }

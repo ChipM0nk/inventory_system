@@ -8,7 +8,7 @@ class AuthRepository {
   Future<String> login(Map<String, dynamic> userObject) async {
     final objRaw = await networkService.authenticate(userObject);
     dynamic jwt = objRaw["token"];
-
+    print("JWT extracted!");
     return jwt;
   }
 }

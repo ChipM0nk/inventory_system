@@ -47,7 +47,7 @@ class PurchaseCubit extends Cubit<PurchaseState>
                 sortAscending: true,
               )),
             })
-        .onError((error, stackTrace) => updateError('$error'));
+        .onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 
   void sortPurchase<T>(Comparable<T> Function(Purchase) getField, int sortIndex,
@@ -81,9 +81,9 @@ class PurchaseCubit extends Cubit<PurchaseState>
         // fetchPurchase();
         emit(PurchaseAdded());
       } else {
-        updateError(null);
+        updateError(null, null);
       }
-    }).onError((error, stackTrace) => updateError('$error'));
+    }).onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 
   void updatePurchase(int purchaseId) {
@@ -98,9 +98,9 @@ class PurchaseCubit extends Cubit<PurchaseState>
         emit(PurchaseUpdated());
         fetchPurchases();
       } else {
-        updateError(null);
+        updateError(null, null);
       }
-    }).onError((error, stackTrace) => updateError('$error'));
+    }).onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 
   void deletePurchase(int purchaseId) {
@@ -109,9 +109,9 @@ class PurchaseCubit extends Cubit<PurchaseState>
         emit(PurchaseDeleted());
         fetchPurchases();
       } else {
-        updateError(null);
+        updateError(null, null);
       }
-    }).onError((error, stackTrace) => updateError('$error'));
+    }).onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 
   void searchPurchase(String searchText) {

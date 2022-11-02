@@ -1,11 +1,11 @@
+import 'dart:io';
+
 import 'package:edar_app/cubit/auth/auth_cubit.dart';
 import 'package:edar_app/locator.dart';
-import 'package:edar_app/presentation/pages/main_display/home_page_scroll.dart';
-import 'package:edar_app/presentation/pages/main_page/main_page.dart';
-import 'package:edar_app/presentation/utils/custom_scroll_behaviour.dart';
 import 'package:edar_app/routing/route_names.dart';
 import 'package:edar_app/routing/router.dart';
 import 'package:edar_app/services/navigation_service.dart';
+import 'package:edar_app/utils/dev_http_overrides.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +14,8 @@ import 'presentation/pages/main_display/main_spa.dart';
 
 void main() {
   setupLocator();
+  print("Loading main page  .....");
+  // HttpOverrides.global = DevHttpOverrides();
   runApp(const MyApp());
 }
 

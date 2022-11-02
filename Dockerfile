@@ -16,6 +16,7 @@ RUN flutter upgrade
 RUN mkdir /app/
 COPY . /app/
 WORKDIR /app/
+RUN flutter clean
 RUN flutter build web
 # Stage 2 - Create the run-time image
 FROM nginx:1.21.1-alpine

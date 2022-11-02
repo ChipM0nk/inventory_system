@@ -26,7 +26,7 @@ class ProductsCubit extends Cubit<ProductsState>
                 sortAscending: true,
               )),
             })
-        .onError((error, stackTrace) => updateError('$error'));
+        .onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 
   void sortProducts<T>(
@@ -61,12 +61,12 @@ class ProductsCubit extends Cubit<ProductsState>
         emit(ProductAdded());
         fetchProducts();
       } else {
-        updateError(null);
+        updateError(null, null);
       }
     }).onError(
       (error, stackTrace) {
         print("Error message : ${error}");
-        updateError('$error');
+        updateError('$error', stackTrace);
       },
     );
   }
@@ -80,12 +80,12 @@ class ProductsCubit extends Cubit<ProductsState>
         emit(ProductUpdated());
         fetchProducts();
       } else {
-        updateError(null);
+        updateError(null, null);
       }
     }).onError(
       (error, stackTrace) {
         print("Error message : ${error}");
-        updateError('$error');
+        updateError('$error', stackTrace);
       },
     );
   }
@@ -96,12 +96,12 @@ class ProductsCubit extends Cubit<ProductsState>
         emit(ProductDeleted());
         fetchProducts();
       } else {
-        updateError(null);
+        updateError(null, null);
       }
     }).onError(
       (error, stackTrace) {
         print("Error message : ${error}");
-        updateError('$error');
+        updateError('$error', stackTrace);
       },
     );
   }

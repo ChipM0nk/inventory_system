@@ -37,7 +37,7 @@ class InvoiceCubit extends Cubit<InvoiceState>
                 sortAscending: true,
               )),
             })
-        .onError((error, stackTrace) => updateError('$error'));
+        .onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 
   void fetchInvoicesWithParam() {
@@ -52,7 +52,7 @@ class InvoiceCubit extends Cubit<InvoiceState>
                 sortAscending: true,
               )),
             })
-        .onError((error, stackTrace) => updateError('$error'));
+        .onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 
   void sortInvoice<T>(
@@ -86,9 +86,9 @@ class InvoiceCubit extends Cubit<InvoiceState>
         emit(InvoiceAdded());
         // fetchInvoice();
       } else {
-        updateError(null);
+        updateError(null, null);
       }
-    }).onError((error, stackTrace) => updateError('$error'));
+    }).onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 
   void updateInvoice(int invoiceId) {
@@ -98,9 +98,9 @@ class InvoiceCubit extends Cubit<InvoiceState>
         // fetchInvoice();
         emit(InvoiceUpdated());
       } else {
-        updateError(null);
+        updateError(null, null);
       }
-    }).onError((error, stackTrace) => updateError('$error'));
+    }).onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 
   void deleteInvoice(int invoiceId) {
@@ -111,9 +111,9 @@ class InvoiceCubit extends Cubit<InvoiceState>
         emit(InvoiceDeleted());
         // fetchInvoice();
       } else {
-        updateError(null);
+        updateError(null, null);
       }
-    }).onError((error, stackTrace) => updateError('$error'));
+    }).onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 
   void searchInvoice(String searchText) {

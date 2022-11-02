@@ -1,17 +1,21 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
-  static const storage = FlutterSecureStorage();
-
   static write(String key, String value) async {
-    await storage.write(key: key, value: value);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(key, value);
   }
 
   static Future<String?> read(String key) async {
-    return storage.read(key: key);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key);
+    // return storage.read(key: key);
   }
 
   static deletAll() async {
-    await storage.deleteAll();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    // await storage.deleteAll();
   }
 }

@@ -9,6 +9,7 @@
 .buildlog/
 .history
 .svn/
+docker_images/
 
 # IntelliJ related
 *.iml
@@ -21,6 +22,7 @@
 .project
 .settings/
 .vscode/
+
 
 # Flutter repo-specific
 /bin/cache/

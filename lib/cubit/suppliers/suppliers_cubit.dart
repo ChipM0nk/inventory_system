@@ -26,7 +26,7 @@ class SuppliersCubit extends Cubit<SuppliersState>
                 sortAscending: true,
               )),
             })
-        .onError((error, stackTrace) => updateError('$error'));
+        .onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 
   void sortSuppliers<T>(Comparable<T> Function(Supplier) getField,
@@ -62,9 +62,9 @@ class SuppliersCubit extends Cubit<SuppliersState>
         emit(SupplierAdded());
         fetchSuppliers();
       } else {
-        updateError(null);
+        updateError(null, null);
       }
-    }).onError((error, stackTrace) => updateError('$error'));
+    }).onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 
   void updateSupplier(int supplierId) {
@@ -79,9 +79,9 @@ class SuppliersCubit extends Cubit<SuppliersState>
         emit(SupplierUpdated());
         fetchSuppliers();
       } else {
-        updateError(null);
+        updateError(null, null);
       }
-    }).onError((error, stackTrace) => updateError('$error'));
+    }).onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 
   void deleteSupplier(int supplierId) {
@@ -90,12 +90,12 @@ class SuppliersCubit extends Cubit<SuppliersState>
         emit(SupplierDeleted());
         fetchSuppliers();
       } else {
-        updateError(null);
+        updateError(null, null);
       }
     }).onError(
       (error, stackTrace) {
         print("Error message : ${error}");
-        updateError('$error');
+        updateError('$error', stackTrace);
       },
     );
   }

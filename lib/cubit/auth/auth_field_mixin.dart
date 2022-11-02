@@ -2,8 +2,10 @@
 
 import 'package:edar_app/data/model/user.dart';
 import 'package:edar_app/common/mixins/mixin_validations.dart';
+import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
+@immutable
 mixin AuthFieldMixin on ValidationMixin {
   final _usernameController = BehaviorSubject<String>();
   final _passwordController = BehaviorSubject<String>();
