@@ -100,8 +100,18 @@ class InvoiceItemDataGrid extends StatelessWidget {
       source: invoiceItemGriDataSource,
       columns: <GridColumn>[
         GridColumn(
+            columnName: 'prodcode',
+            width: 150,
+            label: Container(
+                padding: const EdgeInsets.all(5.0),
+                height: 20,
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  'Product Code',
+                ))),
+        GridColumn(
             columnName: 'prodname',
-            width: 250,
+            width: 200,
             label: Container(
                 padding: const EdgeInsets.all(5.0),
                 height: 20,
@@ -119,7 +129,7 @@ class InvoiceItemDataGrid extends StatelessWidget {
                 child: const Text('Product Desciption'))),
         GridColumn(
             columnName: 'price',
-            width: 133,
+            width: 100,
             label: Container(
                 padding: const EdgeInsets.all(5.0),
                 height: 20,
@@ -127,7 +137,7 @@ class InvoiceItemDataGrid extends StatelessWidget {
                 child: const Text('Price'))),
         GridColumn(
             columnName: 'qty',
-            width: 133,
+            width: 80,
             label: Container(
                 padding: const EdgeInsets.all(5.0),
                 height: 20,
@@ -135,7 +145,7 @@ class InvoiceItemDataGrid extends StatelessWidget {
                 child: const Text('Quantity'))),
         GridColumn(
             columnName: 'total',
-            width: 133,
+            width: 120,
             label: Container(
                 padding: const EdgeInsets.all(5.0),
                 height: 20,

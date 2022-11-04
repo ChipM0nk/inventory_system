@@ -23,7 +23,14 @@ class PurchaseDialog extends StatelessWidget {
     var stackHeaderRows = <StackedHeaderRow>[
       StackedHeaderRow(cells: [
         StackedHeaderCell(
-            columnNames: ['prodname', 'proddesc', 'price', 'qty', 'total'],
+            columnNames: [
+              'prodcode',
+              'prodname',
+              'proddesc',
+              'price',
+              'qty',
+              'total'
+            ],
             child: Container(
               color: Colors.grey[100],
               child: Padding(

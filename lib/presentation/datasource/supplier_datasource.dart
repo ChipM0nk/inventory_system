@@ -46,7 +46,7 @@ class SupplierData extends DataTableSource {
         ),
         DataCell(
           SizedBox(
-              width: 200,
+              width: 300,
               child: Tooltip(
                 message: dataItem.supplierAddress,
                 child: Text(

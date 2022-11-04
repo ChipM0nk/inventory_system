@@ -5,38 +5,39 @@ class ErrorMessage extends StatelessWidget {
   final String? message;
   final double fontSize;
   final double height;
+  final double width;
 
   const ErrorMessage({
     this.snapshot,
     this.message,
     this.fontSize = 10,
     this.height = 16,
+    this.width = 200,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return (snapshot != null && snapshot!.hasError)
-        ? Padding(
-            padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-            child: SizedBox(
-                height: height,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      snapshot!.error.toString(),
-                      style: TextStyle(
-                          fontSize: fontSize,
-                          fontStyle: FontStyle.italic,
-                          color: const Color(0xFFFF0000),
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                )),
-          )
+        ? SizedBox(
+            height: height,
+            width: width,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  snapshot!.error.toString(),
+                  style: TextStyle(
+                      fontSize: fontSize,
+                      fontStyle: FontStyle.italic,
+                      color: const Color(0xFFFF0000),
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
+            ))
         : const SizedBox(
             height: 16,
+            width: 200,
           );
   }
 }

@@ -54,14 +54,13 @@ class LoginDialog extends StatelessWidget {
           child: ErrorMessage(
             snapshot: snapshot,
             fontSize: 12,
-            height: 100,
           ),
         );
       },
     );
     return AlertDialog(
       content: SizedBox(
-        height: 250,
+        height: 150,
         child: BlocBuilder<AuthCubit, AuthState>(
           builder: (context, state) {
             if (state is AuthenticationSuccess) {

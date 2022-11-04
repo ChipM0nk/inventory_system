@@ -15,13 +15,14 @@ class PurchaseItemGridDataSource extends DataGridSource {
         .map<DataGridRow>(
           (e) => DataGridRow(
             cells: [
-              DataGridCell<PurchaseItem>(columnName: "prodname", value: e),
+              DataGridCell<PurchaseItem>(columnName: "prodcode", value: e),
+              DataGridCell<String>(
+                  columnName: "prodname", value: e.product.productName),
               DataGridCell<String>(
                   columnName: "proddesc", value: e.product.productDescription),
               DataGridCell<String>(
                   columnName: "price",
-                  value:
-                      'PHP ${Util.convertToCurrency(e.itemAmount).toString()}'),
+                  value: Util.convertToCurrency(e.itemAmount).toString()),
               DataGridCell<double>(columnName: "qty", value: e.quantity),
               DataGridCell<String>(
                   columnName: "total",
@@ -46,14 +47,15 @@ class PurchaseItemGridDataSource extends DataGridSource {
             ? Alignment.centerRight
             : Alignment.centerLeft,
         padding: const EdgeInsets.all(5.0),
-        child: (dataGridCell.columnName == 'proddesc')
+        child: (dataGridCell.columnName == 'proddesc' ||
+                dataGridCell.columnName == 'prodname')
             ? Tooltip(
                 message: dataGridCell.value.toString(),
                 child: Text(
                   dataGridCell.value.toString(),
                   overflow: TextOverflow.ellipsis,
                 ))
-            : (dataGridCell.columnName == 'prodname')
+            : (dataGridCell.columnName == 'prodcode')
                 ? Row(
                     children: [
                       editable
@@ -67,7 +69,7 @@ class PurchaseItemGridDataSource extends DataGridSource {
                               onPressed: () =>
                                   deletePurchaseItem!(dataGridCell.value))
                           : const SizedBox(width: 0),
-                      Text(dataGridCell.value.product.productName.toString()),
+                      Text(dataGridCell.value.product.productCode.toString()),
                     ],
                   )
                 : Text(dataGridCell.value.toString()),

@@ -70,7 +70,7 @@ class _SupplierPageState extends State<SupplierPage> {
           Align(
             alignment: Alignment.topLeft,
             child: SizedBox(
-              width: 800,
+              width: 1000,
               child: CustomPaginatedDataTable(
                 header: const Text("Suppliers"),
                 dataColumns: dataColumns(supplierData),

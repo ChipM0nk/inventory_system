@@ -10,7 +10,7 @@ mixin ErrorMessageMixin {
   Stream<String> get errorStream => _errorController.stream;
   updateError(String? errorMessage, StackTrace? stackTrace) {
     errorMessage = errorMessage ?? "Error encountered";
-    _errorController.addError(stackTrace.toString());
+    _errorController.addError(errorMessage);
     if (stackTrace != null) {
       _printStacktrace(stackTrace);
     }

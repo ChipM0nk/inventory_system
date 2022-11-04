@@ -86,7 +86,8 @@ class InvoiceAddItemDialog extends StatelessWidget {
                                       } else {
                                         List<String> matches = <String>[];
                                         matches.addAll(state.products
-                                            .map((e) => e.productName)
+                                            .map((e) =>
+                                                "${e.productCode} - ${e.productName}")
                                             .toList());
 
                                         matches.retainWhere((s) {
@@ -116,8 +117,8 @@ class InvoiceAddItemDialog extends StatelessWidget {
                                     onSelected: (String productName) {
                                       Product product = state.products
                                           .firstWhere((element) =>
-                                              element.productName ==
-                                              productName);
+                                              element.productCode ==
+                                              productName.split("-")[0].trim());
                                       BlocProvider.of<InvoiceCubit>(context)
                                           .updateProduct(product);
 

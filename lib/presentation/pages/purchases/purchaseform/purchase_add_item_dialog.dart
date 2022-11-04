@@ -88,7 +88,8 @@ class PurchaseAddItemDialog extends StatelessWidget {
                                                   .where((e) =>
                                                       e.supplier.supplierId ==
                                                       supplierId)
-                                                  .map((e) => e.productName)
+                                                  .map((e) =>
+                                                      "${e.productCode} - ${e.productName}")
                                                   .toList());
 
                                               matches.retainWhere((s) {
@@ -129,8 +130,10 @@ class PurchaseAddItemDialog extends StatelessWidget {
                                           onSelected: (String productName) {
                                             Product product = state.products
                                                 .firstWhere((element) =>
-                                                    element.productName ==
-                                                    productName);
+                                                    element.productCode ==
+                                                    productName
+                                                        .split("-")[0]
+                                                        .trim());
                                             BlocProvider.of<PurchaseCubit>(
                                                     context)
                                                 .updateProduct(product);
