@@ -11,10 +11,9 @@ part 'suppliers_state.dart';
 
 class SuppliersCubit extends Cubit<SuppliersState>
     with ValidationMixin, SuppliersFieldMixin, ErrorMessageMixin {
-  final SupplierRepository supplierRepository;
+  final SupplierRepository supplierRepository = SupplierRepository();
 
-  SuppliersCubit({required this.supplierRepository})
-      : super(SuppliersInitial());
+  SuppliersCubit() : super(SuppliersInitial());
 
   void fetchSuppliers() {
     supplierRepository
@@ -52,36 +51,19 @@ class SuppliersCubit extends Cubit<SuppliersState>
     }
   }
 
-  void addSupplier() {
-    Map<String, dynamic> supplierObj = getSupplier(null).toJson();
-
-    print("Add suppplier :::: ${supplierObj}");
-    supplierRepository.addSupplier(supplierObj).then((isAdded) {
-      if (isAdded) {
-        // fetchSuppliers();
-        emit(SupplierAdded());
-        fetchSuppliers();
+  void searchSupplier(String searchText) {
+    final currentState = state;
+    if (currentState is SuppliersLoaded) {
+      final data = currentState.suppliers;
+      if (searchText.isEmpty) {
+        emit(SuppliersLoaded(suppliers: data, sortAscending: false));
       } else {
-        updateError(null, null);
+        final filteredData =
+            data.where((cat) => cat.supplierName.contains(searchText)).toList();
+        emit(SuppliersLoaded(
+            filteredData: filteredData, suppliers: data, sortAscending: true));
       }
-    }).onError((error, stackTrace) => updateError('$error', stackTrace));
-  }
-
-  void updateSupplier(int supplierId) {
-    Map<String, dynamic> supplierObj = getSupplier(supplierId).toJson();
-    print("Update ::: ${supplierObj}");
-
-    supplierRepository
-        .udpateSupplier(supplierObj, supplierId!)
-        .then((isUpdated) {
-      if (isUpdated) {
-        // fetchSuppliers();
-        emit(SupplierUpdated());
-        fetchSuppliers();
-      } else {
-        updateError(null, null);
-      }
-    }).onError((error, stackTrace) => updateError('$error', stackTrace));
+    }
   }
 
   void deleteSupplier(int supplierId) {
@@ -98,27 +80,5 @@ class SuppliersCubit extends Cubit<SuppliersState>
         updateError('$error', stackTrace);
       },
     );
-  }
-
-  void searchSupplier(String searchText) {
-    final currentState = state;
-    if (currentState is SuppliersLoaded) {
-      final data = currentState.suppliers;
-      if (searchText.isEmpty) {
-        emit(SuppliersLoaded(suppliers: data, sortAscending: false));
-      } else {
-        final filteredData =
-            data.where((cat) => cat.supplierName.contains(searchText)).toList();
-        emit(SuppliersLoaded(
-            filteredData: filteredData, suppliers: data, sortAscending: true));
-      }
-    }
-  }
-
-  loadSuppliers(Supplier supplier) {
-    updateSupplierName(supplier.supplierName);
-    updateSupplierAddress(supplier.supplierAddress);
-    updateSupplierEmailAddress(supplier.supplierEmailAdd);
-    updateSupplierContactNumber(supplier.supplierContactNumber);
   }
 }

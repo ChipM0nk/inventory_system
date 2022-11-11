@@ -1,6 +1,5 @@
-import 'package:edar_app/cubit/categories/add_categories_cubit.dart';
+import 'package:edar_app/cubit/categories/save_categories_cubit.dart';
 import 'package:edar_app/cubit/categories/categories_cubit.dart';
-import 'package:edar_app/cubit/categories/edit_categories_cubit.dart';
 import 'package:edar_app/data/model/category.dart';
 import 'package:edar_app/presentation/datasource/category_datasource.dart';
 import 'package:edar_app/presentation/pages/category/category_dialog.dart';
@@ -47,26 +46,7 @@ class _CategoryPageState extends State<CategoryPage> {
                   width: 30,
                 ),
                 CustomElevatedButton(
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (_) {
-                          searchController.clear();
-                          BlocProvider.of<SaveCategoriesCubit>(context)
-                              .initDialog();
-                          return MultiBlocProvider(
-                            providers: [
-                              BlocProvider.value(
-                                  value: context.read<CategoriesCubit>()),
-                              BlocProvider.value(
-                                  value: context.read<SaveCategoriesCubit>()),
-                              BlocProvider.value(
-                                  value: context.read<EditCategoriesCubit>()),
-                            ],
-                            child: CategoryDialog(),
-                          );
-                        });
-                  },
+                  onPressed: () => showCategoryDialog(null),
                   child: const Text("Add Category"),
                 ),
               ],
@@ -86,7 +66,7 @@ class _CategoryPageState extends State<CategoryPage> {
                   CategoryData categoryData = CategoryData(
                       data: state.filteredData ?? state.categories,
                       onDeleteClick: _deleteCategory,
-                      onItemClick: _openUpdateCategoryDialog);
+                      onItemClick: showCategoryDialog);
 
                   return CustomPaginatedDataTable(
                       header: const Text("Categories"),
@@ -168,18 +148,15 @@ class _CategoryPageState extends State<CategoryPage> {
     );
   }
 
-  void _openUpdateCategoryDialog(Category category) {
-    print('updating category : ${category.categoryCode}');
+  Future<dynamic> showCategoryDialog(Category? category) {
     searchController.clear();
-    BlocProvider.of<SaveCategoriesCubit>(context).initDialog();
-    showDialog(
+    return showDialog(
         context: context,
         builder: (_) {
           return MultiBlocProvider(
             providers: [
               BlocProvider.value(value: context.read<CategoriesCubit>()),
               BlocProvider.value(value: context.read<SaveCategoriesCubit>()),
-              BlocProvider.value(value: context.read<EditCategoriesCubit>()),
             ],
             child: CategoryDialog(category: category),
           );

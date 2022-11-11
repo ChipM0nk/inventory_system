@@ -1,8 +1,6 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:edar_app/cubit/categories/categories_field_mixin.dart';
 import 'package:edar_app/data/model/category.dart';
-import 'package:edar_app/data/network/network_service.dart';
 import 'package:edar_app/data/repository/category_repository.dart';
 import 'package:edar_app/common/mixins/error_message_mixin.dart';
 import 'package:edar_app/common/mixins/mixin_validations.dart';
@@ -12,8 +10,7 @@ part 'categories_state.dart';
 
 class CategoriesCubit extends Cubit<CategoriesState>
     with ValidationMixin, ErrorMessageMixin {
-  final CategoryRepository categoryRepository =
-      CategoryRepository(networkService: NetworkService());
+  final CategoryRepository categoryRepository = CategoryRepository();
 
   CategoriesCubit() : super(CategoriesInitial());
 

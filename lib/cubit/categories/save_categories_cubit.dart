@@ -5,22 +5,15 @@ import 'package:edar_app/common/mixins/error_message_mixin.dart';
 import 'package:edar_app/common/mixins/mixin_validations.dart';
 import 'package:edar_app/cubit/categories/categories_field_mixin.dart';
 import 'package:edar_app/data/model/category.dart';
-import 'package:edar_app/data/network/network_service.dart';
 import 'package:edar_app/data/repository/category_repository.dart';
 import 'package:meta/meta.dart';
 
-part 'add_categories_state.dart';
+part 'save_categories_state.dart';
 
 class SaveCategoriesCubit extends Cubit<SaveCategoriesState>
     with ValidationMixin, CategoriesFieldMixin, ErrorMessageMixin {
-  final CategoryRepository categoryRepository =
-      CategoryRepository(networkService: NetworkService());
+  final CategoryRepository categoryRepository = CategoryRepository();
   SaveCategoriesCubit() : super(SaveCategoriesInitial());
-
-  loadCategory(Category category) {
-    updateCategoryCode(category.categoryCode);
-    updateCategoryName(category.categoryName);
-  }
 
   initDialog() {
     init();
@@ -50,17 +43,28 @@ class SaveCategoriesCubit extends Cubit<SaveCategoriesState>
   }
 
   void updateCategory(int categoryId) {
-    emit(CategoryUpdating());
+    emit(CategorySaving());
     Category category = getCategory(categoryId);
     Map<String, dynamic> categoryObj = category.toJson();
     categoryRepository
         .udpateCategory(categoryObj, category.categoryId!)
         .then((isUpdated) {
       if (isUpdated) {
-        emit(CategoryUpdated());
+        emit(CategorySaved());
       } else {
         updateError(null, null);
+        emit(CategorySavingError());
       }
-    }).onError((error, stackTrace) => updateError('$error', stackTrace));
+    }).onError(
+      (error, stackTrace) {
+        emit(CategorySavingError());
+        updateError('$error', stackTrace);
+      },
+    );
+  }
+
+  loadCategory(Category category) {
+    updateCategoryCode(category.categoryCode);
+    updateCategoryName(category.categoryName);
   }
 }

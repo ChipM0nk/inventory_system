@@ -1,3 +1,4 @@
+import 'package:edar_app/cubit/suppliers/save_suppliers_cubit.dart';
 import 'package:edar_app/cubit/suppliers/suppliers_cubit.dart';
 import 'package:edar_app/data/model/supplier.dart';
 import 'package:edar_app/presentation/datasource/supplier_datasource.dart';
@@ -30,7 +31,7 @@ class _SupplierPageState extends State<SupplierPage> {
         SupplierData supplierData = SupplierData(
             data: state.filteredData ?? state.suppliers,
             onDeleteClick: _deleteSupplier,
-            onItemClick: _openUpdateSupplierDialog);
+            onItemClick: showSupplierDialog);
         return Column(children: [
           const SizedBox(height: 55),
           Row(
@@ -52,17 +53,7 @@ class _SupplierPageState extends State<SupplierPage> {
                 width: 30,
               ),
               CustomElevatedButton(
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (_) {
-                        searchController.clear();
-                        return BlocProvider.value(
-                          value: context.read<SuppliersCubit>(),
-                          child: SupplierDialog(),
-                        );
-                      });
-                },
+                onPressed: () => showSupplierDialog(null),
                 child: const Text("Add Supplier"),
               ),
             ],
@@ -84,6 +75,24 @@ class _SupplierPageState extends State<SupplierPage> {
         ]);
       },
     );
+  }
+
+  void showSupplierDialog(Supplier? supplier) {
+    searchController.clear();
+    showDialog(
+        context: context,
+        builder: (_) {
+          searchController.clear();
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: context.read<SuppliersCubit>()),
+              BlocProvider.value(value: context.read<SaveSuppliersCubit>()),
+            ],
+            child: SupplierDialog(
+              supplier: supplier,
+            ),
+          );
+        });
   }
 
   List<DataColumn> dataColumns(SupplierData data) => <DataColumn>[
@@ -155,19 +164,6 @@ class _SupplierPageState extends State<SupplierPage> {
                     }),
               ],
             ),
-          );
-        });
-  }
-
-  void _openUpdateSupplierDialog(Supplier supplier) {
-    print('updating supplier : ${supplier.supplierId}');
-    searchController.clear();
-    showDialog(
-        context: context,
-        builder: (_) {
-          return BlocProvider.value(
-            value: context.read<SuppliersCubit>(),
-            child: SupplierDialog(supplier: supplier),
           );
         });
   }

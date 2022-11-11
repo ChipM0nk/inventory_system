@@ -1,4 +1,4 @@
-import 'package:edar_app/cubit/categories/add_categories_cubit.dart';
+import 'package:edar_app/cubit/categories/save_categories_cubit.dart';
 import 'package:edar_app/cubit/categories/categories_cubit.dart';
 import 'package:edar_app/data/model/category.dart';
 import 'package:edar_app/presentation/widgets/custom_elevated_action_button.dart';
@@ -16,6 +16,7 @@ class CategoryDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     String title = 'Add Category';
     int? categoryId;
+    BlocProvider.of<SaveCategoriesCubit>(context).initDialog();
 
     if (category != null) {
       BlocProvider.of<SaveCategoriesCubit>(context).loadCategory(category!);
@@ -78,10 +79,10 @@ class CategoryDialog extends StatelessWidget {
     return BlocBuilder<SaveCategoriesCubit, SaveCategoriesState>(
       builder: (context, state) {
         bool isSaving = false;
-        if (state is CategorySaving || state is CategoryUpdating) {
+        if (state is CategorySaving) {
           isSaving = true;
         }
-        if (state is CategorySaved || state is CategoryUpdated) {
+        if (state is CategorySaved) {
           BlocProvider.of<CategoriesCubit>(context).fetchCategories();
           Navigator.of(context, rootNavigator: true).pop();
         }

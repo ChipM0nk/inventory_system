@@ -33,7 +33,6 @@ mixin CategoriesFieldMixin on ValidationMixin {
   }
 
   init() {
-    print("init");
     _categoryCodeController.sink.addError("");
     _categoryNameController.sink.addError("");
   }

@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'dart:convert';
 
 import 'package:edar_app/constants/services.dart';
@@ -5,9 +7,9 @@ import 'package:edar_app/data/model/supplier.dart';
 import 'package:edar_app/data/network/network_service.dart';
 
 class SupplierRepository {
-  final NetworkService networkService;
+  final NetworkService networkService = NetworkService();
 
-  SupplierRepository({required this.networkService});
+  SupplierRepository();
 
   Future<List<Supplier>> fetchAll() async {
     final objRaw = await networkService.fetchAll(SuppliersService);
