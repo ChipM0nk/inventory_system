@@ -55,6 +55,10 @@ class InvoiceData extends DataTableSource {
           Text(dataItem.staff ?? dataItem.staff!),
           onTap: () => onItemClick(dataItem),
         ),
+        DataCell(
+          Text(dataItem.trxnStatus ?? dataItem.trxnStatus!),
+          onTap: () => onItemClick(dataItem),
+        ),
       ],
     );
   }

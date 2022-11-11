@@ -215,6 +215,13 @@ class _InvoicePageState extends State<InvoicePage> {
                 fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
         ),
+        const DataColumn(
+          label: Text(
+            'Status',
+            style: TextStyle(
+                fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+          ),
+        ),
       ];
 
   void _openInvoiceDialog(Invoice invoice) {

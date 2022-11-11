@@ -18,6 +18,7 @@ Purchase _$PurchaseFromJson(Map<String, dynamic> json) => Purchase(
           .toList(),
       staff: json['staff'] as String?,
       totalAmount: (json['totalAmount'] as num).toDouble(),
+      trxnStatus: json['trxnStatus'] as String?,
     );
 
 Map<String, dynamic> _$PurchaseToJson(Purchase instance) {
@@ -38,5 +39,6 @@ Map<String, dynamic> _$PurchaseToJson(Purchase instance) {
   val['purchaseItems'] = instance.purchaseItems.map((e) => e.toJson()).toList();
   writeNotNull('staff', instance.staff);
   val['totalAmount'] = instance.totalAmount;
+  writeNotNull('trxnStatus', instance.trxnStatus);
   return val;
 }

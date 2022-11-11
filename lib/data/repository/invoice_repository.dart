@@ -24,11 +24,10 @@ class InvoiceRepository {
     return isAdded;
   }
 
-  Future<bool> deleteInvoice(int invoiceId) async {
-    final isDeleted =
-        await networkService.deleteItem(invoiceId, InvoicesService);
+  Future<bool> voidInvoice(int invoiceId) async {
+    final isVoided = await networkService.voidItem(invoiceId, InvoicesService);
 
-    return isDeleted;
+    return isVoided;
   }
 
   Future<bool> udpateInvoice(

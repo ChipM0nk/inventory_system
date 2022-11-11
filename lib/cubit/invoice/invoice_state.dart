@@ -26,9 +26,9 @@ class AddingInvoice extends InvoiceState {}
 class InvoiceAdded extends InvoiceState {}
 
 //delete
-class DeletingInvoice extends InvoiceState {}
+class VoidingInvoice extends InvoiceState {}
 
-class InvoiceDeleted extends InvoiceState {}
+class InvoiceVoided extends InvoiceState {}
 
 //update
 class UpdatingInvoice extends InvoiceState {}

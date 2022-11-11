@@ -52,6 +52,13 @@ class _HomePageState extends State<HomePage> {
       // Future.delayed(const Duration(milliseconds: 3000), () {
 
       child: MaterialApp(
+        theme: ThemeData(
+          primarySwatch: Colors.green,
+          primaryColor: const Color(0xFF08B578),
+          buttonTheme: const ButtonThemeData(
+            buttonColor: Color(0xFF08B578),
+          ),
+        ),
         home: Scaffold(
           appBar: AppBar(
             title: const Align(

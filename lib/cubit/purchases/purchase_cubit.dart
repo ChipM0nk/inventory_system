@@ -26,13 +26,16 @@ class PurchaseCubit extends Cubit<PurchaseState>
   PurchaseCubit({required this.purchaseRepository}) : super(PurchaseInitial());
 
   void fetchPurchases() {
-    purchaseRepository.fetchAll().then((purchase) => {
-          emit(PurchaseLoaded(
-            purchases: purchase,
-            sortIndex: null,
-            sortAscending: true,
-          )),
-        });
+    purchaseRepository
+        .fetchAll()
+        .then((purchase) => {
+              emit(PurchaseLoaded(
+                purchases: purchase,
+                sortIndex: null,
+                sortAscending: true,
+              )),
+            })
+        .onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 
   void fetchPurchasesWithParam() {
@@ -103,10 +106,10 @@ class PurchaseCubit extends Cubit<PurchaseState>
     }).onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 
-  void deletePurchase(int purchaseId) {
-    purchaseRepository.deletePurchase(purchaseId).then((isDeleted) {
-      if (isDeleted) {
-        emit(PurchaseDeleted());
+  void voidPurchase(int purchaseId) {
+    purchaseRepository.voidPurchase(purchaseId).then((isVoided) {
+      if (isVoided) {
+        emit(PurchaseVoided());
         fetchPurchases();
       } else {
         updateError(null, null);

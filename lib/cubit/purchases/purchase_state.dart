@@ -25,7 +25,7 @@ class PurchaseAdded extends PurchaseState {}
 
 //delete
 
-class PurchaseDeleted extends PurchaseState {}
+class PurchaseVoided extends PurchaseState {}
 
 //update
 

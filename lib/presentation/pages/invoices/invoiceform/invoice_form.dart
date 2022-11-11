@@ -189,7 +189,7 @@ class _InvoiceFormState extends State<InvoiceForm> {
       builder: (context, state) {
         if (state is InvoiceAdded) {
           print("Invoice Success"); //TODO create a popup for print
-          Future.delayed(const Duration(milliseconds: 500), () {
+          Future.delayed(Duration.zero, () {
             setState(() {
               locator<NavigationService>().navigateTo(InvoiceFormRoute);
               BlocProvider.of<InvoiceCubit>(context).reset();

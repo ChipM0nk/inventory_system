@@ -53,6 +53,10 @@ class PurchaseData extends DataTableSource {
           Text(dataItem.staff ?? ""),
           onTap: () => onItemClick(dataItem),
         ),
+        DataCell(
+          Text(dataItem.trxnStatus ?? ""),
+          onTap: () => onItemClick(dataItem),
+        ),
       ],
     );
   }

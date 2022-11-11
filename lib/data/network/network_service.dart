@@ -1,36 +1,15 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
-import 'package:http/io_client.dart';
 
 import 'package:edar_app/constants/constants.dart';
 import 'package:edar_app/local_storage.dart';
 import 'package:http/http.dart';
-import 'package:universal_io/io.dart';
 
 class NetworkService {
   Future<dynamic> authenticate(Map<String, dynamic> userObj) async {
     String url = "$BASE_URL/authenticate/";
-    // ByteData data = await rootBundle.load('assets/keystore.p12');
-    // SecurityContext context = SecurityContext.defaultContext;
-    // context.setTrustedCertificatesBytes(data.buffer.asUint8List(),
-    //     password: "password");
-    // final httpClient = HttpClient(context: context);
-    // final httpClient = BrowserHttpClient();
 
-    // // httpClient
-    // //   ..badCertificateCallback =
-    // //       (X509Certificate cert, String host, int port) => true;
-    // // final client = IOClient(httpClient);
-
-    // final request = await httpClient.postUrl(Uri.parse(url));
-    // request.headers
-    //     .set(HttpHeaders.contentTypeHeader, "application/json; charset=UTF-8");
-    // request.write(jsonEncode(userObj));
-    // print("invoke request");
-    // final response = await request.close();
-    // print("response : ${response.toString()}");
-    // dynamic respObj = jsonDecode(await response.transform(utf8.decoder).join());
     final response = await post(Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
@@ -118,7 +97,7 @@ class NetworkService {
   }
 
   Future<bool> udpateItem(
-      Map<String, dynamic> categoryObj, int id, String serviceName) async {
+      Map<String, dynamic> updateObj, int id, String serviceName) async {
     print("Updating item");
     String url = "$BASE_URL$serviceName/update";
 
@@ -127,7 +106,7 @@ class NetworkService {
           'Content-Type': 'application/json',
           'Authorization': "Bearer ${await LocalStorage.read("jwt")}",
         },
-        body: jsonEncode(categoryObj));
+        body: jsonEncode(updateObj));
     dynamic respObj = jsonDecode(response.body);
     if (respObj['code'] == '000') {
       return true;
@@ -140,6 +119,24 @@ class NetworkService {
     String url = "$BASE_URL$serviceName/delete/$id";
 
     final response = await delete(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': "Bearer ${await LocalStorage.read("jwt")}",
+      },
+    );
+    dynamic respObj = jsonDecode(response.body);
+    if (respObj['code'] == '000') {
+      return true;
+    }
+    throw Exception(respObj['message']);
+  }
+
+  Future<bool> voidItem(int id, String serviceName) async {
+    print("Voiding item");
+    String url = "$BASE_URL$serviceName/void/$id";
+
+    final response = await patch(
       Uri.parse(url),
       headers: {
         'Content-Type': 'application/json',

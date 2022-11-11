@@ -114,9 +114,13 @@ class ProductsCubit extends Cubit<ProductsState>
         emit(ProductsLoaded(products: data, sortAscending: false));
       } else {
         final filteredData = data
-            .where((cat) => cat.productName.toLowerCase().contains(
-                  searchText.toLowerCase(),
-                ))
+            .where((cat) =>
+                cat.productName.toLowerCase().contains(
+                      searchText.toLowerCase(),
+                    ) ||
+                cat.productCode.toLowerCase().contains(
+                      searchText.toLowerCase(),
+                    ))
             .toList();
         emit(ProductsLoaded(
           filteredData: filteredData,

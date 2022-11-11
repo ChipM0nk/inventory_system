@@ -27,7 +27,6 @@ class InvoiceCubit extends Cubit<InvoiceState>
   }
 
   void fetchInvoices() {
-    emit(InvoiceLoading());
     invoiceRepository
         .fetchAll()
         .then((invoices) => {
@@ -103,13 +102,11 @@ class InvoiceCubit extends Cubit<InvoiceState>
     }).onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 
-  void deleteInvoice(int invoiceId) {
-    emit(DeletingInvoice());
-
-    invoiceRepository.deleteInvoice(invoiceId).then((isDeleted) {
-      if (isDeleted) {
-        emit(InvoiceDeleted());
-        // fetchInvoice();
+  void voidInvoice(int invoiceId) {
+    invoiceRepository.voidInvoice(invoiceId).then((isVoided) {
+      if (isVoided) {
+        emit(InvoiceVoided());
+        fetchInvoices();
       } else {
         updateError(null, null);
       }

@@ -17,6 +17,7 @@ class Purchase {
   final List<PurchaseItem> purchaseItems;
   final String? staff;
   final double totalAmount;
+  final String? trxnStatus;
 
   // Connect the generated [_$PersonFromJson] function to the `fromJson`
   /// factory.
@@ -25,17 +26,17 @@ class Purchase {
   factory Purchase.fromJson(Map<String, dynamic> json) =>
       _$PurchaseFromJson(json);
 
-  const Purchase({
-    this.purchaseId,
-    required this.purchaseNo,
-    required this.purchaseDate,
-    required this.batchCode,
-    required this.supplier,
-    this.remarks,
-    required this.purchaseItems,
-    this.staff,
-    required this.totalAmount,
-  });
+  const Purchase(
+      {this.purchaseId,
+      required this.purchaseNo,
+      required this.purchaseDate,
+      required this.batchCode,
+      required this.supplier,
+      this.remarks,
+      required this.purchaseItems,
+      this.staff,
+      required this.totalAmount,
+      this.trxnStatus});
 
   /// Connect the generated [_$PurchaseToJson] function to the `toJson` method.
   Map<String, dynamic> toJson() => _$PurchaseToJson(this);

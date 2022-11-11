@@ -152,7 +152,7 @@ class _PurchaseFormState extends State<PurchaseForm> {
     return BlocBuilder<PurchaseCubit, PurchaseState>(
       builder: (context, state) {
         if (state is PurchaseAdded) {
-          Future.delayed(const Duration(milliseconds: 500), () {
+          Future.delayed(Duration.zero, () {
             setState(() {
               locator<NavigationService>().navigateTo(PurchaseFormRoute);
               BlocProvider.of<PurchaseCubit>(context).reset();

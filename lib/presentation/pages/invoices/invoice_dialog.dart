@@ -73,7 +73,7 @@ class InvoiceDialog extends StatelessWidget {
                         ]),
                         Row(children: [
                           CustomInlineLabel(
-                              label: "Purchase Date: ",
+                              label: "Invoice Date: ",
                               value: invoice.purchaseDate),
                           CustomInlineLabel(
                               label: "Due Date: ", value: invoice.dueDate),
@@ -110,8 +110,10 @@ class InvoiceDialog extends StatelessWidget {
     );
     return BlocBuilder<InvoiceCubit, InvoiceState>(
       builder: (context, state) {
-        if (state is InvoiceAdded) {
-          Navigator.of(context, rootNavigator: true).pop();
+        if (state is InvoiceAdded || state is InvoiceVoided) {
+          Future.delayed(Duration.zero, () {
+            Navigator.of(context, rootNavigator: true).pop();
+          });
         }
         return AlertDialog(
           title: const Text("Invoice Details"),
@@ -143,21 +145,89 @@ class InvoiceDialog extends StatelessWidget {
           actions: [
             Center(
               child: SizedBox(
-                width: 170,
-                height: 70,
-                child: CustomElevatedButton(
-                  onPressed: flgAddInvoice
-                      ? () {
-                          BlocProvider.of<InvoiceCubit>(context).addInvoice();
-                        }
-                      : () {},
-                  child: Center(
-                    child: Text(
-                      flgAddInvoice ? "SUBMIT" : "PRINT",
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 20),
+                width: flgAddInvoice ? 170 : 350,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: 170,
+                      height: 70,
+                      child: CustomElevatedButton(
+                        onPressed: flgAddInvoice
+                            ? () {
+                                BlocProvider.of<InvoiceCubit>(context)
+                                    .addInvoice();
+                              }
+                            : () {},
+                        child: Center(
+                          child: Text(
+                            flgAddInvoice ? "SUBMIT" : "PRINT",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    if (!flgAddInvoice)
+                      SizedBox(
+                        width: 170,
+                        height: 70,
+                        child: CustomElevatedButton(
+                          color: Colors.red.shade600,
+                          onPressed: invoice.trxnStatus == 'ACTIVE'
+                              ? () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (_) {
+                                        return BlocProvider.value(
+                                          value: context.read<InvoiceCubit>(),
+                                          child: AlertDialog(
+                                            title: const Text("Void Invoice"),
+                                            content: BlocListener<InvoiceCubit,
+                                                InvoiceState>(
+                                              listener: (context, state) {
+                                                if (state is InvoiceVoided) {
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop();
+                                                }
+                                              },
+                                              child: const Text(
+                                                  "Are you sure you want to void this invoice?"),
+                                            ),
+                                            actions: [
+                                              ElevatedButton(
+                                                  child: const Text("Yes"),
+                                                  onPressed: () {
+                                                    BlocProvider.of<
+                                                                InvoiceCubit>(
+                                                            context)
+                                                        .voidInvoice(
+                                                            invoice.invoiceId!);
+                                                  }),
+                                              ElevatedButton(
+                                                  child: const Text("No"),
+                                                  onPressed: () {
+                                                    Navigator.of(context,
+                                                            rootNavigator: true)
+                                                        .pop();
+                                                  }),
+                                            ],
+                                          ),
+                                        );
+                                      });
+                                }
+                              : null,
+                          child: const Center(
+                            child: Text(
+                              "VOID",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ),

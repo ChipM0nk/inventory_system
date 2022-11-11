@@ -23,24 +23,25 @@ class Invoice {
   final String? remarks;
   final List<InvoiceItem> invoiceItems;
   final double totalAmount;
+  final String? trxnStatus;
 
-  const Invoice({
-    this.invoiceId,
-    required this.invoiceNo,
-    required this.customerName,
-    this.customerAddress,
-    this.contactNo,
-    this.staff,
-    required this.poNumber,
-    required this.purchaseDate,
-    required this.paymentType,
-    required this.paymentTerm,
-    required this.tinNumber,
-    required this.dueDate,
-    this.remarks,
-    required this.invoiceItems,
-    required this.totalAmount,
-  });
+  const Invoice(
+      {this.invoiceId,
+      required this.invoiceNo,
+      required this.customerName,
+      this.customerAddress,
+      this.contactNo,
+      this.staff,
+      required this.poNumber,
+      required this.purchaseDate,
+      required this.paymentType,
+      required this.paymentTerm,
+      required this.tinNumber,
+      required this.dueDate,
+      this.remarks,
+      required this.invoiceItems,
+      required this.totalAmount,
+      this.trxnStatus});
   // Connect the generated [_$PersonFromJson] function to the `fromJson`
   /// factory.
   factory Invoice.fromJson(Map<String, dynamic> json) =>

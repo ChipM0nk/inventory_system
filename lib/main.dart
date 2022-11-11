@@ -30,6 +30,10 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.green,
+        primaryColor: const Color(0xFF08B578),
+        buttonTheme: const ButtonThemeData(
+          buttonColor: Color(0xFF08B578),
+        ),
       ),
       // home: BlocProvider(
       //   create: (context) => AuthCubit(),

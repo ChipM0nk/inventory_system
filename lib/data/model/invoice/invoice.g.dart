@@ -24,6 +24,7 @@ Invoice _$InvoiceFromJson(Map<String, dynamic> json) => Invoice(
           .map((e) => InvoiceItem.fromJson(e as Map<String, dynamic>))
           .toList(),
       totalAmount: (json['totalAmount'] as num).toDouble(),
+      trxnStatus: json['trxnStatus'] as String?,
     );
 
 Map<String, dynamic> _$InvoiceToJson(Invoice instance) {
@@ -50,5 +51,6 @@ Map<String, dynamic> _$InvoiceToJson(Invoice instance) {
   writeNotNull('remarks', instance.remarks);
   val['invoiceItems'] = instance.invoiceItems.map((e) => e.toJson()).toList();
   val['totalAmount'] = instance.totalAmount;
+  writeNotNull('trxnStatus', instance.trxnStatus);
   return val;
 }

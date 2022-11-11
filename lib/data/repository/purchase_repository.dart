@@ -25,11 +25,11 @@ class PurchaseRepository {
     return isAdded;
   }
 
-  Future<bool> deletePurchase(int purchaseId) async {
-    final isDeleted =
-        await networkService.deleteItem(purchaseId, PurchasesService);
+  Future<bool> voidPurchase(int purchaseId) async {
+    final isVoided =
+        await networkService.voidItem(purchaseId, PurchasesService);
 
-    return isDeleted;
+    return isVoided;
   }
 
   Future<bool> udpatePurchase(
