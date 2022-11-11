@@ -1,3 +1,5 @@
+import 'package:edar_app/cubit/categories/add_categories_cubit.dart';
+import 'package:edar_app/cubit/categories/edit_categories_cubit.dart';
 import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
 import 'package:edar_app/cubit/products/products_cubit.dart';
 import 'package:edar_app/cubit/purchases/purchase_cubit.dart';
@@ -79,13 +81,17 @@ class BlocProviders {
   }
 
   static List<BlocProvider> _getCategoryBlocProvider() {
-    CategoryRepository categoryRepository =
-        CategoryRepository(networkService: NetworkService());
-    CategoriesCubit categoriesCubit =
-        CategoriesCubit(categoryRepository: categoryRepository);
+    // CategoryRepository categoryRepository =
+    //     CategoryRepository(networkService: NetworkService());
+    // CategoriesCubit categoriesCubit =
+    //     CategoriesCubit(categoryRepository: categoryRepository);
 
     return [
-      BlocProvider<CategoriesCubit>(create: (context) => categoriesCubit)
+      BlocProvider<CategoriesCubit>(create: (context) => CategoriesCubit()),
+      BlocProvider<SaveCategoriesCubit>(
+          create: (context) => SaveCategoriesCubit()),
+      BlocProvider<EditCategoriesCubit>(
+          create: (context) => EditCategoriesCubit())
     ];
   }
 
@@ -106,8 +112,9 @@ class BlocProviders {
 
     CategoryRepository categoryRepository =
         CategoryRepository(networkService: NetworkService());
-    CategoriesCubit categoriesCubit =
-        CategoriesCubit(categoryRepository: categoryRepository);
+    // CategoriesCubit categoriesCubit =
+    //     CategoriesCubit(categoryRepository: categoryRepository);
+    CategoriesCubit categoriesCubit = CategoriesCubit();
 
     SupplierRepository supplierRepository =
         SupplierRepository(networkService: NetworkService());
@@ -115,7 +122,7 @@ class BlocProviders {
         SuppliersCubit(supplierRepository: supplierRepository);
     return [
       BlocProvider<ProductsCubit>(create: (context) => productCubit),
-      BlocProvider<CategoriesCubit>(create: (context) => categoriesCubit),
+      BlocProvider<CategoriesCubit>(create: (context) => CategoriesCubit()),
       BlocProvider<SuppliersCubit>(create: (context) => suppliersCubit)
     ];
   }

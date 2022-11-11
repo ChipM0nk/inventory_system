@@ -1,5 +1,7 @@
+import 'package:edar_app/cubit/categories/add_categories_cubit.dart';
 import 'package:edar_app/cubit/categories/categories_cubit.dart';
 import 'package:edar_app/data/model/category.dart';
+import 'package:edar_app/presentation/widgets/custom_elevated_action_button.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_text_field.dart';
 import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
 import 'package:flutter/material.dart';
@@ -14,17 +16,15 @@ class CategoryDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     String title = 'Add Category';
     int? categoryId;
-    BlocProvider.of<CategoriesCubit>(context).init();
-    BlocProvider.of<CategoriesCubit>(context).clearError();
 
     if (category != null) {
-      BlocProvider.of<CategoriesCubit>(context).loadCategory(category!);
+      BlocProvider.of<SaveCategoriesCubit>(context).loadCategory(category!);
       title = 'Update Category';
       categoryId = category!.categoryId;
     }
 
     var categoryCode = StreamBuilder(
-      stream: BlocProvider.of<CategoriesCubit>(context).categoryCodeStream,
+      stream: BlocProvider.of<SaveCategoriesCubit>(context).categoryCodeStream,
       builder: (context, snapshot) {
         return Padding(
           padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
@@ -36,7 +36,7 @@ class CategoryDialog extends StatelessWidget {
               snapshot: snapshot,
               autofocus: true,
               onChanged: (text) {
-                BlocProvider.of<CategoriesCubit>(context)
+                BlocProvider.of<SaveCategoriesCubit>(context)
                     .updateCategoryCode(text);
               }),
         );
@@ -44,7 +44,7 @@ class CategoryDialog extends StatelessWidget {
     );
 
     var categoryName = StreamBuilder(
-      stream: BlocProvider.of<CategoriesCubit>(context).categoryNameStream,
+      stream: BlocProvider.of<SaveCategoriesCubit>(context).categoryNameStream,
       builder: (context, snapshot) {
         return Padding(
           padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
@@ -55,7 +55,7 @@ class CategoryDialog extends StatelessWidget {
                   category != null ? category!.categoryName.toString() : null,
               snapshot: snapshot,
               onChanged: (text) {
-                BlocProvider.of<CategoriesCubit>(context)
+                BlocProvider.of<SaveCategoriesCubit>(context)
                     .updateCategoryName(text);
               }),
         );
@@ -63,7 +63,7 @@ class CategoryDialog extends StatelessWidget {
     );
 
     var serviceErrorMessage = StreamBuilder(
-      stream: BlocProvider.of<CategoriesCubit>(context).errorStream,
+      stream: BlocProvider.of<SaveCategoriesCubit>(context).errorStream,
       builder: (context, snapshot) {
         return Padding(
           padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
@@ -75,64 +75,68 @@ class CategoryDialog extends StatelessWidget {
         );
       },
     );
-    return AlertDialog(
-      scrollable: true,
-      title: Text(title),
-      content: BlocBuilder<CategoriesCubit, CategoriesState>(
-          builder: (context, state) {
-        if (state is CategoryAdded || state is CategoryUpdated) {
+    return BlocBuilder<SaveCategoriesCubit, SaveCategoriesState>(
+      builder: (context, state) {
+        bool isSaving = false;
+        if (state is CategorySaving || state is CategoryUpdating) {
+          isSaving = true;
+        }
+        if (state is CategorySaved || state is CategoryUpdated) {
+          BlocProvider.of<CategoriesCubit>(context).fetchCategories();
           Navigator.of(context, rootNavigator: true).pop();
         }
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Column(
-                children: [
-                  categoryCode,
-                  categoryName,
-                  serviceErrorMessage,
-                ],
-              ),
-            ],
+        return AlertDialog(
+          scrollable: true,
+          title: Text(title),
+          content: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Column(
+                  children: [
+                    categoryCode,
+                    categoryName,
+                    serviceErrorMessage,
+                  ],
+                ),
+              ],
+            ),
           ),
-        );
-      }),
-      actions: [
-        StreamBuilder(
-          stream: BlocProvider.of<CategoriesCubit>(context).buttonValid,
-          builder: (context, snapshot) {
-            return Padding(
-              padding: const EdgeInsets.all(24),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF08B578),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
+          actions: [
+            StreamBuilder(
+              stream: BlocProvider.of<SaveCategoriesCubit>(context).buttonValid,
+              builder: (context, snapshot) {
+                return Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: CustomElevatedActionButton(
+                          onPressed: snapshot.hasData
+                              ? category == null
+                                  ? () => BlocProvider.of<SaveCategoriesCubit>(
+                                          context)
+                                      .addCategory()
+                                  : () => BlocProvider.of<SaveCategoriesCubit>(
+                                          context)
+                                      .updateCategory(categoryId!)
+                              : null,
+                          isLoading: isSaving,
+                          text: const Text(
+                            "Submit",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          icon: const Icon(Icons.save),
                         ),
                       ),
-                      onPressed: snapshot.hasData
-                          ? category == null
-                              ? () => BlocProvider.of<CategoriesCubit>(context)
-                                  .addCategory()
-                              : () => BlocProvider.of<CategoriesCubit>(context)
-                                  .updateCategory(categoryId!)
-                          : null,
-                      child: const Text(
-                        "Submit",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            );
-          },
-        ),
-      ],
+                );
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

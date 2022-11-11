@@ -1,24 +1,21 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:edar_app/cubit/categories/categories_field_mixin.dart';
 import 'package:edar_app/data/model/category.dart';
+import 'package:edar_app/data/network/network_service.dart';
 import 'package:edar_app/data/repository/category_repository.dart';
 import 'package:edar_app/common/mixins/error_message_mixin.dart';
 import 'package:edar_app/common/mixins/mixin_validations.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'categories_state.dart';
 
 class CategoriesCubit extends Cubit<CategoriesState>
-    with ValidationMixin, CategoriesFieldMixin, ErrorMessageMixin {
-  final CategoryRepository categoryRepository;
+    with ValidationMixin, ErrorMessageMixin {
+  final CategoryRepository categoryRepository =
+      CategoryRepository(networkService: NetworkService());
 
-  CategoriesCubit({required this.categoryRepository})
-      : super(CategoriesInitial());
-
-  loadCategory(Category category) {
-    updateCategoryCode(category.categoryCode);
-    updateCategoryName(category.categoryName);
-  }
+  CategoriesCubit() : super(CategoriesInitial());
 
   //action methods
   void fetchCategories() {
@@ -57,54 +54,6 @@ class CategoriesCubit extends Cubit<CategoriesState>
     }
   }
 
-  void addCategory() {
-    // emit(AddingCategory());
-
-    Category category = getCategory(null);
-
-    Map<String, dynamic> categoryObj = category.toJson();
-    categoryRepository.addCategory(categoryObj).then((isAdded) {
-      if (isAdded) {
-        // fetchCategories();
-        emit(CategoryAdded());
-        fetchCategories();
-      } else {
-        updateError(null, null);
-      }
-    }).onError(
-      (error, stackTrace) {
-        updateError('$error', stackTrace);
-      },
-    );
-  }
-
-  void updateCategory(int categoryId) {
-    Category category = getCategory(categoryId);
-    Map<String, dynamic> categoryObj = category.toJson();
-    categoryRepository
-        .udpateCategory(categoryObj, category.categoryId!)
-        .then((isUpdated) {
-      if (isUpdated) {
-        // fetchCategories();
-        emit(CategoryUpdated());
-        fetchCategories();
-      } else {
-        updateError(null, null);
-      }
-    }).onError((error, stackTrace) => updateError('$error', stackTrace));
-  }
-
-  void deleteCategory(int categoryId) {
-    categoryRepository.deleteCategory(categoryId).then((isDeleted) {
-      if (isDeleted) {
-        emit(CategoryDeleted());
-        fetchCategories();
-      } else {
-        updateError(null, null);
-      }
-    }).onError((error, stackTrace) => updateError('$error', stackTrace));
-  }
-
   void searchCategory(String searchText) {
     final currentState = state;
     if (currentState is CategoriesLoaded) {
@@ -125,5 +74,15 @@ class CategoriesCubit extends Cubit<CategoriesState>
             filteredData: filteredData, categories: data, sortAscending: true));
       }
     }
+  }
+
+  void deleteCategory(int categoryId) {
+    categoryRepository.deleteCategory(categoryId).then((isDeleted) {
+      if (isDeleted) {
+        emit(CategoryDeleted());
+      } else {
+        updateError(null, null);
+      }
+    }).onError((error, stackTrace) => updateError('$error', stackTrace));
   }
 }
