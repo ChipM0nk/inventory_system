@@ -46,7 +46,7 @@ class _CategoryPageState extends State<CategoryPage> {
                   width: 30,
                 ),
                 CustomElevatedButton(
-                  onPressed: () => showCategoryDialog(null),
+                  onPressed: () => _showCategoryDialog(null),
                   child: const Text("Add Category"),
                 ),
               ],
@@ -66,7 +66,7 @@ class _CategoryPageState extends State<CategoryPage> {
                   CategoryData categoryData = CategoryData(
                       data: state.filteredData ?? state.categories,
                       onDeleteClick: _deleteCategory,
-                      onItemClick: showCategoryDialog);
+                      onItemClick: _showCategoryDialog);
 
                   return CustomPaginatedDataTable(
                       header: const Text("Categories"),
@@ -148,7 +148,7 @@ class _CategoryPageState extends State<CategoryPage> {
     );
   }
 
-  Future<dynamic> showCategoryDialog(Category? category) {
+  Future<dynamic> _showCategoryDialog(Category? category) {
     searchController.clear();
     return showDialog(
         context: context,

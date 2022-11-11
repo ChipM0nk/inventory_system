@@ -1,6 +1,7 @@
 import 'package:edar_app/cubit/categories/save_categories_cubit.dart';
 import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
 import 'package:edar_app/cubit/products/products_cubit.dart';
+import 'package:edar_app/cubit/products/save_product_cubit.dart';
 import 'package:edar_app/cubit/purchases/purchase_cubit.dart';
 import 'package:edar_app/cubit/suppliers/save_suppliers_cubit.dart';
 import 'package:edar_app/cubit/suppliers/suppliers_cubit.dart';
@@ -47,13 +48,10 @@ class BlocProviders {
         InvoiceRepository(networkService: NetworkService());
     InvoiceCubit invoiceCubit =
         InvoiceCubit(invoiceRepository: invoiceRepository);
-    ProductRepository productRepository =
-        ProductRepository(networkService: NetworkService());
-    ProductsCubit productCubit =
-        ProductsCubit(productRepository: productRepository);
+
     return [
       BlocProvider<InvoiceCubit>(create: (context) => invoiceCubit),
-      BlocProvider<ProductsCubit>(create: (context) => productCubit),
+      BlocProvider<ProductsCubit>(create: (context) => ProductsCubit()),
     ];
     // return MultiBlocProvider(providers: providers, child: child) BlocProvider<CategoriesCubit>(create: (context) => categoriesCubit);
   }
@@ -64,14 +62,10 @@ class BlocProviders {
         PurchaseRepository(networkService: NetworkService());
     PurchaseCubit purchaseCubit =
         PurchaseCubit(purchaseRepository: purchaseRepository);
-    ProductRepository productRepository =
-        ProductRepository(networkService: NetworkService());
-    ProductsCubit productCubit =
-        ProductsCubit(productRepository: productRepository);
 
     return [
       BlocProvider<PurchaseCubit>(create: (context) => purchaseCubit),
-      BlocProvider<ProductsCubit>(create: (context) => productCubit),
+      BlocProvider<ProductsCubit>(create: (context) => ProductsCubit()),
       BlocProvider<SuppliersCubit>(create: (context) => SuppliersCubit()),
     ];
     // return MultiBlocProvider(providers: providers, child: child) BlocProvider<CategoriesCubit>(create: (context) => categoriesCubit);
@@ -94,18 +88,9 @@ class BlocProviders {
   }
 
   static List<BlocProvider> _getProductBlocProvider() {
-    ProductRepository productRepository =
-        ProductRepository(networkService: NetworkService());
-    ProductsCubit productCubit =
-        ProductsCubit(productRepository: productRepository);
-
-    CategoryRepository categoryRepository = CategoryRepository();
-    // CategoriesCubit categoriesCubit =
-    //     CategoriesCubit(categoryRepository: categoryRepository);
-    CategoriesCubit categoriesCubit = CategoriesCubit();
-
     return [
-      BlocProvider<ProductsCubit>(create: (context) => productCubit),
+      BlocProvider<ProductsCubit>(create: (context) => ProductsCubit()),
+      BlocProvider<SaveProductCubit>(create: (context) => SaveProductCubit()),
       BlocProvider<CategoriesCubit>(create: (context) => CategoriesCubit()),
       BlocProvider<SuppliersCubit>(create: (context) => SuppliersCubit())
     ];

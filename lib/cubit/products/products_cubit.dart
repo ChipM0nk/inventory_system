@@ -7,11 +7,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'products_state.dart';
 
-class ProductsCubit extends Cubit<ProductsState>
-    with ValidationMixin, ProductsFieldMixin, ErrorMessageMixin {
-  final ProductRepository productRepository;
+class ProductsCubit extends Cubit<ProductsState> with ErrorMessageMixin {
+  final ProductRepository productRepository = ProductRepository();
 
-  ProductsCubit({required this.productRepository}) : super(ProductsInitial());
+  ProductsCubit() : super(ProductsInitial());
 
   void fetchProducts() {
     print("Fetch products");
@@ -51,43 +50,6 @@ class ProductsCubit extends Cubit<ProductsState>
           sortIndex: sortIndex,
           sortAscending: ascending));
     }
-  }
-
-  void addProduct() {
-    Map<String, dynamic> productObj = getProduct(null).toJson();
-
-    productRepository.addProduct(productObj).then((isAdded) {
-      if (isAdded) {
-        emit(ProductAdded());
-        fetchProducts();
-      } else {
-        updateError(null, null);
-      }
-    }).onError(
-      (error, stackTrace) {
-        print("Error message : ${error}");
-        updateError('$error', stackTrace);
-      },
-    );
-  }
-
-  void updateProduct(int productId) {
-    Map<String, dynamic> productObj = getProduct(productId).toJson();
-    print("Update ::: ${productObj}");
-
-    productRepository.udpateProduct(productObj, productId!).then((isUpdated) {
-      if (isUpdated) {
-        emit(ProductUpdated());
-        fetchProducts();
-      } else {
-        updateError(null, null);
-      }
-    }).onError(
-      (error, stackTrace) {
-        print("Error message : ${error}");
-        updateError('$error', stackTrace);
-      },
-    );
   }
 
   void deleteProduct(int productId) {
@@ -142,16 +104,5 @@ class ProductsCubit extends Cubit<ProductsState>
             products.firstWhere((prod) => prod.productId == product!.productId),
       ));
     }
-  }
-
-  loadProducts(Product product) {
-    updateProductCode(product.productCode);
-    updateProductName(product.productName);
-    updateProductDecription(product.productDescription);
-    updateProductPrice(product.productPrice.toString());
-    updateProductQuantity(product.currentStock.toString());
-    updateProductUnit(product.unit);
-    updateProductSupplier(product.supplier);
-    updateProductCategory(product.category);
   }
 }

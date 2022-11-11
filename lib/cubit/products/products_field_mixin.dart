@@ -19,7 +19,6 @@ mixin ProductsFieldMixin on ValidationMixin {
   final _productCategoryController = BehaviorSubject<Category>();
 
   init() {
-    print("init");
     _productNameController.sink.addError("");
     _productCodeController.sink.addError("");
     _productDescriptionController.sink.addError("");

@@ -9,8 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'suppliers_state.dart';
 
-class SuppliersCubit extends Cubit<SuppliersState>
-    with ValidationMixin, SuppliersFieldMixin, ErrorMessageMixin {
+class SuppliersCubit extends Cubit<SuppliersState> with ErrorMessageMixin {
   final SupplierRepository supplierRepository = SupplierRepository();
 
   SuppliersCubit() : super(SuppliersInitial());

@@ -3,9 +3,9 @@ import 'package:edar_app/data/model/product.dart';
 import 'package:edar_app/data/network/network_service.dart';
 
 class ProductRepository {
-  final NetworkService networkService;
+  final NetworkService networkService = NetworkService();
 
-  ProductRepository({required this.networkService});
+  ProductRepository();
 
   Future<List<Product>> fetchAll() async {
     final objRaw = await networkService.fetchAll(ProductsService);
