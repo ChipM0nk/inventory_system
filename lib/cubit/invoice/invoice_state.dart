@@ -19,27 +19,3 @@ class InvoiceLoaded extends InvoiceState {
 }
 
 class InvoiceLoading extends InvoiceState {}
-
-//Add
-class AddingInvoice extends InvoiceState {}
-
-class InvoiceAdded extends InvoiceState {}
-
-//delete
-class VoidingInvoice extends InvoiceState {}
-
-class InvoiceVoided extends InvoiceState {}
-
-//update
-class UpdatingInvoice extends InvoiceState {}
-
-class InvoiceUpdated extends InvoiceState {}
-
-//dialog box
-
-class OpeningInvoiceItemDialog extends InvoiceState {}
-
-class InvoiceItemDialogOpened extends InvoiceState {}
-
-//error
-class InvoiceStateError extends InvoiceState {}

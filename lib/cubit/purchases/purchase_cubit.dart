@@ -1,31 +1,20 @@
 import 'package:edar_app/common/mixins/search_param_mixin.dart';
-import 'package:edar_app/cubit/purchases/purchase_field_mixin.dart';
-import 'package:edar_app/cubit/purchases/purchase_item_field_mixin.dart';
 import 'package:edar_app/data/model/purchase/purchase.dart';
 import 'package:edar_app/data/repository/purchase_repository.dart';
 import 'package:edar_app/common/mixins/error_message_mixin.dart';
-import 'package:edar_app/common/mixins/mixin_validations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'purchase_state.dart';
 
 // ignore: must_be_immutable
 class PurchaseCubit extends Cubit<PurchaseState>
-    with
-        ValidationMixin,
-        PurchaseFieldMixin,
-        PurchaseItemFieldMixin,
-        ErrorMessageMixin,
-        SearchParamMixin {
-  final PurchaseRepository purchaseRepository;
+    with ErrorMessageMixin, SearchParamMixin {
+  final PurchaseRepository purchaseRepository = PurchaseRepository();
 
-  void reset() {
-    emit(PurchaseInitial());
-  }
-
-  PurchaseCubit({required this.purchaseRepository}) : super(PurchaseInitial());
+  PurchaseCubit() : super(PurchaseInitial());
 
   void fetchPurchases() {
+    print("Fetch Purchases");
     purchaseRepository
         .fetchAll()
         .then((purchase) => {
@@ -76,47 +65,6 @@ class PurchaseCubit extends Cubit<PurchaseState>
     }
   }
 
-  void addPurchase() {
-    Map<String, dynamic> purchaseObj = getPurchase(null).toJson();
-
-    purchaseRepository.addPurchase(purchaseObj).then((isAdded) {
-      if (isAdded) {
-        // fetchPurchase();
-        emit(PurchaseAdded());
-      } else {
-        updateError(null, null);
-      }
-    }).onError((error, stackTrace) => updateError('$error', stackTrace));
-  }
-
-  void updatePurchase(int purchaseId) {
-    Map<String, dynamic> purchaseObj = getPurchase(purchaseId).toJson();
-    print("Update ::: ${purchaseObj}");
-
-    purchaseRepository
-        .udpatePurchase(purchaseObj, purchaseId)
-        .then((isUpdated) {
-      if (isUpdated) {
-        // fetchPurchase();
-        emit(PurchaseUpdated());
-        fetchPurchases();
-      } else {
-        updateError(null, null);
-      }
-    }).onError((error, stackTrace) => updateError('$error', stackTrace));
-  }
-
-  void voidPurchase(int purchaseId) {
-    purchaseRepository.voidPurchase(purchaseId).then((isVoided) {
-      if (isVoided) {
-        emit(PurchaseVoided());
-        fetchPurchases();
-      } else {
-        updateError(null, null);
-      }
-    }).onError((error, stackTrace) => updateError('$error', stackTrace));
-  }
-
   void searchPurchase(String searchText) {
     final currentState = state;
     if (currentState is PurchaseLoaded) {
@@ -131,13 +79,5 @@ class PurchaseCubit extends Cubit<PurchaseState>
             filteredData: filteredData, purchases: data, sortAscending: true));
       }
     }
-  }
-
-  loadPurchase(Purchase purchase) {
-    updatePurchaseNo(purchase.purchaseNo);
-    updatePurchaseDate(purchase.purchaseDate);
-    updatePurchaseItemList(purchase.purchaseItems);
-    updateBatchCode(purchase.batchCode);
-    updateTotalAmount(purchase.totalAmount);
   }
 }

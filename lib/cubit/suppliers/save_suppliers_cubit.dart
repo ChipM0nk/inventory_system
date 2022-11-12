@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages
+// ignore_for_file: depend_on_referenced_packages, must_be_immutable
 
 import 'package:bloc/bloc.dart';
 import 'package:edar_app/common/mixins/error_message_mixin.dart';
@@ -28,6 +28,7 @@ class SaveSuppliersCubit extends Cubit<SaveSuppliersState>
       if (isAdded) {
         emit(SupplierSaved());
       } else {
+        emit(SupplierSavingError());
         updateError(null, null);
       }
     }).onError(

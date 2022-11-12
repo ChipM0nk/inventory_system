@@ -3,9 +3,9 @@ import 'package:edar_app/data/model/purchase/purchase.dart';
 import 'package:edar_app/data/network/network_service.dart';
 
 class PurchaseRepository {
-  final NetworkService networkService;
+  final NetworkService networkService = NetworkService();
 
-  PurchaseRepository({required this.networkService});
+  PurchaseRepository();
 
   Future<List<Purchase>> fetchWithParam(Map<String, dynamic> paramObj) async {
     final objRaw =

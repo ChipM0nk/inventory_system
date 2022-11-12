@@ -1,30 +1,18 @@
 // ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
-import 'package:edar_app/cubit/invoice/invoice_field_mixin.dart';
-import 'package:edar_app/cubit/invoice/invoice_item_field_mixin.dart';
 import 'package:edar_app/common/mixins/search_param_mixin.dart';
 import 'package:edar_app/data/model/invoice/invoice.dart';
 import 'package:edar_app/data/repository/invoice_repository.dart';
 import 'package:edar_app/common/mixins/error_message_mixin.dart';
-import 'package:edar_app/common/mixins/mixin_validations.dart';
 
 part 'invoice_state.dart';
 
 // ignore: must_be_immutable
 class InvoiceCubit extends Cubit<InvoiceState>
-    with
-        ValidationMixin,
-        SearchParamMixin,
-        InvoiceItemFieldMixin,
-        InvoiceFieldMixin,
-        ErrorMessageMixin {
-  final InvoiceRepository invoiceRepository;
+    with SearchParamMixin, ErrorMessageMixin {
+  final InvoiceRepository invoiceRepository = InvoiceRepository();
 
-  InvoiceCubit({required this.invoiceRepository}) : super(InvoiceInitial());
-
-  void reset() {
-    emit(InvoiceInitial());
-  }
+  InvoiceCubit() : super(InvoiceInitial());
 
   void fetchInvoices() {
     invoiceRepository
@@ -77,42 +65,6 @@ class InvoiceCubit extends Cubit<InvoiceState>
     }
   }
 
-  void addInvoice() {
-    Map<String, dynamic> invoiceObj = getInvoice(null).toJson();
-    invoiceRepository.addInvoice(invoiceObj).then((isAdded) {
-      if (isAdded) {
-        // fetchInvoice();
-        emit(InvoiceAdded());
-        // fetchInvoice();
-      } else {
-        updateError(null, null);
-      }
-    }).onError((error, stackTrace) => updateError('$error', stackTrace));
-  }
-
-  void updateInvoice(int invoiceId) {
-    Map<String, dynamic> invoiceObj = getInvoice(invoiceId).toJson();
-    invoiceRepository.udpateInvoice(invoiceObj, invoiceId).then((isUpdated) {
-      if (isUpdated) {
-        // fetchInvoice();
-        emit(InvoiceUpdated());
-      } else {
-        updateError(null, null);
-      }
-    }).onError((error, stackTrace) => updateError('$error', stackTrace));
-  }
-
-  void voidInvoice(int invoiceId) {
-    invoiceRepository.voidInvoice(invoiceId).then((isVoided) {
-      if (isVoided) {
-        emit(InvoiceVoided());
-        fetchInvoices();
-      } else {
-        updateError(null, null);
-      }
-    }).onError((error, stackTrace) => updateError('$error', stackTrace));
-  }
-
   void searchInvoice(String searchText) {
     final currentState = state;
     if (currentState is InvoiceLoaded) {
@@ -140,25 +92,5 @@ class InvoiceCubit extends Cubit<InvoiceState>
         sortAscending: true,
       ));
     }
-  }
-
-  loadInvoice(Invoice invoice) {
-    updateInvoiceNumber(invoice.invoiceNo);
-    updateCustomerName(invoice.customerName);
-    invoice.customerAddress ?? updateCustomerAddress(invoice.customerAddress!);
-    invoice.contactNo ?? updateCustomerContact(invoice.contactNo!);
-    // updateSalesPerson(invoice.salesPerson);
-    updatePoNumber(invoice.poNumber);
-    updatePurchaseDate(invoice.purchaseDate);
-    updatePaymentTerm(invoice.paymentTerm);
-    updatePaymentType(invoice.paymentType);
-    updateTinNumber(invoice.tinNumber);
-    updateDueDate(invoice.dueDate);
-    updateInvoiceItems(invoice.invoiceItems);
-  }
-
-  loadProduct() {
-    print("null : ${getProduct() == null}");
-    emit(InvoiceItemDialogOpened());
   }
 }

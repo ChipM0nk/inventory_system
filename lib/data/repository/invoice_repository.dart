@@ -3,9 +3,9 @@ import 'package:edar_app/data/model/invoice/invoice.dart';
 import 'package:edar_app/data/network/network_service.dart';
 
 class InvoiceRepository {
-  final NetworkService networkService;
+  final NetworkService networkService = NetworkService();
 
-  InvoiceRepository({required this.networkService});
+  InvoiceRepository();
 
   Future<List<Invoice>> fetchWithParam(Map<String, dynamic> paramObj) async {
     final objRaw =

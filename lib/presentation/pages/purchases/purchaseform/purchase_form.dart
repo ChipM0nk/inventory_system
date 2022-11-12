@@ -1,5 +1,6 @@
 import 'package:edar_app/constants/text_field_formats.dart';
 import 'package:edar_app/cubit/purchases/purchase_cubit.dart';
+import 'package:edar_app/cubit/purchases/save_purchase_cubit.dart';
 import 'package:edar_app/cubit/suppliers/suppliers_cubit.dart';
 import 'package:edar_app/data/model/purchase/purchase.dart';
 import 'package:edar_app/data/model/purchase/purchase_item.dart';
@@ -31,33 +32,35 @@ class _PurchaseFormState extends State<PurchaseForm> {
 
   @override
   void initState() {
-    BlocProvider.of<PurchaseCubit>(context).init();
+    BlocProvider.of<SavePurchaseCubit>(context).init();
     BlocProvider.of<SuppliersCubit>(context).fetchSuppliers();
     super.initState();
   }
 
   void _addItem(PurchaseItem purchaseItem) {
-    BlocProvider.of<PurchaseCubit>(context).addPurchaseItem(purchaseItem);
+    BlocProvider.of<SavePurchaseCubit>(context).addPurchaseItem(purchaseItem);
   }
 
   void _deleteItem(PurchaseItem purchaseItem) {
-    BlocProvider.of<PurchaseCubit>(context).removePurchaseItem(purchaseItem);
+    BlocProvider.of<SavePurchaseCubit>(context)
+        .removePurchaseItem(purchaseItem);
   }
 
   @override
   Widget build(BuildContext context) {
     var purchaseNo = StreamBuilder<String>(
-        stream: BlocProvider.of<PurchaseCubit>(context).purchaseNoStream,
+        stream: BlocProvider.of<SavePurchaseCubit>(context).purchaseNoStream,
         builder: (context, snapshot) {
           return CustomTextField(
               snapshot: snapshot,
               onChanged: (text) {
-                BlocProvider.of<PurchaseCubit>(context).updatePurchaseNo(text);
+                BlocProvider.of<SavePurchaseCubit>(context)
+                    .updatePurchaseNo(text);
               },
               labelText: 'Purchase No');
         });
     var batchCode = StreamBuilder<String>(
-        stream: BlocProvider.of<PurchaseCubit>(context).batchCodeStream,
+        stream: BlocProvider.of<SavePurchaseCubit>(context).batchCodeStream,
         builder: (context, snapshot) {
           return CustomTextField(
               snapshot: snapshot,
@@ -66,7 +69,8 @@ class _PurchaseFormState extends State<PurchaseForm> {
                 TextFieldFormat.bacthCodeFormat,
               ],
               onChanged: (text) {
-                BlocProvider.of<PurchaseCubit>(context).updateBatchCode(text);
+                BlocProvider.of<SavePurchaseCubit>(context)
+                    .updateBatchCode(text);
               },
               labelText: 'Batch Code');
         });
@@ -76,7 +80,7 @@ class _PurchaseFormState extends State<PurchaseForm> {
         CustomDatePicker(
           labelText: "Purchase Date",
           onChanged: (dateTime) {
-            BlocProvider.of<PurchaseCubit>(context)
+            BlocProvider.of<SavePurchaseCubit>(context)
                 .updatePurchaseDate(dateTime);
           },
           dateFormat: dateFormat,
@@ -89,14 +93,14 @@ class _PurchaseFormState extends State<PurchaseForm> {
         CustomTextField(
           labelText: "Remarks",
           onChanged: (remarks) {
-            BlocProvider.of<PurchaseCubit>(context).updateRemarks(remarks);
+            BlocProvider.of<SavePurchaseCubit>(context).updateRemarks(remarks);
           },
         ),
       ],
     );
 
     var supplierFinderField = StreamBuilder<Object>(
-        stream: BlocProvider.of<PurchaseCubit>(context).supplierStream,
+        stream: BlocProvider.of<SavePurchaseCubit>(context).supplierStream,
         builder: (context, snapshot) {
           return BlocBuilder<SuppliersCubit, SuppliersState>(
             builder: (context, state) {
@@ -104,7 +108,7 @@ class _PurchaseFormState extends State<PurchaseForm> {
                 return Autocomplete<String>(
                   optionsBuilder: (TextEditingValue textEditingValue) {
                     if (textEditingValue.text == '') {
-                      BlocProvider.of<PurchaseCubit>(context)
+                      BlocProvider.of<SavePurchaseCubit>(context)
                           .updateSupplier(null);
                       return const Iterable<String>.empty();
                     } else {
@@ -118,7 +122,7 @@ class _PurchaseFormState extends State<PurchaseForm> {
                             .contains(textEditingValue.text.toLowerCase());
                       });
                       if (matches.isEmpty) {
-                        BlocProvider.of<PurchaseCubit>(context)
+                        BlocProvider.of<SavePurchaseCubit>(context)
                             .updateSupplier(null);
                       }
                       return matches;
@@ -139,7 +143,7 @@ class _PurchaseFormState extends State<PurchaseForm> {
                   onSelected: (String supplierName) {
                     Supplier supplier = state.suppliers.firstWhere(
                         (element) => element.supplierName == supplierName);
-                    BlocProvider.of<PurchaseCubit>(context)
+                    BlocProvider.of<SavePurchaseCubit>(context)
                         .updateSupplier(supplier);
                   },
                 );
@@ -149,13 +153,13 @@ class _PurchaseFormState extends State<PurchaseForm> {
           );
         });
 
-    return BlocBuilder<PurchaseCubit, PurchaseState>(
+    return BlocBuilder<SavePurchaseCubit, SavePurchaseState>(
       builder: (context, state) {
-        if (state is PurchaseAdded) {
+        if (state is PurchaseSaved) {
           Future.delayed(Duration.zero, () {
             setState(() {
               locator<NavigationService>().navigateTo(PurchaseFormRoute);
-              BlocProvider.of<PurchaseCubit>(context).reset();
+              BlocProvider.of<SavePurchaseCubit>(context).reset();
             });
           });
         }
@@ -200,7 +204,7 @@ class _PurchaseFormState extends State<PurchaseForm> {
                   ],
                 ),
                 StreamBuilder<List<PurchaseItem>>(
-                    stream: BlocProvider.of<PurchaseCubit>(context)
+                    stream: BlocProvider.of<SavePurchaseCubit>(context)
                         .purchaseItemsStream,
                     builder: (context, snapshot) {
                       return SizedBox(
@@ -210,10 +214,10 @@ class _PurchaseFormState extends State<PurchaseForm> {
                           children: [
                             PurchaseItemDataGrid(
                               purchaseItems:
-                                  BlocProvider.of<PurchaseCubit>(context)
+                                  BlocProvider.of<SavePurchaseCubit>(context)
                                       .getPurchaseItems(),
                               summaryTotal:
-                                  BlocProvider.of<PurchaseCubit>(context)
+                                  BlocProvider.of<SavePurchaseCubit>(context)
                                       .getTotal(), //TO Update
                               editable: true,
                               addPurchaseItem: _addItem,
@@ -226,7 +230,7 @@ class _PurchaseFormState extends State<PurchaseForm> {
                 Row(
                   children: [
                     StreamBuilder<bool>(
-                        stream: BlocProvider.of<PurchaseCubit>(context)
+                        stream: BlocProvider.of<SavePurchaseCubit>(context)
                             .saveButtonValid,
                         builder: (context, snapshot) {
                           return SizedBox(
@@ -254,13 +258,16 @@ class _PurchaseFormState extends State<PurchaseForm> {
 
   void _openPurchaseDialog() {
     Purchase purchase =
-        BlocProvider.of<PurchaseCubit>(context).getPurchase(null);
-    BlocProvider.of<PurchaseCubit>(context).clearError();
+        BlocProvider.of<SavePurchaseCubit>(context).getPurchase(null);
+    BlocProvider.of<SavePurchaseCubit>(context).clearError();
     showDialog(
         context: context,
         builder: (_) {
-          return BlocProvider.value(
-            value: context.read<PurchaseCubit>(),
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: context.read<PurchaseCubit>()),
+              BlocProvider.value(value: context.read<SavePurchaseCubit>()),
+            ],
             child: PurchaseDialog(
               purchase: purchase,
               flgAddPurchase: true,

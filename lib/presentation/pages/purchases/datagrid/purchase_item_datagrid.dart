@@ -1,5 +1,5 @@
 import 'package:edar_app/cubit/products/products_cubit.dart';
-import 'package:edar_app/cubit/purchases/purchase_cubit.dart';
+import 'package:edar_app/cubit/purchases/save_purchase_cubit.dart';
 import 'package:edar_app/data/model/purchase/purchase_item.dart';
 import 'package:edar_app/data/model/supplier.dart';
 import 'package:edar_app/presentation/pages/purchases/datagrid/purchase_item_grid_datasource.dart';
@@ -11,10 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-/**
- * 
- * At the moment the entire datagrid is recreaed
- */
 class PurchaseItemDataGrid extends StatelessWidget {
   final List<PurchaseItem> purchaseItems;
   final double summaryTotal;
@@ -53,7 +49,7 @@ class PurchaseItemDataGrid extends StatelessWidget {
                   ? SizedBox(
                       width: 100,
                       child: StreamBuilder<Supplier>(
-                          stream: BlocProvider.of<PurchaseCubit>(context)
+                          stream: BlocProvider.of<SavePurchaseCubit>(context)
                               .supplierStream,
                           builder: (context, snapshot) {
                             bool enabled = snapshot.hasData;
@@ -71,8 +67,8 @@ class PurchaseItemDataGrid extends StatelessWidget {
                                                     value: context
                                                         .read<ProductsCubit>()),
                                                 BlocProvider.value(
-                                                    value: context
-                                                        .read<PurchaseCubit>()),
+                                                    value: context.read<
+                                                        SavePurchaseCubit>()),
                                               ],
                                               child: PurchaseAddItemDialog(
                                                   addPurchaseItem:

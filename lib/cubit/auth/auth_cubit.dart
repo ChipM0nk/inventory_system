@@ -31,9 +31,7 @@ class AuthCubit extends Cubit<AuthState>
         .login(userObj)
         .then(
           (jwt) async => {
-            print("Writing JWT to local storage"),
             await LocalStorage.write("jwt", jwt),
-            print("Writing JWT to local storage success"),
             authenticate(),
           },
         )
@@ -55,7 +53,6 @@ class AuthCubit extends Cubit<AuthState>
   }
 
   authenticate() {
-    print("Running authenticate() method");
     LocalStorage.read("jwt").then((value) => {
           checkJwt(value),
         });
@@ -65,17 +62,10 @@ class AuthCubit extends Cubit<AuthState>
     if (jwt == null) {
       emit(AuthenticationFailed());
     } else {
-      print("Running checkJwt() method");
       String claims = jwt.split(".")[1];
-      print("Fetching claims..");
       claims = utf8.decode(base64Url.decode(base64.normalize(claims)));
-      print("Fetching claims success..");
-      print("JSON Decode claims..");
       Map<String, dynamic> userObj = jsonDecode(claims);
-      print("JSON Decode claims success..");
-      print("Extractiong user");
       User user = User.fromJson(userObj);
-      print("Extractiong user success");
       _user = user;
       emit(AuthenticationSuccess());
     }

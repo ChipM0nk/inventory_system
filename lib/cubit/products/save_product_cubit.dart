@@ -1,11 +1,12 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:bloc/bloc.dart';
 import 'package:edar_app/common/mixins/error_message_mixin.dart';
 import 'package:edar_app/common/mixins/mixin_validations.dart';
 import 'package:edar_app/cubit/products/products_field_mixin.dart';
-import 'package:edar_app/cubit/suppliers/save_suppliers_cubit.dart';
 import 'package:edar_app/data/model/product.dart';
 import 'package:edar_app/data/repository/product_repository.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/material.dart';
 
 part 'save_product_state.dart';
 

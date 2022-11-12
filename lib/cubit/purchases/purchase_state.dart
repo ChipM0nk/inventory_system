@@ -18,17 +18,3 @@ class PurchaseLoaded extends PurchaseState {
 }
 
 class PurchaseLoading extends PurchaseState {}
-
-//Add
-
-class PurchaseAdded extends PurchaseState {}
-
-//delete
-
-class PurchaseVoided extends PurchaseState {}
-
-//update
-
-class PurchaseUpdated extends PurchaseState {}
-
-//error

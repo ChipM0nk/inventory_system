@@ -1,4 +1,5 @@
 import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
+import 'package:edar_app/cubit/invoice/save_invoice_cubit.dart';
 import 'package:edar_app/data/model/invoice/invoice.dart';
 import 'package:edar_app/presentation/datasource/invoice_datasource.dart';
 import 'package:edar_app/presentation/pages/invoices/invoice_dialog.dart';
@@ -225,12 +226,16 @@ class _InvoicePageState extends State<InvoicePage> {
       ];
 
   void _openInvoiceDialog(Invoice invoice) {
+    BlocProvider.of<SaveInvoiceCubit>(context).initDialog();
     searchController.clear();
     showDialog(
         context: context,
         builder: (_) {
-          return BlocProvider.value(
-            value: context.read<InvoiceCubit>(),
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: context.read<InvoiceCubit>()),
+              BlocProvider.value(value: context.read<SaveInvoiceCubit>()),
+            ],
             child: InvoiceDialog(invoice: invoice),
           );
         });

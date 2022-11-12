@@ -248,10 +248,7 @@ class ProductDialog extends StatelessWidget {
 
     return BlocBuilder<SaveProductCubit, SaveProductState>(
       builder: (context, state) {
-        bool isSaving = false;
-        if (state is ProductSaving) {
-          isSaving = true;
-        }
+        bool isSaving = state is ProductSaving;
         if (state is ProductSaved) {
           BlocProvider.of<ProductsCubit>(context).fetchProducts();
           Navigator.of(context, rootNavigator: true).pop();
@@ -335,6 +332,7 @@ class ProductDialog extends StatelessWidget {
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               icon: const Icon(Icons.save),
+                              isLoading: isSaving,
                             ),
                           ),
                         ],

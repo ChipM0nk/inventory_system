@@ -1,4 +1,5 @@
 import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
+import 'package:edar_app/cubit/invoice/save_invoice_cubit.dart';
 import 'package:edar_app/cubit/products/products_cubit.dart';
 import 'package:edar_app/data/model/invoice/invoice_item.dart';
 import 'package:edar_app/presentation/pages/invoices/datagrid/invoice_item_grid_datasource.dart';
@@ -10,10 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-/**
- * 
- * At the moment the entire datagrid is recreaed
- */
 class InvoiceItemDataGrid extends StatelessWidget {
   final List<InvoiceItem> invoiceItems;
   final double summaryTotal;
@@ -67,7 +64,8 @@ class InvoiceItemDataGrid extends StatelessWidget {
                                     BlocProvider.value(
                                         value: context.read<ProductsCubit>()),
                                     BlocProvider.value(
-                                        value: context.read<InvoiceCubit>()),
+                                        value:
+                                            context.read<SaveInvoiceCubit>()),
                                   ],
                                   child: InvoiceAddItemDialog(
                                       addInvoiceItem: addInvoiceItem!),

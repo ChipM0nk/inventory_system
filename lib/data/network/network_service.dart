@@ -82,6 +82,7 @@ class NetworkService {
     print("Adding item");
     String url = "$BASE_URL$serviceName/add";
     print(addObj);
+    await Future.delayed(Duration(seconds: 2));
     final response = await post(Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
@@ -136,6 +137,7 @@ class NetworkService {
     print("Voiding item");
     String url = "$BASE_URL$serviceName/void/$id";
 
+    await Future.delayed(Duration(seconds: 2));
     final response = await patch(
       Uri.parse(url),
       headers: {

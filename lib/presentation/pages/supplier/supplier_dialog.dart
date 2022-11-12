@@ -116,10 +116,8 @@ class SupplierDialog extends StatelessWidget {
 
     return BlocBuilder<SaveSuppliersCubit, SaveSuppliersState>(
       builder: (context, state) {
-        bool isSaving = false;
-        if (state is SupplierSaving) {
-          isSaving = true;
-        }
+        bool isSaving = state is SupplierSaving;
+
         if (state is SupplierSaved) {
           BlocProvider.of<SuppliersCubit>(context).fetchSuppliers();
           Navigator.of(context, rootNavigator: true).pop();
@@ -162,6 +160,7 @@ class SupplierDialog extends StatelessWidget {
                                           context)
                                       .updateSupplier(supplierId!)
                               : null,
+                          isLoading: isSaving,
                           text: const Text(
                             "Submit",
                             style: TextStyle(fontWeight: FontWeight.bold),

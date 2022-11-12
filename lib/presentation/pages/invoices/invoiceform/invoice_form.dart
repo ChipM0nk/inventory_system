@@ -1,4 +1,5 @@
 import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
+import 'package:edar_app/cubit/invoice/save_invoice_cubit.dart';
 import 'package:edar_app/data/model/invoice/invoice.dart';
 
 import 'package:edar_app/data/model/invoice/invoice_item.dart';
@@ -28,58 +29,60 @@ class _InvoiceFormState extends State<InvoiceForm> {
 
   @override
   void initState() {
-    BlocProvider.of<InvoiceCubit>(context).init();
-    BlocProvider.of<InvoiceCubit>(context).updatePaymentTerm('Cash');
+    BlocProvider.of<SaveInvoiceCubit>(context).init();
+    BlocProvider.of<SaveInvoiceCubit>(context).updatePaymentTerm('Cash');
 
     super.initState();
   }
 
   void _addItem(InvoiceItem invoiceItem) {
-    BlocProvider.of<InvoiceCubit>(context).addInvoiceItem(invoiceItem);
+    BlocProvider.of<SaveInvoiceCubit>(context).addInvoiceItem(invoiceItem);
   }
 
   void _deleteItem(InvoiceItem invoiceItem) {
-    BlocProvider.of<InvoiceCubit>(context).removeInvoiceItem(invoiceItem);
+    BlocProvider.of<SaveInvoiceCubit>(context).removeInvoiceItem(invoiceItem);
   }
 
   @override
   Widget build(BuildContext context) {
     var invoiceNumber = StreamBuilder<String>(
-        stream: BlocProvider.of<InvoiceCubit>(context).invoiceNumberStream,
+        stream: BlocProvider.of<SaveInvoiceCubit>(context).invoiceNumberStream,
         builder: (context, snapshot) {
           return CustomTextField(
               snapshot: snapshot,
               onChanged: (text) {
-                BlocProvider.of<InvoiceCubit>(context)
+                BlocProvider.of<SaveInvoiceCubit>(context)
                     .updateInvoiceNumber(text);
               },
               labelText: 'Invoice No');
         });
 
     var customerName = StreamBuilder<String>(
-        stream: BlocProvider.of<InvoiceCubit>(context).customerNameStream,
+        stream: BlocProvider.of<SaveInvoiceCubit>(context).customerNameStream,
         builder: (context, snapshot) {
           return CustomTextField(
               snapshot: snapshot,
               onChanged: (text) {
-                BlocProvider.of<InvoiceCubit>(context).updateCustomerName(text);
+                BlocProvider.of<SaveInvoiceCubit>(context)
+                    .updateCustomerName(text);
               },
               labelText: 'Customer Name');
         });
     var customerContactNumber = StreamBuilder<String>(
-        stream: BlocProvider.of<InvoiceCubit>(context).customerContactStream,
+        stream:
+            BlocProvider.of<SaveInvoiceCubit>(context).customerContactStream,
         builder: (context, snapshot) {
           return CustomTextField(
               snapshot: snapshot,
               onChanged: (text) {
-                BlocProvider.of<InvoiceCubit>(context)
+                BlocProvider.of<SaveInvoiceCubit>(context)
                     .updateCustomerContact(text);
               },
               labelText: 'Contact Number');
         });
 
     var customerAddressField = StreamBuilder<String>(
-      stream: BlocProvider.of<InvoiceCubit>(context).customerAddressStream,
+      stream: BlocProvider.of<SaveInvoiceCubit>(context).customerAddressStream,
       builder: (context, snapshot) {
         return CustomTextField(
             labelText: "Customer Address",
@@ -89,7 +92,7 @@ class _InvoiceFormState extends State<InvoiceForm> {
             minLines: 1,
             snapshot: snapshot,
             onChanged: (text) {
-              BlocProvider.of<InvoiceCubit>(context)
+              BlocProvider.of<SaveInvoiceCubit>(context)
                   .updateCustomerAddress(text);
             });
       },
@@ -100,7 +103,8 @@ class _InvoiceFormState extends State<InvoiceForm> {
         CustomDatePicker(
           labelText: "Purchase Date",
           onChanged: (dateTime) {
-            BlocProvider.of<InvoiceCubit>(context).updatePurchaseDate(dateTime);
+            BlocProvider.of<SaveInvoiceCubit>(context)
+                .updatePurchaseDate(dateTime);
           },
           dateFormat: dateFormat,
         ),
@@ -108,10 +112,10 @@ class _InvoiceFormState extends State<InvoiceForm> {
     );
 
     var paymentType = StreamBuilder<String>(
-        stream: BlocProvider.of<InvoiceCubit>(context).paymentTypeStream,
+        stream: BlocProvider.of<SaveInvoiceCubit>(context).paymentTypeStream,
         builder: (context, snapshot) {
           void onPaymentTypeChange<String>(val) {
-            BlocProvider.of<InvoiceCubit>(context).updatePaymentType(val);
+            BlocProvider.of<SaveInvoiceCubit>(context).updatePaymentType(val);
           }
 
           return CustomDropdown<String>(
@@ -127,19 +131,19 @@ class _InvoiceFormState extends State<InvoiceForm> {
                 child: Text('Cheque'),
               ),
             ],
-            value: BlocProvider.of<InvoiceCubit>(context).getPaymentType(),
+            value: BlocProvider.of<SaveInvoiceCubit>(context).getPaymentType(),
             context: context,
             onChanged: onPaymentTypeChange,
           );
         });
 
     var poNumber = StreamBuilder<String>(
-        stream: BlocProvider.of<InvoiceCubit>(context).poNumberStream,
+        stream: BlocProvider.of<SaveInvoiceCubit>(context).poNumberStream,
         builder: (context, snapshot) {
           return CustomTextField(
               snapshot: snapshot,
               onChanged: (text) {
-                BlocProvider.of<InvoiceCubit>(context).updatePoNumber(text);
+                BlocProvider.of<SaveInvoiceCubit>(context).updatePoNumber(text);
               },
               labelText: 'PO Number');
         });
@@ -147,52 +151,53 @@ class _InvoiceFormState extends State<InvoiceForm> {
     var dueDate = CustomDatePicker(
       labelText: "Due Date",
       onChanged: (dateTime) {
-        BlocProvider.of<InvoiceCubit>(context).updateDueDate(dateTime);
+        BlocProvider.of<SaveInvoiceCubit>(context).updateDueDate(dateTime);
       },
       dateFormat: dateFormat,
     );
 
     var tinNumber = StreamBuilder<String>(
-        stream: BlocProvider.of<InvoiceCubit>(context).tinNumberStream,
+        stream: BlocProvider.of<SaveInvoiceCubit>(context).tinNumberStream,
         builder: (context, snapshot) {
           return CustomTextField(
               snapshot: snapshot,
               onChanged: (text) {
-                BlocProvider.of<InvoiceCubit>(context).updateTinNumber(text);
+                BlocProvider.of<SaveInvoiceCubit>(context)
+                    .updateTinNumber(text);
               },
               labelText: 'TIN Number');
         });
 
     var paymentTerm = StreamBuilder<String>(
-        stream: BlocProvider.of<InvoiceCubit>(context).paymentTermStream,
+        stream: BlocProvider.of<SaveInvoiceCubit>(context).paymentTermStream,
         builder: (context, snapshot) {
           return CustomTextField(
               snapshot: snapshot,
               onChanged: (text) {
-                BlocProvider.of<InvoiceCubit>(context).updatePaymentTerm(text);
+                BlocProvider.of<SaveInvoiceCubit>(context)
+                    .updatePaymentTerm(text);
               },
               labelText: 'Payment Term');
         });
 
     var remarks = StreamBuilder<String>(
-        stream: BlocProvider.of<InvoiceCubit>(context).remarksStream,
+        stream: BlocProvider.of<SaveInvoiceCubit>(context).remarksStream,
         builder: (context, snapshot) {
           return CustomTextField(
               snapshot: snapshot,
               onChanged: (text) {
-                BlocProvider.of<InvoiceCubit>(context).updateRemarks(text);
+                BlocProvider.of<SaveInvoiceCubit>(context).updateRemarks(text);
               },
               labelText: 'Remarks');
         });
 
-    return BlocBuilder<InvoiceCubit, InvoiceState>(
+    return BlocBuilder<SaveInvoiceCubit, SaveInvoiceState>(
       builder: (context, state) {
-        if (state is InvoiceAdded) {
-          print("Invoice Success"); //TODO create a popup for print
+        if (state is InvoiceSaved) {
           Future.delayed(Duration.zero, () {
             setState(() {
               locator<NavigationService>().navigateTo(InvoiceFormRoute);
-              BlocProvider.of<InvoiceCubit>(context).reset();
+              BlocProvider.of<SaveInvoiceCubit>(context).reset();
             });
           });
         }
@@ -239,7 +244,7 @@ class _InvoiceFormState extends State<InvoiceForm> {
                   ],
                 ),
                 StreamBuilder<List<InvoiceItem>>(
-                    stream: BlocProvider.of<InvoiceCubit>(context)
+                    stream: BlocProvider.of<SaveInvoiceCubit>(context)
                         .invoiceItemsStream,
                     builder: (context, snapshot) {
                       return SizedBox(
@@ -249,10 +254,10 @@ class _InvoiceFormState extends State<InvoiceForm> {
                           children: [
                             InvoiceItemDataGrid(
                               invoiceItems:
-                                  BlocProvider.of<InvoiceCubit>(context)
+                                  BlocProvider.of<SaveInvoiceCubit>(context)
                                       .getInvoiceItems(),
                               summaryTotal:
-                                  BlocProvider.of<InvoiceCubit>(context)
+                                  BlocProvider.of<SaveInvoiceCubit>(context)
                                       .getTotal(), //TO Update
                               editable: true,
                               addInvoiceItem: _addItem,
@@ -265,8 +270,8 @@ class _InvoiceFormState extends State<InvoiceForm> {
                 Row(
                   children: [
                     StreamBuilder<bool>(
-                        stream:
-                            BlocProvider.of<InvoiceCubit>(context).buttonValid,
+                        stream: BlocProvider.of<SaveInvoiceCubit>(context)
+                            .buttonValid,
                         builder: (context, snapshot) {
                           return SizedBox(
                             height: 50,
@@ -295,13 +300,17 @@ class _InvoiceFormState extends State<InvoiceForm> {
   }
 
   void _openInvoiceDialog() {
-    Invoice invoice = BlocProvider.of<InvoiceCubit>(context).getInvoice(null);
-    BlocProvider.of<InvoiceCubit>(context).clearError();
+    Invoice invoice =
+        BlocProvider.of<SaveInvoiceCubit>(context).getInvoice(null);
+    BlocProvider.of<SaveInvoiceCubit>(context).clearError();
     showDialog(
         context: context,
         builder: (_) {
-          return BlocProvider.value(
-            value: context.read<InvoiceCubit>(),
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: context.read<InvoiceCubit>()),
+              BlocProvider.value(value: context.read<SaveInvoiceCubit>()),
+            ],
             child: InvoiceDialog(
               invoice: invoice,
               flgAddInvoice: true,

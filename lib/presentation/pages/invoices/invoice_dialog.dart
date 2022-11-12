@@ -1,7 +1,8 @@
 import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
+import 'package:edar_app/cubit/invoice/save_invoice_cubit.dart';
 import 'package:edar_app/data/model/invoice/invoice.dart';
 import 'package:edar_app/presentation/pages/invoices/datagrid/invoice_item_datagrid.dart';
-import 'package:edar_app/presentation/widgets/custom_elevated_button.dart';
+import 'package:edar_app/presentation/widgets/custom_elevated_action_button.dart';
 import 'package:edar_app/presentation/widgets/custom_inline_label.dart';
 import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
 import 'package:flutter/material.dart';
@@ -94,7 +95,7 @@ class InvoiceDialog extends StatelessWidget {
     ];
 
     var serviceErrorMessage = StreamBuilder(
-      stream: BlocProvider.of<InvoiceCubit>(context).errorStream,
+      stream: BlocProvider.of<SaveInvoiceCubit>(context).errorStream,
       builder: (context, snapshot) {
         return snapshot.hasError
             ? Padding(
@@ -108,10 +109,15 @@ class InvoiceDialog extends StatelessWidget {
             : const SizedBox();
       },
     );
-    return BlocBuilder<InvoiceCubit, InvoiceState>(
+    return BlocBuilder<SaveInvoiceCubit, SaveInvoiceState>(
       builder: (context, state) {
-        if (state is InvoiceAdded || state is InvoiceVoided) {
+        bool isSaving = state is InvoiceSaving;
+        bool isVoiding = state is InvoiceVoiding;
+        if (state is InvoiceVoided || state is InvoiceSaved) {
           Future.delayed(Duration.zero, () {
+            if (state is InvoiceVoided) {
+              BlocProvider.of<InvoiceCubit>(context).fetchInvoices();
+            }
             Navigator.of(context, rootNavigator: true).pop();
           });
         }
@@ -152,27 +158,27 @@ class InvoiceDialog extends StatelessWidget {
                     SizedBox(
                       width: 170,
                       height: 70,
-                      child: CustomElevatedButton(
+                      child: CustomElevatedActionButton(
                         onPressed: flgAddInvoice
                             ? () {
-                                BlocProvider.of<InvoiceCubit>(context)
+                                BlocProvider.of<SaveInvoiceCubit>(context)
                                     .addInvoice();
                               }
                             : () {},
-                        child: Center(
-                          child: Text(
-                            flgAddInvoice ? "SUBMIT" : "PRINT",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
-                          ),
+                        text: Text(
+                          flgAddInvoice ? "SUBMIT" : "PRINT",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
                         ),
+                        icon: const Icon(Icons.save),
+                        isLoading: isSaving,
                       ),
                     ),
                     if (!flgAddInvoice)
                       SizedBox(
                         width: 170,
                         height: 70,
-                        child: CustomElevatedButton(
+                        child: CustomElevatedActionButton(
                           color: Colors.red.shade600,
                           onPressed: invoice.trxnStatus == 'ACTIVE'
                               ? () {
@@ -180,30 +186,24 @@ class InvoiceDialog extends StatelessWidget {
                                       context: context,
                                       builder: (_) {
                                         return BlocProvider.value(
-                                          value: context.read<InvoiceCubit>(),
+                                          value:
+                                              context.read<SaveInvoiceCubit>(),
                                           child: AlertDialog(
                                             title: const Text("Void Invoice"),
-                                            content: BlocListener<InvoiceCubit,
-                                                InvoiceState>(
-                                              listener: (context, state) {
-                                                if (state is InvoiceVoided) {
-                                                  Navigator.of(context,
-                                                          rootNavigator: true)
-                                                      .pop();
-                                                }
-                                              },
-                                              child: const Text(
-                                                  "Are you sure you want to void this invoice?"),
-                                            ),
+                                            content: const Text(
+                                                "Are you sure you want to void this invoice?"),
                                             actions: [
                                               ElevatedButton(
                                                   child: const Text("Yes"),
                                                   onPressed: () {
                                                     BlocProvider.of<
-                                                                InvoiceCubit>(
+                                                                SaveInvoiceCubit>(
                                                             context)
                                                         .voidInvoice(
                                                             invoice.invoiceId!);
+                                                    Navigator.of(context,
+                                                            rootNavigator: true)
+                                                        .pop();
                                                   }),
                                               ElevatedButton(
                                                   child: const Text("No"),
@@ -218,12 +218,15 @@ class InvoiceDialog extends StatelessWidget {
                                       });
                                 }
                               : null,
-                          child: const Center(
-                            child: Text(
-                              "VOID",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20),
-                            ),
+                          isLoading: isVoiding,
+                          text: const Text(
+                            "VOID",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                          icon: const Icon(
+                            Icons.close,
+                            size: 25,
                           ),
                         ),
                       ),

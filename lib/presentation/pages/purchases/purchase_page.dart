@@ -1,13 +1,11 @@
 import 'package:edar_app/cubit/purchases/purchase_cubit.dart';
+import 'package:edar_app/cubit/purchases/save_purchase_cubit.dart';
 import 'package:edar_app/data/model/purchase/purchase.dart';
-import 'package:edar_app/locator.dart';
 import 'package:edar_app/presentation/datasource/purchase_datasource.dart';
 import 'package:edar_app/presentation/pages/purchases/purchase_dialog.dart';
 import 'package:edar_app/presentation/widgets/custom_elevated_button.dart';
 import 'package:edar_app/presentation/widgets/custom_paginated_datatable.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_date_picker.dart';
-import 'package:edar_app/routing/route_names.dart';
-import 'package:edar_app/services/navigation_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -226,12 +224,16 @@ class _PurchasePageState extends State<PurchasePage> {
       ];
 
   void _openPurchaseDialog(Purchase purchase) {
+    BlocProvider.of<SavePurchaseCubit>(context).initDialog();
     searchController.clear();
     showDialog(
         context: context,
         builder: (_) {
-          return BlocProvider.value(
-            value: context.read<PurchaseCubit>(),
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: context.read<PurchaseCubit>()),
+              BlocProvider.value(value: context.read<SavePurchaseCubit>()),
+            ],
             child: PurchaseDialog(purchase: purchase),
           );
         });

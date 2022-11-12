@@ -78,10 +78,8 @@ class CategoryDialog extends StatelessWidget {
     );
     return BlocBuilder<SaveCategoriesCubit, SaveCategoriesState>(
       builder: (context, state) {
-        bool isSaving = false;
-        if (state is CategorySaving) {
-          isSaving = true;
-        }
+        bool isSaving = state is CategorySaving;
+
         if (state is CategorySaved) {
           BlocProvider.of<CategoriesCubit>(context).fetchCategories();
           Navigator.of(context, rootNavigator: true).pop();

@@ -12,7 +12,7 @@ class CustomElevatedActionButton extends StatelessWidget {
       required this.text,
       required this.icon,
       this.color,
-      this.isLoading = false});
+      required this.isLoading});
 
   @override
   Widget build(BuildContext context) {

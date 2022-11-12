@@ -1,6 +1,7 @@
 import 'package:edar_app/constants/text_field_formats.dart';
 import 'package:edar_app/cubit/products/products_cubit.dart';
 import 'package:edar_app/cubit/purchases/purchase_cubit.dart';
+import 'package:edar_app/cubit/purchases/save_purchase_cubit.dart';
 import 'package:edar_app/data/model/product.dart';
 import 'package:edar_app/data/model/purchase/purchase_item.dart';
 import 'package:edar_app/data/model/supplier.dart';
@@ -23,14 +24,14 @@ class PurchaseAddItemDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<PurchaseCubit>(context).initItem();
+    BlocProvider.of<SavePurchaseCubit>(context).initItem();
     BlocProvider.of<ProductsCubit>(context).fetchProducts();
     return AlertDialog(
       scrollable: true,
       title: const Text('Add Item'),
       content: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: BlocBuilder<PurchaseCubit, PurchaseState>(
+        child: BlocBuilder<SavePurchaseCubit, SavePurchaseState>(
           builder: (context, state) {
             print("Building dialog");
             final TextEditingController priceController =
@@ -41,7 +42,8 @@ class PurchaseAddItemDialog extends StatelessWidget {
             // late bool prodSelected = false;
 
             var productDropdownField = StreamBuilder<Product>(
-                stream: BlocProvider.of<PurchaseCubit>(context).productStream,
+                stream:
+                    BlocProvider.of<SavePurchaseCubit>(context).productStream,
                 builder: (context, snapshot) {
                   final categoryController = TextEditingController();
                   categoryController.text = snapshot.hasData
@@ -60,7 +62,7 @@ class PurchaseAddItemDialog extends StatelessWidget {
                   return Column(
                     children: [
                       StreamBuilder<Supplier>(
-                          stream: BlocProvider.of<PurchaseCubit>(context)
+                          stream: BlocProvider.of<SavePurchaseCubit>(context)
                               .supplierStream,
                           builder: (context, snapshot) {
                             int supplierId = snapshot.data!.supplierId!;
@@ -68,16 +70,18 @@ class PurchaseAddItemDialog extends StatelessWidget {
                               builder: (context, state) {
                                 if (state is ProductsLoaded) {
                                   return StreamBuilder<Product>(
-                                      stream: BlocProvider.of<PurchaseCubit>(
-                                              context)
-                                          .productStream,
+                                      stream:
+                                          BlocProvider.of<SavePurchaseCubit>(
+                                                  context)
+                                              .productStream,
                                       builder: (context, snapshot) {
                                         return Autocomplete<String>(
                                           optionsBuilder: (TextEditingValue
                                               textEditingValue) {
                                             if (textEditingValue.text == '') {
                                               categoryController.text = "";
-                                              BlocProvider.of<PurchaseCubit>(
+                                              BlocProvider.of<
+                                                          SavePurchaseCubit>(
                                                       context)
                                                   .updateProduct(null);
                                               return const Iterable<
@@ -99,11 +103,13 @@ class PurchaseAddItemDialog extends StatelessWidget {
                                               });
 
                                               if (matches.isEmpty) {
-                                                BlocProvider.of<PurchaseCubit>(
+                                                BlocProvider.of<
+                                                            SavePurchaseCubit>(
                                                         context)
                                                     .updateProduct(null);
 
-                                                BlocProvider.of<PurchaseCubit>(
+                                                BlocProvider.of<
+                                                            SavePurchaseCubit>(
                                                         context)
                                                     .updateBatchQuantity("0");
                                                 quantityController.text = "0";
@@ -134,11 +140,11 @@ class PurchaseAddItemDialog extends StatelessWidget {
                                                     productName
                                                         .split("-")[0]
                                                         .trim());
-                                            BlocProvider.of<PurchaseCubit>(
+                                            BlocProvider.of<SavePurchaseCubit>(
                                                     context)
                                                 .updateProduct(product);
 
-                                            BlocProvider.of<PurchaseCubit>(
+                                            BlocProvider.of<SavePurchaseCubit>(
                                                     context)
                                                 .updateBatchQuantity("1");
                                             quantityController.text = "1";
@@ -157,8 +163,8 @@ class PurchaseAddItemDialog extends StatelessWidget {
                 });
 
             var productPrice = StreamBuilder(
-              stream:
-                  BlocProvider.of<PurchaseCubit>(context).purchaseAmountStream,
+              stream: BlocProvider.of<SavePurchaseCubit>(context)
+                  .purchaseAmountStream,
               builder: (context, snapshot) {
                 return Column(
                   children: [
@@ -171,7 +177,7 @@ class PurchaseAddItemDialog extends StatelessWidget {
                         TextFieldFormat.amountFormat
                       ],
                       onChanged: (text) {
-                        BlocProvider.of<PurchaseCubit>(context)
+                        BlocProvider.of<SavePurchaseCubit>(context)
                             .updatePurchaseAmount(text);
                       },
                     ),
@@ -181,8 +187,8 @@ class PurchaseAddItemDialog extends StatelessWidget {
             );
 
             var quantity = StreamBuilder(
-              stream:
-                  BlocProvider.of<PurchaseCubit>(context).batchQuantityStream,
+              stream: BlocProvider.of<SavePurchaseCubit>(context)
+                  .batchQuantityStream,
               builder: (context, snapshot) {
                 return Column(
                   children: [
@@ -195,7 +201,7 @@ class PurchaseAddItemDialog extends StatelessWidget {
                           TextFieldFormat.amountFormat
                         ],
                         onChanged: (text) {
-                          BlocProvider.of<PurchaseCubit>(context)
+                          BlocProvider.of<SavePurchaseCubit>(context)
                               .updateBatchQuantity(text);
                         }),
                   ],
@@ -204,7 +210,8 @@ class PurchaseAddItemDialog extends StatelessWidget {
             );
 
             var totalAmount = StreamBuilder(
-              stream: BlocProvider.of<PurchaseCubit>(context).itemTotalStream,
+              stream:
+                  BlocProvider.of<SavePurchaseCubit>(context).itemTotalStream,
               builder: (context, snapshot) {
                 final totalAmountController = TextEditingController();
                 totalAmountController.text =
@@ -237,14 +244,14 @@ class PurchaseAddItemDialog extends StatelessWidget {
       ),
       actions: [
         StreamBuilder<bool>(
-            stream:
-                BlocProvider.of<PurchaseCubit>(context).buttonValidPurchaseItem,
+            stream: BlocProvider.of<SavePurchaseCubit>(context)
+                .buttonValidPurchaseItem,
             builder: (context, snapshot) {
               return CustomElevatedButton(
                   onPressed: snapshot.hasData
                       ? () {
                           PurchaseItem purchaseItem =
-                              BlocProvider.of<PurchaseCubit>(context)
+                              BlocProvider.of<SavePurchaseCubit>(context)
                                   .getPurchaseItem(null);
                           addPurchaseItem(purchaseItem);
                           Navigator.of(context).pop();

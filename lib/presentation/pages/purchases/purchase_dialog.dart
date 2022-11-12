@@ -1,6 +1,8 @@
 import 'package:edar_app/cubit/purchases/purchase_cubit.dart';
+import 'package:edar_app/cubit/purchases/save_purchase_cubit.dart';
 import 'package:edar_app/data/model/purchase/purchase.dart';
 import 'package:edar_app/presentation/pages/purchases/datagrid/purchase_item_datagrid.dart';
+import 'package:edar_app/presentation/widgets/custom_elevated_action_button.dart';
 import 'package:edar_app/presentation/widgets/custom_elevated_button.dart';
 import 'package:edar_app/presentation/widgets/custom_inline_label.dart';
 import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
@@ -73,7 +75,7 @@ class PurchaseDialog extends StatelessWidget {
     ];
 
     var serviceErrorMessage = StreamBuilder(
-      stream: BlocProvider.of<PurchaseCubit>(context).errorStream,
+      stream: BlocProvider.of<SavePurchaseCubit>(context).errorStream,
       builder: (context, snapshot) {
         return snapshot.hasError
             ? Padding(
@@ -87,10 +89,16 @@ class PurchaseDialog extends StatelessWidget {
             : const SizedBox();
       },
     );
-    return BlocBuilder<PurchaseCubit, PurchaseState>(
+    return BlocBuilder<SavePurchaseCubit, SavePurchaseState>(
       builder: (context, state) {
-        if (state is PurchaseAdded || state is PurchaseVoided) {
+        bool isSaving = state is PurchaseSaving;
+        bool isVoiding = state is PurchaseVoiding;
+
+        if (state is PurchaseVoided || state is PurchaseSaved) {
           Future.delayed(Duration.zero, () {
+            if (state is PurchaseVoided) {
+              BlocProvider.of<PurchaseCubit>(context).fetchPurchases();
+            }
             Navigator.of(context, rootNavigator: true).pop();
           });
         }
@@ -131,27 +139,27 @@ class PurchaseDialog extends StatelessWidget {
                     SizedBox(
                       width: 170,
                       height: 70,
-                      child: CustomElevatedButton(
+                      child: CustomElevatedActionButton(
                         onPressed: flgAddPurchase
                             ? () {
-                                BlocProvider.of<PurchaseCubit>(context)
+                                BlocProvider.of<SavePurchaseCubit>(context)
                                     .addPurchase();
                               }
                             : () {},
-                        child: Center(
-                          child: Text(
-                            flgAddPurchase ? "SUBMIT" : "PRINT",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
-                          ),
+                        isLoading: isSaving,
+                        text: Text(
+                          flgAddPurchase ? "SUBMIT" : "PRINT",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
                         ),
+                        icon: const Icon(Icons.save),
                       ),
                     ),
                     if (!flgAddPurchase)
                       SizedBox(
                         width: 170,
                         height: 70,
-                        child: CustomElevatedButton(
+                        child: CustomElevatedActionButton(
                           color: Colors.red.shade600,
                           onPressed: purchase.trxnStatus == 'ACTIVE'
                               ? () {
@@ -159,30 +167,24 @@ class PurchaseDialog extends StatelessWidget {
                                       context: context,
                                       builder: (_) {
                                         return BlocProvider.value(
-                                          value: context.read<PurchaseCubit>(),
+                                          value:
+                                              context.read<SavePurchaseCubit>(),
                                           child: AlertDialog(
                                             title: const Text("Void Purchase"),
-                                            content: BlocListener<PurchaseCubit,
-                                                PurchaseState>(
-                                              listener: (context, state) {
-                                                if (state is PurchaseVoided) {
-                                                  Navigator.of(context,
-                                                          rootNavigator: true)
-                                                      .pop();
-                                                }
-                                              },
-                                              child: const Text(
-                                                  "Are you sure you want to void this purchase?"),
-                                            ),
+                                            content: const Text(
+                                                "Are you sure you want to void this purchase?"),
                                             actions: [
                                               ElevatedButton(
                                                   child: const Text("Yes"),
                                                   onPressed: () {
                                                     BlocProvider.of<
-                                                                PurchaseCubit>(
+                                                                SavePurchaseCubit>(
                                                             context)
                                                         .voidPurchase(purchase
                                                             .purchaseId!);
+                                                    Navigator.of(context,
+                                                            rootNavigator: true)
+                                                        .pop();
                                                   }),
                                               ElevatedButton(
                                                   child: const Text("No"),
@@ -197,12 +199,15 @@ class PurchaseDialog extends StatelessWidget {
                                       });
                                 }
                               : null,
-                          child: const Center(
-                            child: Text(
-                              "VOID",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20),
-                            ),
+                          isLoading: isVoiding,
+                          text: const Text(
+                            "VOID",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                          icon: const Icon(
+                            Icons.close,
+                            size: 25,
                           ),
                         ),
                       ),

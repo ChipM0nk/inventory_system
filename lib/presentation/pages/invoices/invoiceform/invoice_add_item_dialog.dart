@@ -1,5 +1,5 @@
 import 'package:edar_app/constants/text_field_formats.dart';
-import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
+import 'package:edar_app/cubit/invoice/save_invoice_cubit.dart';
 import 'package:edar_app/cubit/products/products_cubit.dart';
 import 'package:edar_app/data/model/invoice/invoice_item.dart';
 import 'package:edar_app/presentation/widgets/custom_elevated_button.dart';
@@ -22,14 +22,14 @@ class InvoiceAddItemDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<InvoiceCubit>(context).initItem();
+    BlocProvider.of<SaveInvoiceCubit>(context).initItem();
     BlocProvider.of<ProductsCubit>(context).fetchProducts();
     return AlertDialog(
       scrollable: true,
       title: const Text('Add Item'),
       content: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: BlocBuilder<InvoiceCubit, InvoiceState>(
+        child: BlocBuilder<SaveInvoiceCubit, SaveInvoiceState>(
           builder: (context, state) {
             final TextEditingController priceController =
                 TextEditingController();
@@ -39,7 +39,8 @@ class InvoiceAddItemDialog extends StatelessWidget {
             // late bool prodSelected = false;
 
             var productDropdownField = StreamBuilder<Product>(
-                stream: BlocProvider.of<InvoiceCubit>(context).productStream,
+                stream:
+                    BlocProvider.of<SaveInvoiceCubit>(context).productStream,
                 builder: (context, snapshot) {
                   // final categoryController = TextEditingController();
                   final currStockController = TextEditingController();
@@ -68,8 +69,8 @@ class InvoiceAddItemDialog extends StatelessWidget {
                     ],
                   );
                   return StreamBuilder<Product>(
-                      stream:
-                          BlocProvider.of<InvoiceCubit>(context).productStream,
+                      stream: BlocProvider.of<SaveInvoiceCubit>(context)
+                          .productStream,
                       builder: (context, snapshot) {
                         return Column(
                           children: [
@@ -80,7 +81,8 @@ class InvoiceAddItemDialog extends StatelessWidget {
                                     optionsBuilder:
                                         (TextEditingValue textEditingValue) {
                                       if (textEditingValue.text == '') {
-                                        BlocProvider.of<InvoiceCubit>(context)
+                                        BlocProvider.of<SaveInvoiceCubit>(
+                                                context)
                                             .updateProduct(null);
                                         return const Iterable<String>.empty();
                                       } else {
@@ -119,16 +121,16 @@ class InvoiceAddItemDialog extends StatelessWidget {
                                           .firstWhere((element) =>
                                               element.productCode ==
                                               productName.split("-")[0].trim());
-                                      BlocProvider.of<InvoiceCubit>(context)
+                                      BlocProvider.of<SaveInvoiceCubit>(context)
                                           .updateProduct(product);
 
                                       priceController.text =
                                           product.productPrice.toString();
-                                      BlocProvider.of<InvoiceCubit>(context)
+                                      BlocProvider.of<SaveInvoiceCubit>(context)
                                           .updatePrice(
                                               product.productPrice.toString());
 
-                                      BlocProvider.of<InvoiceCubit>(context)
+                                      BlocProvider.of<SaveInvoiceCubit>(context)
                                           .updateQuantity("1");
                                       quantityController.text = "1";
                                     },
@@ -145,7 +147,7 @@ class InvoiceAddItemDialog extends StatelessWidget {
                 });
 
             var productPrice = StreamBuilder(
-              stream: BlocProvider.of<InvoiceCubit>(context).priceStream,
+              stream: BlocProvider.of<SaveInvoiceCubit>(context).priceStream,
               builder: (context, snapshot) {
                 return Column(
                   children: [
@@ -158,7 +160,7 @@ class InvoiceAddItemDialog extends StatelessWidget {
                         TextFieldFormat.amountFormat
                       ],
                       onChanged: (text) {
-                        BlocProvider.of<InvoiceCubit>(context)
+                        BlocProvider.of<SaveInvoiceCubit>(context)
                             .updatePrice(text);
                       },
                     ),
@@ -168,7 +170,7 @@ class InvoiceAddItemDialog extends StatelessWidget {
             );
 
             var quantity = StreamBuilder(
-              stream: BlocProvider.of<InvoiceCubit>(context).quantityStream,
+              stream: BlocProvider.of<SaveInvoiceCubit>(context).quantityStream,
               builder: (context, snapshot) {
                 return Column(
                   children: [
@@ -181,7 +183,7 @@ class InvoiceAddItemDialog extends StatelessWidget {
                           TextFieldFormat.amountFormat
                         ],
                         onChanged: (text) {
-                          BlocProvider.of<InvoiceCubit>(context)
+                          BlocProvider.of<SaveInvoiceCubit>(context)
                               .updateQuantity(text);
                         }),
                   ],
@@ -190,7 +192,7 @@ class InvoiceAddItemDialog extends StatelessWidget {
             );
 
             var totalAmount = StreamBuilder<double>(
-              stream: BlocProvider.of<InvoiceCubit>(context)
+              stream: BlocProvider.of<SaveInvoiceCubit>(context)
                   .invoiceItemAmountStream,
               builder: (context, snapshot) {
                 final totalAmountController = TextEditingController();
@@ -225,14 +227,14 @@ class InvoiceAddItemDialog extends StatelessWidget {
       ),
       actions: [
         StreamBuilder<bool>(
-            stream:
-                BlocProvider.of<InvoiceCubit>(context).buttonValidInvoiceItem,
+            stream: BlocProvider.of<SaveInvoiceCubit>(context)
+                .buttonValidInvoiceItem,
             builder: (context, snapshot) {
               return CustomElevatedButton(
                   onPressed: snapshot.hasData
                       ? () {
                           InvoiceItem invoiceItem =
-                              BlocProvider.of<InvoiceCubit>(context)
+                              BlocProvider.of<SaveInvoiceCubit>(context)
                                   .getInvoiceItem(null);
                           addInvoiceItem(invoiceItem);
                           Navigator.of(context).pop();
