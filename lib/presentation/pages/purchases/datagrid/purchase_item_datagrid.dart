@@ -10,8 +10,11 @@ import 'package:edar_app/presentation/widgets/custom_sfdatagrid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xlsio;
+import 'package:universal_io/io.dart';
 
 class PurchaseItemDataGrid extends StatelessWidget {
+  final GlobalKey<SfDataGridState> purchaseSfKey;
   final List<PurchaseItem> purchaseItems;
   final double summaryTotal;
   final List<StackedHeaderRow>? stackHeaderRows;
@@ -20,6 +23,7 @@ class PurchaseItemDataGrid extends StatelessWidget {
   final bool editable;
 
   const PurchaseItemDataGrid({
+    required this.purchaseSfKey,
     required this.purchaseItems,
     this.summaryTotal = 0.00,
     this.stackHeaderRows,
@@ -104,13 +108,14 @@ class PurchaseItemDataGrid extends StatelessWidget {
         ));
 
     return CustomSfDataGrid(
-      stackedHeaderRows: stackHeaderRows ?? [],
+      sfKey: purchaseSfKey,
+      stackedHeaderRows: [],
       stackedHeaderRowHeight: 120,
       footer: footer,
       source: purchaseItemGriDataSource,
       columns: <GridColumn>[
         GridColumn(
-            columnName: 'prodcode',
+            columnName: editable ? 'purchaseitem' : 'Product Code',
             width: 150,
             label: Container(
                 padding: const EdgeInsets.all(5.0),

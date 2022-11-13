@@ -21,6 +21,9 @@ class InvoiceDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<SfDataGridState> invoiceSfKey =
+        GlobalKey<SfDataGridState>();
+
     var stackHeaderRows = <StackedHeaderRow>[
       StackedHeaderRow(cells: [
         StackedHeaderCell(
@@ -121,6 +124,9 @@ class InvoiceDialog extends StatelessWidget {
             Navigator.of(context, rootNavigator: true).pop();
           });
         }
+
+        final GlobalKey<SfDataGridState> invoiceSfKey =
+            GlobalKey<SfDataGridState>();
         return AlertDialog(
           title: const Text("Invoice Details"),
           content: Column(
@@ -135,6 +141,7 @@ class InvoiceDialog extends StatelessWidget {
                     SizedBox(
                       height: 500,
                       child: InvoiceItemDataGrid(
+                        invoiceSfKey: invoiceSfKey,
                         invoiceItems: invoice.invoiceItems,
                         summaryTotal: invoice.totalAmount,
                         stackHeaderRows: stackHeaderRows,

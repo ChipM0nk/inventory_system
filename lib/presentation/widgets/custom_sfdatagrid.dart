@@ -9,8 +9,10 @@ class CustomSfDataGrid extends StatelessWidget {
   final List<StackedHeaderRow> stackedHeaderRows;
   final double stackedHeaderRowHeight;
   final double rowHeight;
+  final GlobalKey<SfDataGridState> sfKey;
   const CustomSfDataGrid(
       {super.key,
+      required this.sfKey,
       required this.source,
       required this.columns,
       this.footer,
@@ -23,6 +25,7 @@ class CustomSfDataGrid extends StatelessWidget {
     return SfDataGridTheme(
       data: SfDataGridThemeData(headerColor: Colors.green.shade200),
       child: SfDataGrid(
+          key: sfKey,
           footerFrozenRowsCount: 1,
           onQueryRowHeight: (details) {
             // Set the row height as 70.0 to the column header row.

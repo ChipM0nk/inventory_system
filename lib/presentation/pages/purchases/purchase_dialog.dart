@@ -1,14 +1,25 @@
+import 'dart:convert';
+
 import 'package:edar_app/cubit/purchases/purchase_cubit.dart';
 import 'package:edar_app/cubit/purchases/save_purchase_cubit.dart';
 import 'package:edar_app/data/model/purchase/purchase.dart';
+import 'package:edar_app/data/model/purchase/purchase_item.dart';
 import 'package:edar_app/presentation/pages/purchases/datagrid/purchase_item_datagrid.dart';
 import 'package:edar_app/presentation/widgets/custom_elevated_action_button.dart';
-import 'package:edar_app/presentation/widgets/custom_elevated_button.dart';
 import 'package:edar_app/presentation/widgets/custom_inline_label.dart';
 import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:printing/printing.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xlsio;
+import 'package:syncfusion_flutter_pdf/pdf.dart' as sfPdf;
+import 'package:syncfusion_flutter_datagrid_export/export.dart';
+import 'package:universal_io/io.dart' as uio;
+import 'package:file_saver/file_saver.dart';
 
 class PurchaseDialog extends StatelessWidget {
   final Purchase purchase;
@@ -22,55 +33,56 @@ class PurchaseDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var headerContainer = SizedBox(
+      width: 1000,
+      height: 120,
+      child: Container(
+        color: Colors.grey[100],
+        child: Padding(
+          padding: const EdgeInsets.only(top: 15, left: 15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(children: [
+                    CustomInlineLabel(
+                        label: "Purchase No: ", value: purchase.purchaseNo),
+                  ]),
+                  Row(children: [
+                    CustomInlineLabel(
+                        label: "Supplier: ",
+                        value: purchase.supplier.supplierName),
+                    CustomInlineLabel(
+                        label: "Batch Code: ", value: purchase.batchCode),
+                  ]),
+                  Row(children: [
+                    CustomInlineLabel(
+                        label: "Purchase Date: ", value: purchase.purchaseDate),
+                    CustomInlineLabel(
+                        width: 600,
+                        label: "Remarks: ",
+                        value: purchase.remarks),
+                  ]),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
     var stackHeaderRows = <StackedHeaderRow>[
       StackedHeaderRow(cells: [
-        StackedHeaderCell(
-            columnNames: [
-              'prodcode',
-              'prodname',
-              'proddesc',
-              'price',
-              'qty',
-              'total'
-            ],
-            child: Container(
-              color: Colors.grey[100],
-              child: Padding(
-                padding: const EdgeInsets.only(top: 15, left: 15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(children: [
-                          CustomInlineLabel(
-                              label: "Purchase No: ",
-                              value: purchase.purchaseNo),
-                        ]),
-                        Row(children: [
-                          CustomInlineLabel(
-                              label: "Supplier: ",
-                              value: purchase.supplier.supplierName),
-                          CustomInlineLabel(
-                              label: "Batch Code: ", value: purchase.batchCode),
-                        ]),
-                        Row(children: [
-                          CustomInlineLabel(
-                              label: "Purchase Date: ",
-                              value: purchase.purchaseDate),
-                          CustomInlineLabel(
-                              width: 600,
-                              label: "Remarks: ",
-                              value: purchase.remarks),
-                        ]),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ))
+        StackedHeaderCell(columnNames: [
+          'prodcode',
+          'prodname',
+          'proddesc',
+          'price',
+          'qty',
+          'total'
+        ], child: headerContainer)
       ]),
     ];
 
@@ -89,6 +101,7 @@ class PurchaseDialog extends StatelessWidget {
             : const SizedBox();
       },
     );
+
     return BlocBuilder<SavePurchaseCubit, SavePurchaseState>(
       builder: (context, state) {
         bool isSaving = state is PurchaseSaving;
@@ -102,20 +115,68 @@ class PurchaseDialog extends StatelessWidget {
             Navigator.of(context, rootNavigator: true).pop();
           });
         }
+
+        GlobalKey<SfDataGridState> purchaseSfKey = GlobalKey<SfDataGridState>();
+
+        void exportDataGridToExcel() async {
+          final xlsio.Workbook workbook =
+              purchaseSfKey.currentState!.exportToExcelWorkbook();
+          final List<int> bytes = workbook.saveAsStream();
+          // File('DataGrid.xlsx').writeAsBytes(bytes);
+          print("Opening print option");
+          // uio.File('DataGrid.xlsx').writeAsBytes(bytes);
+          // await Printing.layoutPdf(onLayout: (_) => Uint8List.fromList(bytes));
+          await FileSaver.instance
+              .saveFile("Datagrid.xls", Uint8List.fromList(bytes), "xls");
+          workbook.dispose();
+          // await xlsio.saveAndLaunchFile(bytes, 'DataGrid.xlsx');
+        }
+
+        void exportDataGridToPDF() async {
+          sfPdf.PdfDocument document = purchaseSfKey.currentState!
+              .exportToPdfDocument(
+                  fitAllColumnsInOnePage: true,
+                  // cellExport: (DataGridCellPdfExportDetails details) {
+                  //   if (details.cellType == DataGridExportCellType.row) {
+                  //     if (details.columnName == 'prodcode') {}
+                  //   }
+                  // },
+                  headerFooterExport:
+                      (DataGridPdfHeaderFooterExportDetails details) {
+                    final double width = details.pdfPage.getClientSize().width;
+                    final PdfPageTemplateElement header =
+                        PdfPageTemplateElement(Rect.fromLTWH(0, 0, width, 65));
+
+                    header.graphics.drawRectangle(
+                      bounds: Rect.fromLTWH(width - 148, 0, 148, 60),
+                      pen: PdfPen(PdfColor.fromCMYK(120, 12, 20, 120)),
+                      // brush: PdfSolidBrush(
+                      //   PdfColor.fromCMYK(120, 12, 20, 120),
+                      // ),
+                    );
+                    details.pdfDocumentTemplate.top = header;
+                  });
+          final List<int> bytes = document.saveSync();
+          document.dispose();
+          await Printing.layoutPdf(onLayout: (_) => Uint8List.fromList(bytes));
+        }
+
         return AlertDialog(
           title: const Text("Purchase Details"),
           content: Column(
             children: [
               SizedBox(
                 width: 1000,
-                height: 540,
+                height: 500,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    headerContainer,
                     SizedBox(
-                      height: 500,
+                      height: 380,
                       child: PurchaseItemDataGrid(
+                        purchaseSfKey: purchaseSfKey,
                         purchaseItems: purchase.purchaseItems,
                         summaryTotal: purchase.totalAmount,
                         stackHeaderRows: stackHeaderRows,
@@ -145,7 +206,9 @@ class PurchaseDialog extends StatelessWidget {
                                 BlocProvider.of<SavePurchaseCubit>(context)
                                     .addPurchase();
                               }
-                            : () {},
+                            : () async {
+                                exportDataGridToPDF();
+                              },
                         isLoading: isSaving,
                         text: Text(
                           flgAddPurchase ? "SUBMIT" : "PRINT",

@@ -30,7 +30,6 @@ class NetworkService {
   Future<List<dynamic>> fetchWithParam(
       String serviceName, Map<String, dynamic> paramObj) async {
     try {
-      print("Parameter :${json.encode(paramObj)}");
       String url = "$BASE_URL$serviceName/all/param";
 
       final response = await post(Uri.parse(url),
@@ -61,7 +60,6 @@ class NetworkService {
         'Authorization': "Bearer ${await LocalStorage.read("jwt")}"
       });
       dynamic respObj = jsonDecode(response.body);
-      // print(json.encode(respObj));
       if (respObj['code'] == '000') {
         List<dynamic> respBody = respObj['body'];
         return respBody;
@@ -78,11 +76,8 @@ class NetworkService {
     Map<String, dynamic> addObj,
     String serviceName,
   ) async {
-    // try {
-    print("Adding item");
     String url = "$BASE_URL$serviceName/add";
-    print(addObj);
-    await Future.delayed(Duration(seconds: 2));
+    // await Future.delayed(Duration(seconds: 2));
     final response = await post(Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
@@ -137,7 +132,7 @@ class NetworkService {
     print("Voiding item");
     String url = "$BASE_URL$serviceName/void/$id";
 
-    await Future.delayed(Duration(seconds: 2));
+    // await Future.delayed(Duration(seconds: 2));
     final response = await patch(
       Uri.parse(url),
       headers: {

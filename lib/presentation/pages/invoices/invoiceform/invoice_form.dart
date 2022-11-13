@@ -13,6 +13,7 @@ import 'package:edar_app/routing/route_names.dart';
 import 'package:edar_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../../../widgets/fields/custom_text_field.dart';
 
@@ -253,6 +254,7 @@ class _InvoiceFormState extends State<InvoiceForm> {
                         child: Column(
                           children: [
                             InvoiceItemDataGrid(
+                              invoiceSfKey: GlobalKey<SfDataGridState>(),
                               invoiceItems:
                                   BlocProvider.of<SaveInvoiceCubit>(context)
                                       .getInvoiceItems(),

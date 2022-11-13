@@ -39,7 +39,4 @@ class PurchaseItem {
 
   @override
   int get hashCode => purchaseItemId.hashCode;
-
-  @override
-  String toString() => '{ id: $purchaseItemId }';
 }

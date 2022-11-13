@@ -1,4 +1,3 @@
-import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
 import 'package:edar_app/cubit/invoice/save_invoice_cubit.dart';
 import 'package:edar_app/cubit/products/products_cubit.dart';
 import 'package:edar_app/data/model/invoice/invoice_item.dart';
@@ -12,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class InvoiceItemDataGrid extends StatelessWidget {
+  final GlobalKey<SfDataGridState> invoiceSfKey;
   final List<InvoiceItem> invoiceItems;
   final double summaryTotal;
   final List<StackedHeaderRow>? stackHeaderRows;
@@ -20,6 +20,7 @@ class InvoiceItemDataGrid extends StatelessWidget {
   final bool editable;
 
   const InvoiceItemDataGrid({
+    required this.invoiceSfKey,
     required this.invoiceItems,
     this.summaryTotal = 0.00,
     this.stackHeaderRows,
@@ -93,6 +94,7 @@ class InvoiceItemDataGrid extends StatelessWidget {
         ));
 
     return CustomSfDataGrid(
+      sfKey: invoiceSfKey,
       stackedHeaderRows: stackHeaderRows ?? [],
       footer: footer,
       source: invoiceItemGriDataSource,

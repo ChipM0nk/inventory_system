@@ -15,6 +15,7 @@ import 'package:edar_app/services/navigation_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../../../../locator.dart';
 import '../../../widgets/fields/custom_text_field.dart';
@@ -213,6 +214,7 @@ class _PurchaseFormState extends State<PurchaseForm> {
                         child: Column(
                           children: [
                             PurchaseItemDataGrid(
+                              purchaseSfKey: GlobalKey<SfDataGridState>(),
                               purchaseItems:
                                   BlocProvider.of<SavePurchaseCubit>(context)
                                       .getPurchaseItems(),

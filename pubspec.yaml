@@ -31,6 +31,7 @@ dependencies:
   bloc: ^8.1.0
   build_web_compilers: ^3.2.7
   cupertino_icons: ^1.0.2
+  file_saver: ^0.1.1
   flutter:
     sdk: flutter
   flutter_bloc: ^8.0.1
@@ -43,12 +44,18 @@ dependencies:
   json_annotation: ^4.6.0
   logger: ^1.1.0
   mask_text_input_formatter: ^2.4.0
+  native_pdf_view: ^6.0.0+1
+  printing: ^5.9.3
   responsive_builder: ^0.4.3
   rxdart: ^0.27.5
   shared_preferences: ^2.0.15
   side_navigation: ^1.0.2
   syncfusion_flutter_core: ^20.3.50
   syncfusion_flutter_datagrid: ^20.3.50
+  syncfusion_flutter_datagrid_export: ^20.3.56-beta
+  syncfusion_flutter_pdf: ^20.3.56
+  syncfusion_flutter_pdfviewer: ^20.3.56
+  syncfusion_flutter_xlsio: ^20.3.56-beta
   toast: ^0.3.0
   universal_io: ^2.0.4
 

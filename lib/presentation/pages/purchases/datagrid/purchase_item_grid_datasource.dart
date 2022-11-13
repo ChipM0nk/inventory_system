@@ -15,7 +15,11 @@ class PurchaseItemGridDataSource extends DataGridSource {
         .map<DataGridRow>(
           (e) => DataGridRow(
             cells: [
-              DataGridCell<PurchaseItem>(columnName: "prodcode", value: e),
+              editable
+                  ? DataGridCell<PurchaseItem>(
+                      columnName: "purchaseitem", value: e)
+                  : DataGridCell<String>(
+                      columnName: "Product Code", value: e.product.productCode),
               DataGridCell<String>(
                   columnName: "prodname", value: e.product.productName),
               DataGridCell<String>(
@@ -48,14 +52,15 @@ class PurchaseItemGridDataSource extends DataGridSource {
             : Alignment.centerLeft,
         padding: const EdgeInsets.all(5.0),
         child: (dataGridCell.columnName == 'proddesc' ||
-                dataGridCell.columnName == 'prodname')
+                dataGridCell.columnName == 'prodname' ||
+                dataGridCell.columnName == 'Product Code')
             ? Tooltip(
                 message: dataGridCell.value.toString(),
                 child: Text(
                   dataGridCell.value.toString(),
                   overflow: TextOverflow.ellipsis,
                 ))
-            : (dataGridCell.columnName == 'prodcode')
+            : (dataGridCell.columnName == 'purchaseitem')
                 ? Row(
                     children: [
                       editable
