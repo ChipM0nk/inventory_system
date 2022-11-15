@@ -15,17 +15,22 @@ class InvoiceItemGridDataSource extends DataGridSource {
         .map<DataGridRow>(
           (e) => DataGridRow(
             cells: [
-              DataGridCell<InvoiceItem>(columnName: "prodcode", value: e),
+              editable
+                  ? DataGridCell<InvoiceItem>(
+                      columnName: "invoiceitem", value: e)
+                  : DataGridCell<String>(
+                      columnName: "Product Code", value: e.product.productCode),
               DataGridCell<String>(
-                  columnName: "prodname", value: e.product.productName),
+                  columnName: "Product Name", value: e.product.productName),
               DataGridCell<String>(
-                  columnName: "proddesc", value: e.product.productDescription),
+                  columnName: "Product Description",
+                  value: e.product.productDescription),
               DataGridCell<String>(
-                  columnName: "price",
+                  columnName: "Price",
                   value: Util.convertToCurrency(e.price).toString()),
-              DataGridCell<double>(columnName: "qty", value: e.quantity),
+              DataGridCell<double>(columnName: "QTY", value: e.quantity),
               DataGridCell<String>(
-                  columnName: "total",
+                  columnName: "Total",
                   value:
                       'PHP ${Util.convertToCurrency(e.totalAmount).toString()}'),
             ],
@@ -41,21 +46,22 @@ class InvoiceItemGridDataSource extends DataGridSource {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((dataGridCell) {
       return Container(
-        alignment: (dataGridCell.columnName == 'price' ||
-                dataGridCell.columnName == 'qty' ||
-                dataGridCell.columnName == 'total')
+        alignment: (dataGridCell.columnName == 'Price' ||
+                dataGridCell.columnName == 'QTY' ||
+                dataGridCell.columnName == 'Total')
             ? Alignment.centerRight
             : Alignment.centerLeft,
         padding: const EdgeInsets.all(5.0),
-        child: (dataGridCell.columnName == 'proddesc' ||
-                dataGridCell.columnName == 'prodname')
+        child: (dataGridCell.columnName == 'Product Description' ||
+                dataGridCell.columnName == 'Product Name' ||
+                dataGridCell.columnName == 'Product Code')
             ? Tooltip(
                 message: dataGridCell.value.toString(),
                 child: Text(
                   dataGridCell.value.toString(),
                   overflow: TextOverflow.ellipsis,
                 ))
-            : (dataGridCell.columnName == 'prodcode')
+            : (dataGridCell.columnName == 'invoiceitem')
                 ? Row(
                     children: [
                       editable

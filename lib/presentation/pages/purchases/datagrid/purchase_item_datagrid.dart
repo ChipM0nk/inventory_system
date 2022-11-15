@@ -125,7 +125,7 @@ class PurchaseItemDataGrid extends StatelessWidget {
                   'Product Code',
                 ))),
         GridColumn(
-            columnName: 'prodname',
+            columnName: 'Product Name',
             width: 200,
             label: Container(
                 padding: const EdgeInsets.all(5.0),
@@ -135,7 +135,7 @@ class PurchaseItemDataGrid extends StatelessWidget {
                   'Product Name',
                 ))),
         GridColumn(
-            columnName: 'proddesc',
+            columnName: 'Product Description',
             width: 350,
             label: Container(
                 padding: const EdgeInsets.all(5.0),
@@ -143,7 +143,7 @@ class PurchaseItemDataGrid extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: const Text('Product Desciption'))),
         GridColumn(
-            columnName: 'price',
+            columnName: 'Price',
             width: 100,
             label: Container(
                 padding: const EdgeInsets.all(5.0),
@@ -151,7 +151,7 @@ class PurchaseItemDataGrid extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: const Text('Price'))),
         GridColumn(
-            columnName: 'qty',
+            columnName: 'QTY',
             width: 80,
             label: Container(
                 padding: const EdgeInsets.all(5.0),
@@ -159,7 +159,7 @@ class PurchaseItemDataGrid extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: const Text('Quantity'))),
         GridColumn(
-            columnName: 'total',
+            columnName: 'Total',
             width: 120,
             label: Container(
                 padding: const EdgeInsets.all(5.0),

@@ -131,7 +131,7 @@ class _ProductPageState extends State<ProductPage> {
           label: const SizedBox(
             width: 40,
             child: Text(
-              'Qty',
+              'QTY',
               style: TextStyle(
                   fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
             ),

@@ -2,12 +2,18 @@ import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
 import 'package:edar_app/cubit/invoice/save_invoice_cubit.dart';
 import 'package:edar_app/data/model/invoice/invoice.dart';
 import 'package:edar_app/presentation/pages/invoices/datagrid/invoice_item_datagrid.dart';
+import 'package:edar_app/presentation/pages/invoices/datagrid/invoice_pdf.dart';
+import 'package:edar_app/presentation/pages/invoices/datagrid/sf_datagrid_invoice_export_pdf.dart';
 import 'package:edar_app/presentation/widgets/custom_elevated_action_button.dart';
 import 'package:edar_app/presentation/widgets/custom_inline_label.dart';
 import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:printing/printing.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart' as sf_pdf;
+import 'package:syncfusion_flutter_datagrid_export/export.dart';
 
 class InvoiceDialog extends StatelessWidget {
   final Invoice invoice;
@@ -25,15 +31,16 @@ class InvoiceDialog extends StatelessWidget {
         GlobalKey<SfDataGridState>();
 
     var stackHeaderRows = <StackedHeaderRow>[
-      StackedHeaderRow(cells: [
-        StackedHeaderCell(
+      StackedHeaderRow(
+        cells: [
+          StackedHeaderCell(
             columnNames: [
-              'prodcode',
-              'prodname',
-              'proddesc',
-              'price',
-              'qty',
-              'total'
+              'Product Code',
+              'Product Name',
+              'Product Description',
+              'Price',
+              'QTY',
+              'Total'
             ],
             child: Container(
               color: Colors.grey[100],
@@ -93,8 +100,23 @@ class InvoiceDialog extends StatelessWidget {
                   ],
                 ),
               ),
-            ))
-      ]),
+            ),
+          ),
+          // StackedHeaderCell(
+          //   columnNames: [
+          //     'Product Code',
+          //     'Product Name',
+          //     'Product Description',
+          //     'Price',
+          //     'QTY',
+          //     'Total'
+          //   ],
+          //   child: Container(
+          //     child: Text("Hello"),
+          //   ),
+          // )
+        ],
+      ),
     ];
 
     var serviceErrorMessage = StreamBuilder(
@@ -127,6 +149,22 @@ class InvoiceDialog extends StatelessWidget {
 
         final GlobalKey<SfDataGridState> invoiceSfKey =
             GlobalKey<SfDataGridState>();
+
+        void exportDataGridToPDF() async {
+          InvoicePdf invoicePdf = InvoicePdf(invoice: invoice);
+          invoicePdf.makePdf();
+          // await Printing.layoutPdf(onLayout: (_) => bytes);
+          // final ByteData data =
+          //     await rootBundle.load('/images/report_header.jpg');
+          // sf_pdf.PdfDocument document =
+          //     invoiceSfKey.currentState!.exportToPdfDocument(
+          //   converter: SfDataGridToInvoicePdfConverterExt(data),
+          // );
+          // final List<int> bytes = document.saveSync();
+          // document.dispose();
+          // await Printing.layoutPdf(onLayout: (_) => Uint8List.fromList(bytes));
+        }
+
         return AlertDialog(
           title: const Text("Invoice Details"),
           content: Column(
@@ -171,7 +209,9 @@ class InvoiceDialog extends StatelessWidget {
                                 BlocProvider.of<SaveInvoiceCubit>(context)
                                     .addInvoice();
                               }
-                            : () {},
+                            : () {
+                                exportDataGridToPDF();
+                              },
                         text: Text(
                           flgAddInvoice ? "SUBMIT" : "PRINT",
                           style: const TextStyle(

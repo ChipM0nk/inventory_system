@@ -1,24 +1,19 @@
-import 'dart:convert';
-
 import 'package:edar_app/cubit/purchases/purchase_cubit.dart';
 import 'package:edar_app/cubit/purchases/save_purchase_cubit.dart';
 import 'package:edar_app/data/model/purchase/purchase.dart';
-import 'package:edar_app/data/model/purchase/purchase_item.dart';
+import 'package:edar_app/presentation/pages/purchases/datagrid/datagrid_export.dart';
 import 'package:edar_app/presentation/pages/purchases/datagrid/purchase_item_datagrid.dart';
 import 'package:edar_app/presentation/widgets/custom_elevated_action_button.dart';
 import 'package:edar_app/presentation/widgets/custom_inline_label.dart';
 import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:printing/printing.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:syncfusion_flutter_pdf/pdf.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xlsio;
 import 'package:syncfusion_flutter_pdf/pdf.dart' as sfPdf;
 import 'package:syncfusion_flutter_datagrid_export/export.dart';
-import 'package:universal_io/io.dart' as uio;
 import 'package:file_saver/file_saver.dart';
 
 class PurchaseDialog extends StatelessWidget {
@@ -77,11 +72,11 @@ class PurchaseDialog extends StatelessWidget {
       StackedHeaderRow(cells: [
         StackedHeaderCell(columnNames: [
           'prodcode',
-          'prodname',
-          'proddesc',
-          'price',
-          'qty',
-          'total'
+          'Product Name',
+          'Product Description',
+          'Price',
+          'QTY',
+          'Total'
         ], child: headerContainer)
       ]),
     ];
@@ -133,29 +128,12 @@ class PurchaseDialog extends StatelessWidget {
         }
 
         void exportDataGridToPDF() async {
-          sfPdf.PdfDocument document = purchaseSfKey.currentState!
-              .exportToPdfDocument(
-                  fitAllColumnsInOnePage: true,
-                  // cellExport: (DataGridCellPdfExportDetails details) {
-                  //   if (details.cellType == DataGridExportCellType.row) {
-                  //     if (details.columnName == 'prodcode') {}
-                  //   }
-                  // },
-                  headerFooterExport:
-                      (DataGridPdfHeaderFooterExportDetails details) {
-                    final double width = details.pdfPage.getClientSize().width;
-                    final PdfPageTemplateElement header =
-                        PdfPageTemplateElement(Rect.fromLTWH(0, 0, width, 65));
-
-                    header.graphics.drawRectangle(
-                      bounds: Rect.fromLTWH(width - 148, 0, 148, 60),
-                      pen: PdfPen(PdfColor.fromCMYK(120, 12, 20, 120)),
-                      // brush: PdfSolidBrush(
-                      //   PdfColor.fromCMYK(120, 12, 20, 120),
-                      // ),
-                    );
-                    details.pdfDocumentTemplate.top = header;
-                  });
+          final ByteData data =
+              await rootBundle.load('/images/report_header.jpg');
+          sfPdf.PdfDocument document =
+              purchaseSfKey.currentState!.exportToPdfDocument(
+            converter: SfDataGridToPdfConverterExt(data),
+          );
           final List<int> bytes = document.saveSync();
           document.dispose();
           await Printing.layoutPdf(onLayout: (_) => Uint8List.fromList(bytes));

@@ -21,15 +21,16 @@ class PurchaseItemGridDataSource extends DataGridSource {
                   : DataGridCell<String>(
                       columnName: "Product Code", value: e.product.productCode),
               DataGridCell<String>(
-                  columnName: "prodname", value: e.product.productName),
+                  columnName: "Product Name", value: e.product.productName),
               DataGridCell<String>(
-                  columnName: "proddesc", value: e.product.productDescription),
+                  columnName: "Product Description",
+                  value: e.product.productDescription),
               DataGridCell<String>(
-                  columnName: "price",
+                  columnName: "Price",
                   value: Util.convertToCurrency(e.itemAmount).toString()),
-              DataGridCell<double>(columnName: "qty", value: e.quantity),
+              DataGridCell<double>(columnName: "QTY", value: e.quantity),
               DataGridCell<String>(
-                  columnName: "total",
+                  columnName: "Total",
                   value:
                       'PHP ${Util.convertToCurrency(e.itemTotalAmount).toString()}'),
             ],
@@ -45,14 +46,14 @@ class PurchaseItemGridDataSource extends DataGridSource {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((dataGridCell) {
       return Container(
-        alignment: (dataGridCell.columnName == 'price' ||
-                dataGridCell.columnName == 'qty' ||
-                dataGridCell.columnName == 'total')
+        alignment: (dataGridCell.columnName == 'Price' ||
+                dataGridCell.columnName == 'QTY' ||
+                dataGridCell.columnName == 'Total')
             ? Alignment.centerRight
             : Alignment.centerLeft,
         padding: const EdgeInsets.all(5.0),
-        child: (dataGridCell.columnName == 'proddesc' ||
-                dataGridCell.columnName == 'prodname' ||
+        child: (dataGridCell.columnName == 'Product Description' ||
+                dataGridCell.columnName == 'Product Name' ||
                 dataGridCell.columnName == 'Product Code')
             ? Tooltip(
                 message: dataGridCell.value.toString(),
