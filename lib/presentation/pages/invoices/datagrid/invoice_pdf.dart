@@ -6,48 +6,56 @@ import 'package:pdf/widgets.dart';
 import 'package:printing/printing.dart';
 
 class InvoicePdf {
-  final Invoice invoice;
+  // final Invoice invoice;
 
-  InvoicePdf({required this.invoice});
+  // InvoicePdf({required this.invoice});
 
-  Widget paddedText(
-    final String text, {
-    final TextAlign align = TextAlign.left,
-    final double fontSize = 12,
-    final FontWeight fontWeight = FontWeight.normal,
-  }) =>
-      Padding(
-        padding: const EdgeInsets.all(5),
-        child: Text(text,
-            textAlign: align,
-            style: TextStyle(fontSize: fontSize, fontWeight: fontWeight)),
-      );
-  Widget labeledValueText({
-    required final String label,
-    required final String value,
-    required final double labelWidth,
-    required final double valueWidth,
-  }) =>
-      Padding(
-          padding: const EdgeInsets.only(bottom: 5),
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            SizedBox(
-                width: labelWidth,
-                child: Text("$label: ",
-                    style: TextStyle(fontWeight: FontWeight.bold))),
-            Container(
-                padding: const EdgeInsets.only(left: 10),
-                decoration: const BoxDecoration(
-                    border: Border(bottom: BorderSide(color: PdfColors.black))),
-                width: valueWidth,
-                child: Text(value))
-          ]));
-
-  void makePdf() async {
+  static makePdf(Invoice invoice) async {
     final imageLogo = MemoryImage(
         (await rootBundle.load('/images/edar_logo.jpg')).buffer.asUint8List());
+
+    Widget paddedText(
+      final String text, {
+      final TextAlign align = TextAlign.left,
+      final double fontSize = 12,
+      final FontWeight fontWeight = FontWeight.normal,
+      final FontStyle fontStyle = FontStyle.normal,
+    }) =>
+        Padding(
+          padding: const EdgeInsets.all(5),
+          child: Text(text,
+              textAlign: align,
+              style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: fontWeight,
+                  fontStyle: fontStyle)),
+        );
+    Widget labeledValueText({
+      required final String label,
+      required final String value,
+      required final double labelWidth,
+      required final double valueWidth,
+    }) =>
+        Padding(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                      width: labelWidth,
+                      child: Text("$label: ",
+                          style: TextStyle(fontWeight: FontWeight.bold))),
+                  Container(
+                      padding: const EdgeInsets.only(left: 10),
+                      decoration: const BoxDecoration(
+                          border: Border(
+                              bottom: BorderSide(color: PdfColors.black))),
+                      width: valueWidth,
+                      child: Text(value))
+                ]));
+
     final pdf = Document();
+
     pdf.addPage(
       MultiPage(
         pageFormat: PdfPageFormat.a4,
@@ -116,22 +124,22 @@ class InvoicePdf {
                     children: [
                       labeledValueText(
                           label: "S.I. No",
-                          value: invoice.invoiceNo,
+                          value: invoice.invoiceNo.trim(),
                           labelWidth: 68,
                           valueWidth: 80),
                       labeledValueText(
                           label: "Date",
-                          value: invoice.purchaseDate,
+                          value: invoice.purchaseDate.trim(),
                           labelWidth: 68,
                           valueWidth: 80),
                       labeledValueText(
                           label: "Terms",
-                          value: invoice.paymentTerm,
+                          value: invoice.paymentTerm.trim(),
                           labelWidth: 68,
                           valueWidth: 80),
                       labeledValueText(
                           label: "PO/DR.No",
-                          value: invoice.poNumber,
+                          value: invoice.poNumber.trim(),
                           labelWidth: 68,
                           valueWidth: 80),
                     ],
@@ -254,7 +262,10 @@ class InvoicePdf {
                 ),
                 children: [
                   TableRow(children: [
-                    SizedBox(width: 220, height: 60, child: Text("Hello")),
+                    SizedBox(
+                      width: 220,
+                      height: 60,
+                    ),
                     Table(
                         columnWidths: {0: FixedColumnWidth(100)},
                         border: const TableBorder(
@@ -326,8 +337,131 @@ class InvoicePdf {
                           ]),
                         ]),
                   ])
-                ])
+                ]),
+            Container(
+                decoration: BoxDecoration(
+                    border: Border(bottom: BorderSide(width: 0.5))),
+                height: 20,
+                alignment: Alignment.centerRight,
+                child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                          width: 330,
+                          child: Text("TOTAL AMOUNT DUE",
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.bold))),
+                      SizedBox(width: 20),
+                      SizedBox(
+                          width: 110,
+                          child: Text(
+                              "PHP ${Util.convertToCurrency(invoice.totalAmount)}",
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.bold)))
+                    ])),
+            SizedBox(height: 2),
+            Container(
+              decoration:
+                  BoxDecoration(border: Border(top: BorderSide(width: 0.5))),
+            ),
+            SizedBox(height: 20),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                    height: 150,
+                    width: 150,
+                    child: Padding(
+                        padding:
+                            EdgeInsets.only(top: 15, bottom: 10, right: 10),
+                        child: Column(children: [
+                          paddedText(invoice.staff ?? "",
+                              fontSize: 10, align: TextAlign.center),
+                          Container(
+                              width: 150,
+                              decoration: BoxDecoration(
+                                  border: Border(top: BorderSide(width: 0.5))),
+                              child: paddedText("Sales Representative",
+                                  fontSize: 10, align: TextAlign.center)),
+                          SizedBox(height: 30),
+                          Container(
+                              width: 150,
+                              decoration: BoxDecoration(
+                                  border: Border(top: BorderSide(width: 0.5))),
+                              child: paddedText("Checked by:",
+                                  fontSize: 10, align: TextAlign.center)),
+                        ]))),
+                Container(
+                    height: 120,
+                    width: 180,
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      border: Border.all(
+                        color: PdfColors.grey600,
+                      ),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(5),
+                      child: Column(children: [
+                        paddedText("TERMS & CONDITION",
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            align: TextAlign.center),
+                        RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                                style: TextStyle(fontSize: 9),
+                                children: [
+                                  TextSpan(
+                                      text:
+                                          "Returns must strictly only be accepted within 30 days from invoice date. Purchased items for "),
+                                  TextSpan(
+                                      text: "return or exchange ",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  TextSpan(
+                                      text:
+                                          "must be done strictly within 3 days from the day of invoice. Returns should be presented with its ORIGINAL INVOICE/RECEIPT and should be original packaging and in good condition."),
+                                ])),
+                      ]),
+                    )),
+                SizedBox(
+                    height: 150,
+                    width: 150,
+                    child: Padding(
+                        padding: EdgeInsets.only(top: 40, bottom: 10, left: 10),
+                        child: Column(children: [
+                          Container(
+                              width: 150,
+                              decoration: BoxDecoration(
+                                  border: Border(top: BorderSide(width: 0.5))),
+                              child: paddedText("Customer over Printed Name",
+                                  fontSize: 10, align: TextAlign.center)),
+                          SizedBox(height: 20),
+                          Container(
+                              width: 150,
+                              child: paddedText(
+                                  "Recieved the above items in completely and good condition.",
+                                  fontSize: 10,
+                                  align: TextAlign.center,
+                                  fontStyle: FontStyle.italic)),
+                        ]))),
+              ],
+            ),
+            SizedBox(height: 20),
+            Center(
+                // width: 450,
+                child: paddedText(
+                    "THIS SALES INVOICE SHALL BE VALID FOR FIVE (5) YEARS FROM THE DATE ATP",
+                    fontWeight: FontWeight.bold,
+                    align: TextAlign.center,
+                    fontSize: 10))
           ];
+
           return pdfBody;
         },
       ),

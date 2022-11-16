@@ -151,8 +151,8 @@ class InvoiceDialog extends StatelessWidget {
             GlobalKey<SfDataGridState>();
 
         void exportDataGridToPDF() async {
-          InvoicePdf invoicePdf = InvoicePdf(invoice: invoice);
-          invoicePdf.makePdf();
+          // InvoicePdf invoicePdf = InvoicePdf(invoice: invoice);
+          InvoicePdf.makePdf(invoice);
           // await Printing.layoutPdf(onLayout: (_) => bytes);
           // final ByteData data =
           //     await rootBundle.load('/images/report_header.jpg');
@@ -208,6 +208,7 @@ class InvoiceDialog extends StatelessWidget {
                             ? () {
                                 BlocProvider.of<SaveInvoiceCubit>(context)
                                     .addInvoice();
+                                InvoicePdf.makePdf(invoice);
                               }
                             : () {
                                 exportDataGridToPDF();
