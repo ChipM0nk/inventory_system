@@ -92,6 +92,27 @@ class NetworkService {
     throw Exception(respObj['message']);
   }
 
+  Future<dynamic> addandReturnItem(
+    Map<String, dynamic> addObj,
+    String serviceName,
+  ) async {
+    String url = "$BASE_URL$serviceName/add";
+    // await Future.delayed(Duration(seconds: 2));
+    final response = await post(Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': "Bearer ${await LocalStorage.read("jwt")}",
+        },
+        body: jsonEncode(addObj));
+    dynamic respObj = jsonDecode(response.body);
+    if (respObj['code'] == '000') {
+      dynamic respBody = respObj['body'];
+      return respBody;
+    }
+    print('Error Code: ${respObj["code"]}');
+    throw Exception(respObj['message']);
+  }
+
   Future<bool> udpateItem(
       Map<String, dynamic> updateObj, int id, String serviceName) async {
     print("Updating item");

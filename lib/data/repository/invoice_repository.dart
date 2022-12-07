@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:edar_app/constants/services.dart';
 import 'package:edar_app/data/model/invoice/invoice.dart';
 import 'package:edar_app/data/network/network_service.dart';
@@ -18,10 +20,12 @@ class InvoiceRepository {
     return objRaw.map((e) => Invoice.fromJson(e)).toList();
   }
 
-  Future<bool> addInvoice(Map<String, dynamic> invoiceObj) async {
-    final isAdded = await networkService.addItem(invoiceObj, InvoicesService);
+  Future<Map<String, dynamic>> addInvoice(
+      Map<String, dynamic> invoiceObj) async {
+    dynamic invoiceRetObj =
+        await networkService.addandReturnItem(invoiceObj, InvoicesService);
 
-    return isAdded;
+    return invoiceRetObj;
   }
 
   Future<bool> voidInvoice(int invoiceId) async {

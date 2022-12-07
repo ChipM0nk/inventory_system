@@ -9,9 +9,9 @@ part 'purchase.g.dart';
 @immutable
 class Purchase {
   final int? purchaseId;
-  final String purchaseNo;
+  final String supplierInvoiceNo;
   final String purchaseDate;
-  final String batchCode;
+  final String? batchCode;
   final Supplier supplier;
   final String? remarks;
   final List<PurchaseItem> purchaseItems;
@@ -28,9 +28,9 @@ class Purchase {
 
   const Purchase(
       {this.purchaseId,
-      required this.purchaseNo,
+      required this.supplierInvoiceNo,
       required this.purchaseDate,
-      required this.batchCode,
+      this.batchCode,
       required this.supplier,
       this.remarks,
       required this.purchaseItems,

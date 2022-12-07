@@ -19,10 +19,11 @@ class PurchaseRepository {
     return objRaw.map((e) => Purchase.fromJson(e)).toList();
   }
 
-  Future<bool> addPurchase(Map<String, dynamic> purchaseObj) async {
-    final isAdded = await networkService.addItem(purchaseObj, PurchasesService);
+  Future<String> addPurchase(Map<String, dynamic> purchaseObj) async {
+    final purchaseRetObj =
+        await networkService.addandReturnItem(purchaseObj, PurchasesService);
 
-    return isAdded;
+    return purchaseRetObj["batchCode"];
   }
 
   Future<bool> voidPurchase(int purchaseId) async {

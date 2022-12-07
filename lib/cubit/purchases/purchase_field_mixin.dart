@@ -10,7 +10,7 @@ import 'package:rxdart/rxdart.dart';
 
 @immutable
 mixin PurchaseFieldMixin on ValidationMixin {
-  final _purchaseNoController = BehaviorSubject<String>();
+  final _supplierInvoiceController = BehaviorSubject<String>();
   final _purchaseDateController = BehaviorSubject<String>();
   final _batchCodeController = BehaviorSubject<String>();
   final _supplierController = BehaviorSubject<Supplier>();
@@ -21,8 +21,7 @@ mixin PurchaseFieldMixin on ValidationMixin {
   init() {
     List<PurchaseItem> initialList = [];
 
-    _purchaseNoController.sink.addError("");
-    _batchCodeController.sink.addError("");
+    _supplierInvoiceController.sink.addError("");
     _remarksController.sink.addError("");
     _supplierController.sink.addError("");
     _totalAmountController.sink.addError("");
@@ -35,12 +34,12 @@ mixin PurchaseFieldMixin on ValidationMixin {
   }
 
   //set format
-  Stream<String> get purchaseNoStream => _purchaseNoController.stream;
+  Stream<String> get supplierInvoiceStream => _supplierInvoiceController.stream;
   updatePurchaseNo(String fieldValue) {
     if (validTextLength(fieldValue, 4)) {
-      _purchaseNoController.sink.add(fieldValue);
+      _supplierInvoiceController.sink.add(fieldValue);
     } else {
-      _purchaseNoController.sink.addError("Incorrect Format");
+      _supplierInvoiceController.sink.addError("Incorrect Format");
     }
   }
 
@@ -134,20 +133,19 @@ mixin PurchaseFieldMixin on ValidationMixin {
     return _totalAmountController.value;
   }
 
-  Stream<bool> get saveButtonValid => Rx.combineLatest5(
-      purchaseNoStream,
+  Stream<bool> get saveButtonValid => Rx.combineLatest4(
+      supplierInvoiceStream,
       purchaseDateStream,
-      batchCodeStream,
       purchaseItemsStream,
       totalAmountStream,
-      (a, b, c, d, e) => true && _purchaseItemListController.value.length > 0);
+      (a, b, c, d) => true && _purchaseItemListController.value.isNotEmpty);
 
   Purchase getPurchase(int? purchaseId) {
     return Purchase(
       purchaseId: purchaseId,
-      purchaseNo: _purchaseNoController.value,
+      supplierInvoiceNo: _supplierInvoiceController.value,
       purchaseDate: _purchaseDateController.value,
-      batchCode: _batchCodeController.value,
+      batchCode: _batchCodeController.valueOrNull,
       supplier: _supplierController.value,
       remarks: _remarksController.valueOrNull,
       purchaseItems: _purchaseItemListController.value,

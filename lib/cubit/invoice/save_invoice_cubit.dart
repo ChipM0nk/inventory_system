@@ -28,19 +28,16 @@ class SaveInvoiceCubit extends Cubit<SaveInvoiceState>
   }
 
   void reset() {
+    init();
     emit(SaveInvoiceInitial());
   }
 
   void addInvoice() {
     emit(InvoiceSaving());
     Map<String, dynamic> invoiceObj = getInvoice(null).toJson();
-    invoiceRepository.addInvoice(invoiceObj).then((isAdded) {
-      if (isAdded) {
-        emit(InvoiceSaved());
-      } else {
-        emit(InvoiceSavingError());
-        updateError(null, null);
-      }
+    invoiceRepository.addInvoice(invoiceObj).then((returnMap) {
+      emit(InvoiceSaved(
+          invoiceNo: returnMap["invoiceNo"], poNumber: returnMap["poNumber"]));
     }).onError(
       (error, stackTrace) {
         emit(InvoiceSavingError());
@@ -67,16 +64,14 @@ class SaveInvoiceCubit extends Cubit<SaveInvoiceState>
   }
 
   loadInvoice(Invoice invoice) {
-    updateInvoiceNumber(invoice.invoiceNo);
     updateCustomerName(invoice.customerName);
     invoice.customerAddress ?? updateCustomerAddress(invoice.customerAddress!);
     invoice.contactNo ?? updateCustomerContact(invoice.contactNo!);
-    updatePoNumber(invoice.poNumber);
     updatePurchaseDate(invoice.purchaseDate);
     updatePaymentTerm(invoice.paymentTerm);
     updatePaymentType(invoice.paymentType);
     updateTinNumber(invoice.tinNumber);
-    updateDueDate(invoice.dueDate);
+    // updateDueDate(invoice.dueDate);
     updateInvoiceItems(invoice.invoiceItems);
   }
 }

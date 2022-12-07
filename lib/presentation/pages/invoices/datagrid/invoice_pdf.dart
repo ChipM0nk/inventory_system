@@ -10,19 +10,26 @@ class InvoicePdf {
 
   // InvoicePdf({required this.invoice});
 
-  static makePdf(Invoice invoice) async {
+  static makePdf(
+      {required final Invoice invoice,
+      String? invoiceNo,
+      String? poNumber}) async {
+    String docuInvoiceNo = invoice.invoiceNo ?? invoiceNo!;
+    String docuPoNumber = invoice.poNumber ?? poNumber!;
     final imageLogo = MemoryImage(
         (await rootBundle.load('/images/edar_logo.jpg')).buffer.asUint8List());
 
     Widget paddedText(
       final String text, {
+      final double padding = 5.0,
       final TextAlign align = TextAlign.left,
       final double fontSize = 12,
       final FontWeight fontWeight = FontWeight.normal,
       final FontStyle fontStyle = FontStyle.normal,
     }) =>
         Padding(
-          padding: const EdgeInsets.all(5),
+          padding:
+              EdgeInsets.only(left: 5, right: 5, top: padding, bottom: padding),
           child: Text(text,
               textAlign: align,
               style: TextStyle(
@@ -58,11 +65,31 @@ class InvoicePdf {
 
     pdf.addPage(
       MultiPage(
-        pageFormat: PdfPageFormat.a4,
+        footer: (context) {
+          return Stack(children: [
+            Center(
+              child: paddedText(
+                  "$docuInvoiceNo :::: THIS SALES INVOICE SHALL BE VALID FOR FIVE (5) YEARS FROM THE DATE ATP",
+                  fontWeight: FontWeight.bold,
+                  align: TextAlign.center,
+                  fontSize: 6),
+            ),
+            Align(
+                alignment: Alignment.centerRight,
+                child: paddedText("${context.pageNumber}/${context.pagesCount}",
+                    fontSize: 6, align: TextAlign.right))
+          ]);
+        },
+        pageFormat: const PdfPageFormat(
+            21.0 * PdfPageFormat.cm, 29.7 * PdfPageFormat.cm,
+            marginTop: 1.0 * PdfPageFormat.cm,
+            marginLeft: 1.0 * PdfPageFormat.cm,
+            marginRight: 1.0 * PdfPageFormat.cm,
+            marginBottom: 0.5 * PdfPageFormat.cm),
         build: (context) {
           var customerInfoArea = Container(
             height: 100,
-            width: 310,
+            width: 350,
             padding: const EdgeInsets.all(10),
             decoration:
                 BoxDecoration(border: Border.all(color: PdfColors.grey600)),
@@ -72,28 +99,28 @@ class InvoicePdf {
                     label: "Customer",
                     value: invoice.customerName,
                     labelWidth: 80,
-                    valueWidth: 210),
+                    valueWidth: 250),
                 labeledValueText(
                     label: "Address",
                     value: invoice.customerAddress ?? "",
                     labelWidth: 80,
-                    valueWidth: 210),
+                    valueWidth: 250),
                 labeledValueText(
                     label: "Contact No",
                     value: invoice.contactNo ?? "",
                     labelWidth: 80,
-                    valueWidth: 210),
+                    valueWidth: 250),
                 labeledValueText(
                     label: "TIN No",
                     value: invoice.tinNumber,
                     labelWidth: 80,
-                    valueWidth: 210),
+                    valueWidth: 250),
               ],
             ),
           );
           var invoiceInfoArea = Container(
             height: 135,
-            width: 160,
+            width: 180,
             padding: const EdgeInsets.only(top: 5, bottom: 5),
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -107,7 +134,7 @@ class InvoicePdf {
                     child: Text("ORIGINAL",
                         style: TextStyle(fontWeight: FontWeight.bold))),
                 Container(
-                  width: 158,
+                  width: 178,
                   height: 20,
                   color: PdfColors.green200,
                   child: Center(
@@ -124,24 +151,24 @@ class InvoicePdf {
                     children: [
                       labeledValueText(
                           label: "S.I. No",
-                          value: invoice.invoiceNo.trim(),
+                          value: docuInvoiceNo,
                           labelWidth: 68,
-                          valueWidth: 80),
+                          valueWidth: 100),
                       labeledValueText(
                           label: "Date",
                           value: invoice.purchaseDate.trim(),
                           labelWidth: 68,
-                          valueWidth: 80),
+                          valueWidth: 100),
                       labeledValueText(
                           label: "Terms",
                           value: invoice.paymentTerm.trim(),
                           labelWidth: 68,
-                          valueWidth: 80),
+                          valueWidth: 100),
                       labeledValueText(
                           label: "PO/DR.No",
-                          value: invoice.poNumber.trim(),
+                          value: docuPoNumber,
                           labelWidth: 68,
-                          valueWidth: 80),
+                          valueWidth: 100),
                     ],
                   ),
                 ),
@@ -152,22 +179,36 @@ class InvoicePdf {
           /**
              * For Testing large list
              */
-          // List<TableRow> ret = <TableRow>[];
-          // int i = 1;
-          // while (i < 8) {
-          //   i++;
-          //   ret.addAll([
-          //     ...invoice.invoiceItems.map((e) => TableRow(children: [
-          //           paddedText(e.product.productCode),
-          //           paddedText(e.product.productDescription),
-          //           paddedText("${e.quantity.toString()} ${e.product.unit} "),
-          //           paddedText(Util.convertToCurrency(e.price),
-          //               align: TextAlign.right),
-          //           paddedText(Util.convertToCurrency(e.totalAmount),
-          //               align: TextAlign.right),
-          //         ]))
-          //   ]);
-          // }
+          List<TableRow> paddingTableRow = <TableRow>[];
+          int i = 0;
+          while (i < 10 - invoice.invoiceItems.length) {
+            i++;
+            paddingTableRow.add(TableRow(children: [
+              Text("  - "),
+              Text("  - "),
+              Text("  - "),
+              Text("-  ", textAlign: TextAlign.right),
+              Text("-  ", textAlign: TextAlign.right),
+              Text("-  ", textAlign: TextAlign.right),
+            ]));
+
+            // ...invoice.invoiceItems.map((e) => TableRow(children: [
+            //       paddedText(e.product.productCode, fontSize: 10),
+            //       paddedText(e.product.productDescription, fontSize: 10),
+            //       paddedText("${e.quantity.toString()} ${e.product.unit} ",
+            //           fontSize: 10),
+            //       paddedText(Util.convertToCurrency(e.price),
+            //           align: TextAlign.right, fontSize: 10),
+            //       paddedText(
+            //           e.product.productPrice - e.price != 0.0
+            //               ? Util.convertToCurrency(
+            //                   e.product.productPrice - e.price)
+            //               : "",
+            //           align: TextAlign.right,
+            //           fontSize: 10),
+            //       paddedText(Util.convertToCurrency(e.totalAmount),
+            //           align: TextAlign.right, fontSize: 10),
+          }
 
           List<Widget> pdfBody = [
             Row(
@@ -209,11 +250,12 @@ class InvoicePdf {
                 verticalInside: BorderSide(style: BorderStyle.solid),
               ),
               columnWidths: {
-                0: const FixedColumnWidth(70),
-                1: const FixedColumnWidth(150),
-                2: const FixedColumnWidth(40),
-                3: const FixedColumnWidth(60),
-                4: const FixedColumnWidth(80)
+                0: const FixedColumnWidth(55),
+                1: const FixedColumnWidth(155),
+                2: const FixedColumnWidth(30),
+                3: const FixedColumnWidth(50),
+                4: const FixedColumnWidth(50),
+                5: const FixedColumnWidth(60)
               },
               children: [
                 TableRow(
@@ -226,29 +268,52 @@ class InvoicePdf {
                   ),
                   children: [
                     paddedText('ITEM CODE',
-                        fontWeight: FontWeight.bold, align: TextAlign.center),
+                        fontWeight: FontWeight.bold,
+                        align: TextAlign.center,
+                        fontSize: 10),
                     paddedText('DESCRIPTION',
-                        fontWeight: FontWeight.bold, align: TextAlign.center),
+                        fontWeight: FontWeight.bold,
+                        align: TextAlign.center,
+                        fontSize: 10),
                     paddedText('QTY UNIT',
-                        fontWeight: FontWeight.bold, align: TextAlign.center),
+                        fontWeight: FontWeight.bold,
+                        align: TextAlign.center,
+                        fontSize: 10),
                     paddedText('UNIT PRICE',
-                        fontWeight: FontWeight.bold, align: TextAlign.center),
+                        fontWeight: FontWeight.bold,
+                        align: TextAlign.center,
+                        fontSize: 10),
+                    paddedText('DISCOUNT',
+                        fontWeight: FontWeight.bold,
+                        align: TextAlign.center,
+                        fontSize: 9),
                     paddedText('TOTAL AMOUNT',
-                        fontWeight: FontWeight.bold, align: TextAlign.center),
+                        fontWeight: FontWeight.bold,
+                        align: TextAlign.center,
+                        fontSize: 10),
                   ],
                 ),
-                // ...ret,
                 ...invoice.invoiceItems.map((e) => TableRow(children: [
-                      paddedText(e.product.productCode),
-                      paddedText(e.product.productDescription),
-                      paddedText("${e.quantity.toString()} ${e.product.unit} "),
-                      paddedText(Util.convertToCurrency(e.price),
-                          align: TextAlign.right),
+                      paddedText(e.product.productCode, fontSize: 10),
+                      paddedText(e.product.productDescription, fontSize: 10),
+                      paddedText("${e.quantity.toString()} ${e.product.unit} ",
+                          fontSize: 10),
+                      paddedText(Util.convertToCurrency(e.product.productPrice),
+                          align: TextAlign.right, fontSize: 10),
+                      paddedText(
+                          e.product.productPrice - e.price != 0.0
+                              ? Util.convertToCurrency(
+                                  (e.product.productPrice - e.price) *
+                                      e.quantity)
+                              : "-",
+                          align: TextAlign.right,
+                          fontSize: 10),
                       paddedText(Util.convertToCurrency(e.totalAmount),
-                          align: TextAlign.right),
+                          align: TextAlign.right, fontSize: 10),
                     ])),
+                ...paddingTableRow,
                 TableRow(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: PdfColors.black,
                     ),
                     children: [SizedBox(height: 3)]),
@@ -263,11 +328,11 @@ class InvoicePdf {
                 children: [
                   TableRow(children: [
                     SizedBox(
-                      width: 220,
+                      width: 240,
                       height: 60,
                     ),
                     Table(
-                        columnWidths: {0: FixedColumnWidth(100)},
+                        columnWidths: {0: const FixedColumnWidth(100)},
                         border: const TableBorder(
                           bottom: BorderSide(style: BorderStyle.dotted),
                           horizontalInside:
@@ -277,24 +342,30 @@ class InvoicePdf {
                         children: [
                           TableRow(children: [
                             paddedText("Total Amount",
-                                fontSize: 12, fontWeight: FontWeight.bold)
-                          ]),
-                          TableRow(
-                              children: [paddedText("Less VAT", fontSize: 10)]),
-                          TableRow(children: [
-                            paddedText("Amount Net of VAT", fontSize: 10)
+                                padding: 1,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold)
                           ]),
                           TableRow(children: [
-                            paddedText("Less SC/PWD Dsicount", fontSize: 10)
+                            paddedText("Less VAT", padding: 1, fontSize: 10)
                           ]),
                           TableRow(children: [
-                            paddedText("Amount Due", fontSize: 10)
+                            paddedText("Amount Net of VAT",
+                                padding: 1, fontSize: 10)
                           ]),
-                          TableRow(
-                              children: [paddedText("Add VAT", fontSize: 10)]),
+                          TableRow(children: [
+                            paddedText("Less SC/PWD Dsicount",
+                                padding: 1, fontSize: 10)
+                          ]),
+                          TableRow(children: [
+                            paddedText("Amount Due", padding: 1, fontSize: 10)
+                          ]),
+                          TableRow(children: [
+                            paddedText("Add VAT", padding: 1, fontSize: 10)
+                          ]),
                         ]),
                     Table(
-                        columnWidths: {0: FixedColumnWidth(80)},
+                        columnWidths: {0: const FixedColumnWidth(60)},
                         border: const TableBorder(
                           bottom: BorderSide(style: BorderStyle.dotted),
                           horizontalInside:
@@ -305,6 +376,7 @@ class InvoicePdf {
                           TableRow(children: [
                             paddedText(
                                 Util.convertToCurrency(invoice.totalAmount),
+                                padding: 1,
                                 fontSize: 12,
                                 align: TextAlign.right,
                                 fontWeight: FontWeight.bold)
@@ -313,6 +385,7 @@ class InvoicePdf {
                             paddedText(
                                 Util.convertToCurrency(
                                     invoice.totalAmount * .12),
+                                padding: 1,
                                 fontSize: 10,
                                 align: TextAlign.right)
                           ]),
@@ -320,26 +393,33 @@ class InvoicePdf {
                             paddedText(
                                 Util.convertToCurrency(
                                     invoice.totalAmount * .88),
+                                padding: 1,
                                 fontSize: 10,
                                 align: TextAlign.right)
                           ]),
                           TableRow(children: [
                             paddedText("0.00",
-                                fontSize: 10, align: TextAlign.right)
+                                padding: 1,
+                                fontSize: 10,
+                                align: TextAlign.right)
                           ]),
                           TableRow(children: [
                             paddedText("0.00",
-                                fontSize: 10, align: TextAlign.right)
+                                padding: 1,
+                                fontSize: 10,
+                                align: TextAlign.right)
                           ]),
                           TableRow(children: [
                             paddedText("0.00",
-                                fontSize: 10, align: TextAlign.right)
+                                padding: 1,
+                                fontSize: 10,
+                                align: TextAlign.right)
                           ]),
                         ]),
                   ])
                 ]),
             Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     border: Border(bottom: BorderSide(width: 0.5))),
                 height: 20,
                 alignment: Alignment.centerRight,
@@ -364,40 +444,46 @@ class InvoicePdf {
                     ])),
             SizedBox(height: 2),
             Container(
-              decoration:
-                  BoxDecoration(border: Border(top: BorderSide(width: 0.5))),
+              decoration: const BoxDecoration(
+                  border: Border(top: BorderSide(width: 0.5))),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 40),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(
                     height: 150,
-                    width: 150,
+                    width: 180,
                     child: Padding(
-                        padding:
-                            EdgeInsets.only(top: 15, bottom: 10, right: 10),
+                        padding: const EdgeInsets.only(
+                            top: 5, bottom: 10, right: 10, left: 30),
                         child: Column(children: [
                           paddedText(invoice.staff ?? "",
-                              fontSize: 10, align: TextAlign.center),
+                              padding: 1,
+                              fontSize: 10,
+                              align: TextAlign.center),
                           Container(
                               width: 150,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                   border: Border(top: BorderSide(width: 0.5))),
                               child: paddedText("Sales Representative",
-                                  fontSize: 10, align: TextAlign.center)),
+                                  padding: 1,
+                                  fontSize: 10,
+                                  align: TextAlign.center)),
                           SizedBox(height: 30),
                           Container(
                               width: 150,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                   border: Border(top: BorderSide(width: 0.5))),
                               child: paddedText("Checked by:",
-                                  fontSize: 10, align: TextAlign.center)),
+                                  padding: 1,
+                                  fontSize: 10,
+                                  align: TextAlign.center)),
                         ]))),
                 Container(
-                    height: 120,
-                    width: 180,
+                    height: 90,
+                    width: 160,
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                       border: Border.all(
@@ -405,25 +491,26 @@ class InvoicePdf {
                       ),
                     ),
                     child: Padding(
-                      padding: EdgeInsets.all(5),
+                      padding: const EdgeInsets.all(5),
                       child: Column(children: [
                         paddedText("TERMS & CONDITION",
-                            fontSize: 10,
+                            padding: 2,
+                            fontSize: 8,
                             fontWeight: FontWeight.bold,
                             align: TextAlign.center),
                         RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
-                                style: TextStyle(fontSize: 9),
+                                style: const TextStyle(fontSize: 7),
                                 children: [
-                                  TextSpan(
+                                  const TextSpan(
                                       text:
                                           "Returns must strictly only be accepted within 30 days from invoice date. Purchased items for "),
                                   TextSpan(
                                       text: "return or exchange ",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold)),
-                                  TextSpan(
+                                  const TextSpan(
                                       text:
                                           "must be done strictly within 3 days from the day of invoice. Returns should be presented with its ORIGINAL INVOICE/RECEIPT and should be original packaging and in good condition."),
                                 ])),
@@ -431,17 +518,20 @@ class InvoicePdf {
                     )),
                 SizedBox(
                     height: 150,
-                    width: 150,
+                    width: 180,
                     child: Padding(
-                        padding: EdgeInsets.only(top: 40, bottom: 10, left: 10),
+                        padding: const EdgeInsets.only(
+                            top: 18, bottom: 10, left: 10, right: 30),
                         child: Column(children: [
                           Container(
                               width: 150,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                   border: Border(top: BorderSide(width: 0.5))),
                               child: paddedText("Customer over Printed Name",
-                                  fontSize: 10, align: TextAlign.center)),
-                          SizedBox(height: 20),
+                                  padding: 1,
+                                  fontSize: 10,
+                                  align: TextAlign.center)),
+                          SizedBox(height: 15),
                           Container(
                               width: 150,
                               child: paddedText(
@@ -452,20 +542,15 @@ class InvoicePdf {
                         ]))),
               ],
             ),
-            SizedBox(height: 20),
-            Center(
-                // width: 450,
-                child: paddedText(
-                    "THIS SALES INVOICE SHALL BE VALID FOR FIVE (5) YEARS FROM THE DATE ATP",
-                    fontWeight: FontWeight.bold,
-                    align: TextAlign.center,
-                    fontSize: 10))
           ];
+          print("Returning PDF body");
 
           return pdfBody;
         },
       ),
     );
+
+    print("Opening print dialog");
     Printing.layoutPdf(
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );

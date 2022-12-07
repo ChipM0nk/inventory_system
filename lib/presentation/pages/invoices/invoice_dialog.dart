@@ -87,7 +87,8 @@ class InvoiceDialog extends StatelessWidget {
                               label: "Invoice Date: ",
                               value: invoice.purchaseDate),
                           CustomInlineLabel(
-                              label: "Due Date: ", value: invoice.dueDate),
+                              label: "Due Date: ",
+                              value: ""), //TODO Update later
                         ]),
                         Row(children: [
                           CustomInlineLabel(
@@ -142,6 +143,11 @@ class InvoiceDialog extends StatelessWidget {
           Future.delayed(Duration.zero, () {
             if (state is InvoiceVoided) {
               BlocProvider.of<InvoiceCubit>(context).fetchInvoices();
+            } else if (state is InvoiceSaved) {
+              String invoiceNo = state.invoiceNo!;
+              String poNumber = state.poNumber!;
+              InvoicePdf.makePdf(
+                  invoice: invoice, invoiceNo: invoiceNo, poNumber: poNumber);
             }
             Navigator.of(context, rootNavigator: true).pop();
           });
@@ -150,20 +156,11 @@ class InvoiceDialog extends StatelessWidget {
         final GlobalKey<SfDataGridState> invoiceSfKey =
             GlobalKey<SfDataGridState>();
 
-        void exportDataGridToPDF() async {
-          // InvoicePdf invoicePdf = InvoicePdf(invoice: invoice);
-          InvoicePdf.makePdf(invoice);
-          // await Printing.layoutPdf(onLayout: (_) => bytes);
-          // final ByteData data =
-          //     await rootBundle.load('/images/report_header.jpg');
-          // sf_pdf.PdfDocument document =
-          //     invoiceSfKey.currentState!.exportToPdfDocument(
-          //   converter: SfDataGridToInvoicePdfConverterExt(data),
-          // );
-          // final List<int> bytes = document.saveSync();
-          // document.dispose();
-          // await Printing.layoutPdf(onLayout: (_) => Uint8List.fromList(bytes));
-        }
+        // void exportDataGridToPDF() async {
+        //   print("Opening PDF Print Dialog");
+        //   Future<Uint8List> docByte = InvoicePdf.makePdf(invoice);
+        //   await Printing.layoutPdf(onLayout: (_) => docByte);
+        // }
 
         return AlertDialog(
           title: const Text("Invoice Details"),
@@ -205,13 +202,12 @@ class InvoiceDialog extends StatelessWidget {
                       height: 70,
                       child: CustomElevatedActionButton(
                         onPressed: flgAddInvoice
-                            ? () {
+                            ? () async {
                                 BlocProvider.of<SaveInvoiceCubit>(context)
                                     .addInvoice();
-                                InvoicePdf.makePdf(invoice);
                               }
-                            : () {
-                                exportDataGridToPDF();
+                            : () async {
+                                await InvoicePdf.makePdf(invoice: invoice);
                               },
                         text: Text(
                           flgAddInvoice ? "SUBMIT" : "PRINT",
@@ -228,7 +224,7 @@ class InvoiceDialog extends StatelessWidget {
                         height: 70,
                         child: CustomElevatedActionButton(
                           color: Colors.red.shade600,
-                          onPressed: invoice.trxnStatus == 'ACTIVE'
+                          onPressed: invoice.trxnStatus == 'FINAL'
                               ? () {
                                   showDialog(
                                       context: context,

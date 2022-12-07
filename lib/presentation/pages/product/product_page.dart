@@ -109,26 +109,26 @@ class _ProductPageState extends State<ProductPage> {
                 .sortProducts((product) => product.productName, colIdx, asc);
           },
         ),
-        const DataColumn(
-          label: Text(
+        DataColumn(
+          label: const Text(
             'Category',
             style: TextStyle(
                 fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
+          onSort: (colIdx, asc) {
+            BlocProvider.of<ProductsCubit>(context).sortProducts(
+                (product) => product.category.categoryName, colIdx, asc);
+          },
         ),
-        DataColumn(
-          label: const Text(
+        const DataColumn(
+          label: Text(
             'Price',
             style: TextStyle(
                 fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
-          onSort: (colIdx, asc) {
-            BlocProvider.of<ProductsCubit>(context)
-                .sortProducts((product) => product.productPrice, colIdx, asc);
-          },
         ),
-        DataColumn(
-          label: const SizedBox(
+        const DataColumn(
+          label: SizedBox(
             width: 40,
             child: Text(
               'QTY',
@@ -136,21 +136,13 @@ class _ProductPageState extends State<ProductPage> {
                   fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
             ),
           ),
-          onSort: (colIdx, asc) {
-            BlocProvider.of<ProductsCubit>(context)
-                .sortProducts((product) => product.currentStock, colIdx, asc);
-          },
         ),
-        DataColumn(
-          label: const Text(
+        const DataColumn(
+          label: Text(
             'Unit',
             style: TextStyle(
                 fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
-          onSort: (colIdx, asc) {
-            BlocProvider.of<ProductsCubit>(context)
-                .sortProducts((product) => product.unit, colIdx, asc);
-          },
         ),
         DataColumn(
           label: const Text(

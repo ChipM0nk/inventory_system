@@ -50,7 +50,8 @@ class _PurchaseFormState extends State<PurchaseForm> {
   @override
   Widget build(BuildContext context) {
     var purchaseNo = StreamBuilder<String>(
-        stream: BlocProvider.of<SavePurchaseCubit>(context).purchaseNoStream,
+        stream:
+            BlocProvider.of<SavePurchaseCubit>(context).supplierInvoiceStream,
         builder: (context, snapshot) {
           return CustomTextField(
               snapshot: snapshot,
@@ -58,46 +59,39 @@ class _PurchaseFormState extends State<PurchaseForm> {
                 BlocProvider.of<SavePurchaseCubit>(context)
                     .updatePurchaseNo(text);
               },
-              labelText: 'Purchase No');
+              labelText: 'Supplier Invoice No');
         });
-    var batchCode = StreamBuilder<String>(
-        stream: BlocProvider.of<SavePurchaseCubit>(context).batchCodeStream,
-        builder: (context, snapshot) {
-          return CustomTextField(
-              snapshot: snapshot,
-              hintText: "2022-09-12", //TODO review
-              inputFormatters: [
-                TextFieldFormat.bacthCodeFormat,
-              ],
-              onChanged: (text) {
-                BlocProvider.of<SavePurchaseCubit>(context)
-                    .updateBatchCode(text);
-              },
-              labelText: 'Batch Code');
-        });
+    // var batchCode = StreamBuilder<String>(
+    //     stream: BlocProvider.of<SavePurchaseCubit>(context).batchCodeStream,
+    //     builder: (context, snapshot) {
+    //       return CustomTextField(
+    //           snapshot: snapshot,
+    //           hintText: "2022-09-12", //TODO review
+    //           inputFormatters: [
+    //             TextFieldFormat.bacthCodeFormat,
+    //           ],
+    //           onChanged: (text) {
+    //             BlocProvider.of<SavePurchaseCubit>(context)
+    //                 .updateBatchCode(text);
+    //           },
+    //           labelText: 'Batch Code');
+    //     });
 
-    var purchaseDate = Column(
-      children: [
-        CustomDatePicker(
-          labelText: "Purchase Date",
-          onChanged: (dateTime) {
-            BlocProvider.of<SavePurchaseCubit>(context)
-                .updatePurchaseDate(dateTime);
-          },
-          dateFormat: dateFormat,
-        ),
-      ],
+    var purchaseDate = CustomDatePicker(
+      labelText: "Purchase Date",
+      onChanged: (dateTime) {
+        BlocProvider.of<SavePurchaseCubit>(context)
+            .updatePurchaseDate(dateTime);
+      },
+      dateFormat: dateFormat,
     );
 
-    var remarks = Column(
-      children: [
-        CustomTextField(
-          labelText: "Remarks",
-          onChanged: (remarks) {
-            BlocProvider.of<SavePurchaseCubit>(context).updateRemarks(remarks);
-          },
-        ),
-      ],
+    var remarks = CustomTextField(
+      width: 465,
+      labelText: "Remarks",
+      onChanged: (remarks) {
+        BlocProvider.of<SavePurchaseCubit>(context).updateRemarks(remarks);
+      },
     );
 
     var supplierFinderField = StreamBuilder<Object>(
@@ -181,20 +175,20 @@ class _PurchaseFormState extends State<PurchaseForm> {
                       children: [
                         supplierFinderField,
                         purchaseNo,
-                        const SizedBox(width: 200),
-                        const SizedBox(width: 200),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        batchCode,
                         purchaseDate,
                         const SizedBox(width: 200),
-                        const SizedBox(width: 200),
                       ],
                     ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //   crossAxisAlignment: CrossAxisAlignment.start,
+                    //   children: [
+                    //     batchCode,
+                    //     purchaseDate,
+                    //     const SizedBox(width: 200),
+                    //     const SizedBox(width: 200),
+                    //   ],
+                    // ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,

@@ -73,7 +73,7 @@ class PurchaseCubit extends Cubit<PurchaseState>
         emit(PurchaseLoaded(purchases: data, sortAscending: false));
       } else {
         final filteredData = data
-            .where((purchase) => purchase.batchCode.contains(searchText))
+            .where((purchase) => purchase.batchCode!.contains(searchText))
             .toList();
         emit(PurchaseLoaded(
             filteredData: filteredData, purchases: data, sortAscending: true));

@@ -52,7 +52,7 @@ mixin InvoiceItemFieldMixin on ValidationMixin {
       _quantityController.sink.add(quantity);
 
       Product product = _productController.value;
-      if (product.currentStock < quantity) {
+      if (product.currentStock! < quantity) {
         _quantityController.sink.addError("Not enough stock");
       } else {
         updateInvoiceItemAmount();
@@ -65,7 +65,13 @@ mixin InvoiceItemFieldMixin on ValidationMixin {
   Stream<double> get priceStream => _priceController.stream;
   updatePrice(String fieldValue) {
     if (isFieldDoubleNumeric(fieldValue)) {
-      _priceController.sink.add(double.parse(fieldValue));
+      double price = double.parse(fieldValue);
+      if (price > getProduct()!.productPrice) {
+        _priceController.sink
+            .addError("Max Price is ${getProduct()!.productPrice}");
+      } else {
+        _priceController.sink.add(double.parse(fieldValue));
+      }
     } else {
       _priceController.sink.addError("Please enter valid numeric value");
     }
@@ -88,7 +94,7 @@ mixin InvoiceItemFieldMixin on ValidationMixin {
       invoiceItemAmountStream,
       (a, b, c, d) =>
           true &&
-          _productController.value.currentStock >= _quantityController.value);
+          _productController.value.currentStock! >= _quantityController.value);
 
   InvoiceItem getInvoiceItem(int? invoiceItem) {
     return InvoiceItem(

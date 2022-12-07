@@ -7,7 +7,10 @@ class SavePurchaseInitial extends SavePurchaseState {}
 
 class PurchaseSaving extends SavePurchaseState {}
 
-class PurchaseSaved extends SavePurchaseState {}
+class PurchaseSaved extends SavePurchaseState {
+  final String? batchCode;
+  PurchaseSaved({this.batchCode});
+}
 
 class PurchaseSavingError extends SavePurchaseState {}
 

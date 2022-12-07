@@ -75,7 +75,7 @@ class InvoiceCubit extends Cubit<InvoiceState>
         final filteredData = data
             .where((invoice) =>
                 invoice.customerName.contains(searchText) ||
-                invoice.invoiceNo.contains(searchText))
+                invoice.invoiceNo!.contains(searchText))
             .toList();
         emit(InvoiceLoaded(
             filteredData: filteredData, invoices: data, sortAscending: true));

@@ -44,7 +44,8 @@ class PurchaseDialog extends StatelessWidget {
                 children: [
                   Row(children: [
                     CustomInlineLabel(
-                        label: "Purchase No: ", value: purchase.purchaseNo),
+                        label: "Purchase No: ",
+                        value: purchase.supplierInvoiceNo),
                   ]),
                   Row(children: [
                     CustomInlineLabel(
@@ -202,7 +203,7 @@ class PurchaseDialog extends StatelessWidget {
                         height: 70,
                         child: CustomElevatedActionButton(
                           color: Colors.red.shade600,
-                          onPressed: purchase.trxnStatus == 'ACTIVE'
+                          onPressed: purchase.trxnStatus == 'FINAL'
                               ? () {
                                   showDialog(
                                       context: context,

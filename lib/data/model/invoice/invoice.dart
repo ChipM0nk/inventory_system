@@ -1,6 +1,6 @@
 // ignore: depend_on_referenced_packages
+import 'package:edar_app/data/model/invoice/delivery.dart';
 import 'package:edar_app/data/model/invoice/invoice_item.dart';
-import 'package:edar_app/data/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'invoice.g.dart';
@@ -9,17 +9,17 @@ part 'invoice.g.dart';
 @immutable
 class Invoice {
   final int? invoiceId;
-  final String invoiceNo;
+  final String? invoiceNo;
   final String customerName;
   final String? customerAddress;
   final String? contactNo;
   final String? staff;
-  final String poNumber;
+  final String? poNumber;
   final String purchaseDate;
   final String paymentType;
   final String paymentTerm;
   final String tinNumber;
-  final String dueDate;
+  final Delivery? delivery;
   final String? remarks;
   final List<InvoiceItem> invoiceItems;
   final double totalAmount;
@@ -27,17 +27,17 @@ class Invoice {
 
   const Invoice(
       {this.invoiceId,
-      required this.invoiceNo,
+      this.invoiceNo,
       required this.customerName,
       this.customerAddress,
       this.contactNo,
       this.staff,
-      required this.poNumber,
+      this.poNumber,
       required this.purchaseDate,
       required this.paymentType,
       required this.paymentTerm,
       required this.tinNumber,
-      required this.dueDate,
+      this.delivery,
       this.remarks,
       required this.invoiceItems,
       required this.totalAmount,

@@ -14,7 +14,7 @@ class Product {
   final String productName;
   final String productDescription;
   final double productPrice;
-  final double currentStock;
+  final double? currentStock;
   final String unit;
   final Supplier supplier;
   final Category category;
@@ -25,7 +25,7 @@ class Product {
     required this.productName,
     required this.productDescription,
     required this.productPrice,
-    required this.currentStock,
+    this.currentStock = 0.0,
     required this.unit,
     required this.supplier,
     required this.category,

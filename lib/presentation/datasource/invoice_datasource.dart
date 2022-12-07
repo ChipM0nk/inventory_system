@@ -32,7 +32,7 @@ class InvoiceData extends DataTableSource {
       selected: false,
       cells: <DataCell>[
         DataCell(
-          Text(dataItem.invoiceNo),
+          Text(dataItem.invoiceNo!),
           onTap: () => onItemClick(dataItem),
         ),
         DataCell(

@@ -7,7 +7,13 @@ class SaveInvoiceInitial extends SaveInvoiceState {}
 
 class InvoiceSaving extends SaveInvoiceState {}
 
-class InvoiceSaved extends SaveInvoiceState {}
+class InvoiceSaved extends SaveInvoiceState {
+  final Invoice? invoice;
+  final String? invoiceNo;
+  final String? poNumber;
+
+  InvoiceSaved({this.invoice, this.invoiceNo, this.poNumber});
+}
 
 class InvoiceSavingError extends SaveInvoiceState {}
 

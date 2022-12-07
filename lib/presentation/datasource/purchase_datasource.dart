@@ -30,11 +30,11 @@ class PurchaseData extends DataTableSource {
       selected: false,
       cells: <DataCell>[
         DataCell(
-          Text(dataItem.purchaseNo),
+          Text(dataItem.supplierInvoiceNo),
           onTap: () => onItemClick(dataItem),
         ),
         DataCell(
-          Text(dataItem.batchCode),
+          Text(dataItem.batchCode!),
           onTap: () => onItemClick(dataItem),
         ),
         DataCell(

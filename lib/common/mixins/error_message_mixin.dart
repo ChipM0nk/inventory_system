@@ -11,6 +11,7 @@ mixin ErrorMessageMixin {
   updateError(String? errorMessage, StackTrace? stackTrace) {
     errorMessage = errorMessage ?? "Error encountered";
     _errorController.addError(errorMessage);
+    print(errorMessage);
     if (stackTrace != null) {
       _printStacktrace(stackTrace);
     }

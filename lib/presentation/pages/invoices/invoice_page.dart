@@ -171,7 +171,7 @@ class _InvoicePageState extends State<InvoicePage> {
           ),
           onSort: (colIdx, asc) {
             BlocProvider.of<InvoiceCubit>(context)
-                .sortInvoice((invoice) => invoice.invoiceNo, colIdx, asc);
+                .sortInvoice((invoice) => invoice.invoiceNo!, colIdx, asc);
           },
         ),
         DataColumn(

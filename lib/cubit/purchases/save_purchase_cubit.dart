@@ -35,13 +35,8 @@ class SavePurchaseCubit extends Cubit<SavePurchaseState>
     emit(PurchaseSaving());
     Map<String, dynamic> purchaseObj = getPurchase(null).toJson();
 
-    purchaseRepository.addPurchase(purchaseObj).then((isAdded) {
-      if (isAdded) {
-        emit(PurchaseSaved());
-      } else {
-        emit(PurchaseSavingError());
-        updateError(null, null);
-      }
+    purchaseRepository.addPurchase(purchaseObj).then((batchCode) {
+      emit(PurchaseSaved(batchCode: batchCode));
     }).onError(
       (error, stackTrace) {
         emit(PurchaseSavingError());
@@ -89,10 +84,10 @@ class SavePurchaseCubit extends Cubit<SavePurchaseState>
   }
 
   loadPurchase(Purchase purchase) {
-    updatePurchaseNo(purchase.purchaseNo);
+    updatePurchaseNo(purchase.supplierInvoiceNo);
     updatePurchaseDate(purchase.purchaseDate);
     updatePurchaseItemList(purchase.purchaseItems);
-    updateBatchCode(purchase.batchCode);
+    updateBatchCode(purchase.batchCode!);
     updateTotalAmount(purchase.totalAmount);
   }
 }

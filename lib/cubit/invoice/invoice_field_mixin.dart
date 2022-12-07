@@ -9,34 +9,30 @@ import 'package:rxdart/rxdart.dart';
 
 @immutable
 mixin InvoiceFieldMixin on ValidationMixin {
-  final _invoiceNumberController = BehaviorSubject<String>();
   final _customerNameController = BehaviorSubject<String>();
   final _customerAddressController = BehaviorSubject<String>();
   final _customerContactController = BehaviorSubject<String>();
   final _salesPersonController = BehaviorSubject<String>();
-  final _poNumberController = BehaviorSubject<String>();
   final _purchaseDateController = BehaviorSubject<String>();
   final _paymentTypeController = BehaviorSubject<String>();
   final _paymentTermController = BehaviorSubject<String>();
   final _tinNumberController = BehaviorSubject<String>();
-  final _dueDateController = BehaviorSubject<String>();
   final _remarksController = BehaviorSubject<String>();
   final _invoiceItemListController = BehaviorSubject<List<InvoiceItem>>();
   final _invoiceTotalAmountController = BehaviorSubject<double>();
 
   init() {
+    print("Init form");
     List<InvoiceItem> initialList = [];
-    _invoiceNumberController.sink.addError("");
+
     _customerNameController.sink.addError("");
     _customerAddressController.sink.addError("");
     _customerContactController.sink.addError("");
     _salesPersonController.sink.addError("");
-    _poNumberController.sink.addError("");
     _purchaseDateController.sink.addError("");
     _paymentTermController.sink.addError("");
     _paymentTypeController.sink.addError("");
     _tinNumberController.sink.addError("");
-    _dueDateController.sink.addError("");
     _remarksController.sink.addError("");
 
     _invoiceItemListController.sink.add(initialList);
@@ -45,18 +41,7 @@ mixin InvoiceFieldMixin on ValidationMixin {
     String initialDate =
         DateFormat('dd-MMM-yy').format(DateTime.now()); //default
     updatePurchaseDate(initialDate);
-    updateDueDate(initialDate);
     updateTotalAmount(0.00);
-  }
-
-  Stream<String> get invoiceNumberStream => _invoiceNumberController.stream;
-  updateInvoiceNumber(String fieldValue) {
-    if (validTextLength(fieldValue, 4)) {
-      _invoiceNumberController.sink.add(fieldValue);
-    } else {
-      _invoiceNumberController.sink
-          .addError("Please enter text with length greater than 4");
-    }
   }
 
   Stream<String> get customerNameStream => _customerNameController.stream;
@@ -94,16 +79,6 @@ mixin InvoiceFieldMixin on ValidationMixin {
     _salesPersonController.sink.add(user);
   }
 
-  Stream<String> get poNumberStream => _poNumberController.stream;
-  updatePoNumber(String fieldValue) {
-    if (validTextLength(fieldValue, 4)) {
-      _poNumberController.sink.add(fieldValue);
-    } else {
-      _poNumberController.sink
-          .addError("Please enter text with length greater than 4");
-    }
-  }
-
 //TODO: Create date validator
   Stream<String> get purchaseDateStream => _purchaseDateController.stream;
   updatePurchaseDate(String dateTime) {
@@ -138,11 +113,6 @@ mixin InvoiceFieldMixin on ValidationMixin {
       _tinNumberController.sink
           .addError("Please enter text with length greater than 4");
     }
-  }
-
-  Stream<String> get dueDateStream => _dueDateController.stream;
-  updateDueDate(String dateTime) {
-    _dueDateController.sink.add(dateTime);
   }
 
   Stream<String> get remarksStream => _remarksController.stream;
@@ -205,30 +175,25 @@ mixin InvoiceFieldMixin on ValidationMixin {
   }
 
   ///invoice item list
-  Stream<bool> get buttonValid => Rx.combineLatest8(
+  Stream<bool> get buttonValid => Rx.combineLatest6(
       customerNameStream,
-      poNumberStream,
       purchaseDateStream,
       paymentTypeStream,
       paymentTermStream,
       tinNumberStream,
-      dueDateStream,
       invoiceItemsStream,
-      (a, b, c, d, e, f, g, h) =>
-          true && _invoiceItemListController.value.length > 0);
+      (a, b, c, d, e, f) =>
+          true && _invoiceItemListController.value.isNotEmpty);
 
   Invoice getInvoice(int? invoiceId) {
     return Invoice(
-      invoiceNo: _invoiceNumberController.value,
       customerName: _customerNameController.value,
       customerAddress: _customerAddressController.value,
       contactNo: _customerContactController.value,
-      poNumber: _poNumberController.value,
       purchaseDate: _purchaseDateController.value,
       paymentType: _paymentTypeController.value,
       paymentTerm: _paymentTermController.value,
       tinNumber: _tinNumberController.value,
-      dueDate: _dueDateController.value,
       remarks: _remarksController.valueOrNull,
       invoiceItems: _invoiceItemListController.value,
       totalAmount: _invoiceTotalAmountController.value,

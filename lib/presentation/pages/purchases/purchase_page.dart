@@ -168,8 +168,8 @@ class _PurchasePageState extends State<PurchasePage> {
                 fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
           ),
           onSort: (colIdx, asc) {
-            BlocProvider.of<PurchaseCubit>(context)
-                .sortPurchase((purchase) => purchase.purchaseNo, colIdx, asc);
+            BlocProvider.of<PurchaseCubit>(context).sortPurchase(
+                (purchase) => purchase.supplierInvoiceNo, colIdx, asc);
           },
         ),
         DataColumn(
@@ -180,7 +180,7 @@ class _PurchasePageState extends State<PurchasePage> {
           ),
           onSort: (colIdx, asc) {
             BlocProvider.of<PurchaseCubit>(context)
-                .sortPurchase((purchase) => purchase.batchCode, colIdx, asc);
+                .sortPurchase((purchase) => purchase.batchCode!, colIdx, asc);
           },
         ),
         const DataColumn(
