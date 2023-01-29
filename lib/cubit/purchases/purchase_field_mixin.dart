@@ -112,6 +112,7 @@ mixin PurchaseFieldMixin on ValidationMixin {
 
   removePurchaseItem(PurchaseItem purchaseItem) {
     List<PurchaseItem> purchaseItems = _purchaseItemListController.value;
+    print('Removing ${purchaseItem.hashCode}');
     purchaseItems.remove(purchaseItem);
     _purchaseItemListController.sink.add(purchaseItems);
     calculateTotalAmount(purchaseItems);

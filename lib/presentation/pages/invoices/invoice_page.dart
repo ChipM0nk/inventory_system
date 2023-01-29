@@ -144,17 +144,17 @@ class _InvoicePageState extends State<InvoicePage> {
                       data: state.filteredData ?? state.invoices,
                       onItemClick: _openInvoiceDialog);
                   return CustomPaginatedDataTable(
-                      header:
-                          BlocProvider.of<InvoiceCubit>(context).getParam() ==
-                                  null
-                              ? const Text("Invoice (Top 50 records only)")
-                              : const Text("Invoice"),
-                      dataColumns: dataColumns(invoiceData),
-                      rowsPerPage: 10,
-                      dataRowHeight: 40,
-                      sortAscending: state.sortAscending,
-                      sortIndex: state.sortIndex,
-                      source: invoiceData);
+                    header: BlocProvider.of<InvoiceCubit>(context).getParam() ==
+                            null
+                        ? const Text("Invoice (Top 50 records only)")
+                        : const Text("Invoice"),
+                    dataColumns: dataColumns(invoiceData),
+                    rowsPerPage: 10,
+                    dataRowHeight: 40,
+                    sortAscending: state.sortAscending,
+                    sortIndex: state.sortIndex,
+                    source: invoiceData,
+                  );
                 },
               ),
             ),
@@ -236,7 +236,10 @@ class _InvoicePageState extends State<InvoicePage> {
               BlocProvider.value(value: context.read<InvoiceCubit>()),
               BlocProvider.value(value: context.read<SaveInvoiceCubit>()),
             ],
-            child: InvoiceDialog(invoice: invoice),
+            child: InvoiceDialog(
+              invoice: invoice,
+              isProforma: invoice.invoiceType == 'Proforma',
+            ),
           );
         });
   }

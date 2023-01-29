@@ -1,5 +1,5 @@
 // ignore: depend_on_referenced_packages
-import 'package:edar_app/data/model/invoice/delivery.dart';
+import 'package:edar_app/data/model/invoice/proforma.dart';
 import 'package:edar_app/data/model/invoice/invoice_item.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -19,29 +19,34 @@ class Invoice {
   final String paymentType;
   final String paymentTerm;
   final String tinNumber;
-  final Delivery? delivery;
+  final Proforma? proforma;
   final String? remarks;
   final List<InvoiceItem> invoiceItems;
   final double totalAmount;
+  final double? downPayment;
   final String? trxnStatus;
+  final String? invoiceType;
 
-  const Invoice(
-      {this.invoiceId,
-      this.invoiceNo,
-      required this.customerName,
-      this.customerAddress,
-      this.contactNo,
-      this.staff,
-      this.poNumber,
-      required this.purchaseDate,
-      required this.paymentType,
-      required this.paymentTerm,
-      required this.tinNumber,
-      this.delivery,
-      this.remarks,
-      required this.invoiceItems,
-      required this.totalAmount,
-      this.trxnStatus});
+  const Invoice({
+    this.invoiceId,
+    this.invoiceNo,
+    required this.customerName,
+    this.customerAddress,
+    this.contactNo,
+    this.staff,
+    this.poNumber,
+    required this.purchaseDate,
+    required this.paymentType,
+    required this.paymentTerm,
+    required this.tinNumber,
+    this.proforma,
+    this.remarks,
+    required this.invoiceItems,
+    required this.totalAmount,
+    this.downPayment,
+    this.trxnStatus,
+    this.invoiceType,
+  });
   // Connect the generated [_$PersonFromJson] function to the `fromJson`
   /// factory.
   factory Invoice.fromJson(Map<String, dynamic> json) =>

@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
+import 'package:edar_app/cubit/invoice/proforma_field_mixin.dart';
+import 'package:edar_app/data/model/invoice/proforma.dart';
 import 'package:edar_app/data/model/invoice/invoice.dart';
 import 'package:edar_app/data/model/invoice/invoice_item.dart';
 import 'package:edar_app/common/mixins/mixin_validations.dart';
@@ -8,7 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 
 @immutable
-mixin InvoiceFieldMixin on ValidationMixin {
+mixin InvoiceFieldMixin on ValidationMixin, ProformaFieldMixin {
   final _customerNameController = BehaviorSubject<String>();
   final _customerAddressController = BehaviorSubject<String>();
   final _customerContactController = BehaviorSubject<String>();
@@ -20,9 +22,12 @@ mixin InvoiceFieldMixin on ValidationMixin {
   final _remarksController = BehaviorSubject<String>();
   final _invoiceItemListController = BehaviorSubject<List<InvoiceItem>>();
   final _invoiceTotalAmountController = BehaviorSubject<double>();
+  final _downPaymentController = BehaviorSubject<double>();
+  final _trxnStatusController = BehaviorSubject<String>();
+  final _invoiceTypeController = BehaviorSubject<String>();
+  final _proformaController = BehaviorSubject<Proforma>();
 
   init() {
-    print("Init form");
     List<InvoiceItem> initialList = [];
 
     _customerNameController.sink.addError("");
@@ -34,14 +39,20 @@ mixin InvoiceFieldMixin on ValidationMixin {
     _paymentTypeController.sink.addError("");
     _tinNumberController.sink.addError("");
     _remarksController.sink.addError("");
+    _downPaymentController.addError("");
 
     _invoiceItemListController.sink.add(initialList);
     _paymentTypeController.sink.add('Cash');
+    _invoiceTypeController.sink.add('Normal');
+    _trxnStatusController.sink.add('FINAL');
 
     String initialDate =
         DateFormat('dd-MMM-yy').format(DateTime.now()); //default
     updatePurchaseDate(initialDate);
+    updateDownPayment("0.00");
     updateTotalAmount(0.00);
+
+    initProforma();
   }
 
   Stream<String> get customerNameStream => _customerNameController.stream;
@@ -79,7 +90,6 @@ mixin InvoiceFieldMixin on ValidationMixin {
     _salesPersonController.sink.add(user);
   }
 
-//TODO: Create date validator
   Stream<String> get purchaseDateStream => _purchaseDateController.stream;
   updatePurchaseDate(String dateTime) {
     _purchaseDateController.sink.add(dateTime);
@@ -88,7 +98,16 @@ mixin InvoiceFieldMixin on ValidationMixin {
   Stream<String> get paymentTypeStream => _paymentTypeController.stream;
   updatePaymentType(String fieldValue) {
     _paymentTypeController.sink.add(fieldValue);
-    print("update payment type: ${_paymentTypeController.value}");
+  }
+
+  Stream<String> get invoiceTypeStream => _invoiceTypeController.stream;
+  updateInvoiceType(String fieldValue) {
+    _invoiceTypeController.sink.add(fieldValue);
+  }
+
+  Stream<String> get txnStatusStream => _trxnStatusController.stream;
+  updateTrxnStatus(String fieldValue) {
+    _trxnStatusController.sink.add(fieldValue);
   }
 
   Stream<String> get paymentTermStream => _paymentTermController.stream;
@@ -156,8 +175,17 @@ mixin InvoiceFieldMixin on ValidationMixin {
     calculateTotalAmount(invoiceItems);
   }
 
-  Stream<double> get totalAmountStream => _invoiceTotalAmountController.stream;
+  Stream<double> get downPaymentStream => _downPaymentController.stream;
+  updateDownPayment(String fieldValue) {
+    if (isFieldDoubleNumeric(fieldValue)) {
+      double price = double.parse(fieldValue);
+      _downPaymentController.sink.add(price);
+    } else {
+      _downPaymentController.sink.addError("Please enter valid numeric value");
+    }
+  }
 
+  Stream<double> get totalAmountStream => _invoiceTotalAmountController.stream;
   updateTotalAmount(double totalAmount) {
     _invoiceTotalAmountController.sink.add(totalAmount.toPrecision(2));
   }
@@ -174,6 +202,10 @@ mixin InvoiceFieldMixin on ValidationMixin {
         : 0.0;
   }
 
+  updateProforma() {
+    _proformaController.add(getProforma(null));
+  }
+
   ///invoice item list
   Stream<bool> get buttonValid => Rx.combineLatest6(
       customerNameStream,
@@ -185,7 +217,7 @@ mixin InvoiceFieldMixin on ValidationMixin {
       (a, b, c, d, e, f) =>
           true && _invoiceItemListController.value.isNotEmpty);
 
-  Invoice getInvoice(int? invoiceId) {
+  Invoice getInvoice({int? invoiceId, Proforma? proforma}) {
     return Invoice(
       customerName: _customerNameController.value,
       customerAddress: _customerAddressController.value,
@@ -197,6 +229,10 @@ mixin InvoiceFieldMixin on ValidationMixin {
       remarks: _remarksController.valueOrNull,
       invoiceItems: _invoiceItemListController.value,
       totalAmount: _invoiceTotalAmountController.value,
+      downPayment: _downPaymentController.valueOrNull,
+      trxnStatus: _trxnStatusController.valueOrNull,
+      invoiceType: _invoiceTypeController.valueOrNull,
+      proforma: proforma ?? getProforma(null),
     );
   }
 

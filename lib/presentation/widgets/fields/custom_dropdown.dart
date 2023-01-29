@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
+typedef OnChanged = void Function(dynamic values);
 
 // ignore: must_be_immutable
 class CustomDropdown<T> extends StatelessWidget {
@@ -26,7 +27,7 @@ class CustomDropdown<T> extends StatelessWidget {
   final double height;
   final double width;
 
-  void Function<T>(T? obj)? onChanged;
+  OnChanged? onChanged;
 
   final TextStyle labelTextStyle = const TextStyle(
       color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15);

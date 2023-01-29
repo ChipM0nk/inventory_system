@@ -1,3 +1,4 @@
+import 'package:edar_app/constants/text_field_formats.dart';
 import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
 import 'package:edar_app/cubit/invoice/save_invoice_cubit.dart';
 import 'package:edar_app/data/model/invoice/invoice.dart';
@@ -9,13 +10,13 @@ import 'package:edar_app/presentation/pages/invoices/invoice_dialog.dart';
 import 'package:edar_app/presentation/widgets/custom_elevated_button.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_date_picker.dart';
 import 'package:edar_app/presentation/widgets/fields/custom_dropdown.dart';
+import 'package:edar_app/presentation/widgets/fields/custom_text_field.dart';
 import 'package:edar_app/routing/route_names.dart';
 import 'package:edar_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-
-import '../../../widgets/fields/custom_text_field.dart';
 
 class InvoiceForm extends StatefulWidget {
   const InvoiceForm({Key? key}) : super(key: key);
@@ -44,6 +45,9 @@ class _InvoiceFormState extends State<InvoiceForm> {
     BlocProvider.of<SaveInvoiceCubit>(context).removeInvoiceItem(invoiceItem);
   }
 
+  bool isProforma = false;
+  String invoiceTypeVal = 'Normal';
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SaveInvoiceCubit, SaveInvoiceState>(
@@ -57,6 +61,33 @@ class _InvoiceFormState extends State<InvoiceForm> {
           });
         }
 
+        var invoiceType = CustomDropdown(
+          labelText: "Invoice Type",
+          context: context,
+          value: invoiceTypeVal,
+          items: const [
+            DropdownMenuItem<String>(
+              value: 'Normal',
+              child: Text('Normal'),
+            ),
+            DropdownMenuItem<String>(
+              value: 'Proforma',
+              child: Text('Proforma'),
+            ),
+          ],
+          onChanged: (value) {
+            setState(
+              () {
+                isProforma = value == 'Proforma';
+                invoiceTypeVal = value;
+                BlocProvider.of<SaveInvoiceCubit>(context)
+                    .updateTrxnStatus(isProforma ? 'PROFORMA' : 'FINAL');
+                BlocProvider.of<SaveInvoiceCubit>(context)
+                    .updateInvoiceType(value);
+              },
+            );
+          },
+        );
         var customerName = StreamBuilder<String>(
             stream:
                 BlocProvider.of<SaveInvoiceCubit>(context).customerNameStream,
@@ -100,17 +131,13 @@ class _InvoiceFormState extends State<InvoiceForm> {
           },
         );
 
-        var purchaseDate = Column(
-          children: [
-            CustomDatePicker(
-              labelText: "Purchase Date",
-              onChanged: (dateTime) {
-                BlocProvider.of<SaveInvoiceCubit>(context)
-                    .updatePurchaseDate(dateTime);
-              },
-              dateFormat: dateFormat,
-            ),
-          ],
+        var purchaseDate = CustomDatePicker(
+          labelText: "Purchase Date",
+          onChanged: (dateTime) {
+            BlocProvider.of<SaveInvoiceCubit>(context)
+                .updatePurchaseDate(dateTime);
+          },
+          dateFormat: dateFormat,
         );
 
         var paymentType = StreamBuilder<String>(
@@ -125,7 +152,6 @@ class _InvoiceFormState extends State<InvoiceForm> {
               return CustomDropdown<String>(
                 labelText: "Payment Type",
                 items: const [
-                  //TODO: Put in constant
                   DropdownMenuItem<String>(
                     value: 'Cash',
                     child: Text('Cash'),
@@ -192,6 +218,113 @@ class _InvoiceFormState extends State<InvoiceForm> {
                   labelText: 'Remarks');
             });
 
+        var deliveredBy = StreamBuilder<String>(
+            stream:
+                BlocProvider.of<SaveInvoiceCubit>(context).deliveredByStream,
+            builder: (context, snapshot) {
+              return CustomTextField(
+                  snapshot: snapshot,
+                  onChanged: (text) {
+                    BlocProvider.of<SaveInvoiceCubit>(context)
+                        .updateDeliveredBy(text);
+                  },
+                  labelText: 'Delivered By');
+            });
+        var contactPerson = StreamBuilder<String>(
+            stream:
+                BlocProvider.of<SaveInvoiceCubit>(context).contactPersonStream,
+            builder: (context, snapshot) {
+              return CustomTextField(
+                  snapshot: snapshot,
+                  onChanged: (text) {
+                    BlocProvider.of<SaveInvoiceCubit>(context)
+                        .updateContactPerson(text);
+                  },
+                  labelText: 'Contact Person');
+            });
+        var shippingMethod = StreamBuilder<Object>(
+            stream: null,
+            builder: (context, snapshot) {
+              return CustomDropdown(
+                value: BlocProvider.of<SaveInvoiceCubit>(context)
+                    .getShippingMethod(),
+                width: 150,
+                labelText: "Shipping Status",
+                context: context,
+                items: const [
+                  DropdownMenuItem<String>(
+                    value: 'Pick-up',
+                    child: Text('Pick-up'),
+                  ),
+                  DropdownMenuItem<String>(
+                    value: 'Delivery',
+                    child: Text('Delivery'),
+                  ),
+                ],
+                onChanged: (value) {
+                  BlocProvider.of<SaveInvoiceCubit>(context)
+                      .updateShippingMethod(value);
+                },
+              );
+            });
+
+        var dueDate = CustomDatePicker(
+          width: 150,
+          labelText: "Due Date",
+          initialValue: "",
+          onChanged: (dateTime) {
+            BlocProvider.of<SaveInvoiceCubit>(context).updateDueDate(dateTime);
+          },
+          dateFormat: dateFormat,
+        );
+        var deliveryDate = CustomDatePicker(
+          width: 150,
+          labelText: "Delivery Date",
+          initialValue: "",
+          onChanged: (dateTime) {
+            BlocProvider.of<SaveInvoiceCubit>(context)
+                .updateDeliveryDate(dateTime);
+          },
+          dateFormat: dateFormat,
+        );
+
+        var downpayment = Offstage(
+          offstage: !isProforma,
+          child: StreamBuilder<double>(
+              stream:
+                  BlocProvider.of<SaveInvoiceCubit>(context).downPaymentStream,
+              builder: (context, snapshot) {
+                return Align(
+                  alignment: Alignment.centerRight,
+                  child: SizedBox(
+                    width: 150,
+                    child: TextFormField(
+                      inputFormatters: <TextInputFormatter>[
+                        TextFieldFormat.amountFormat
+                      ],
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green.shade900),
+                      textAlign: TextAlign.right,
+                      decoration: InputDecoration(
+                        hintText: "0.00",
+                        labelText: 'Down Payment',
+                        labelStyle: TextStyle(
+                          color: Colors.green.shade900,
+                        ),
+                        filled: true,
+                        fillColor: Colors.green.shade50,
+                      ),
+                      onChanged: (value) => {
+                        BlocProvider.of<SaveInvoiceCubit>(context)
+                            .updateDownPayment(value)
+                      },
+                    ),
+                  ),
+                );
+              }),
+        );
+
         return Align(
           alignment: Alignment.topLeft,
           child: SizedBox(
@@ -207,8 +340,8 @@ class _InvoiceFormState extends State<InvoiceForm> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // invoiceNumber,
+                        invoiceType,
                         customerName,
-                        customerContactNumber,
                         customerAddressField,
                       ],
                     ),
@@ -216,9 +349,9 @@ class _InvoiceFormState extends State<InvoiceForm> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        customerContactNumber,
                         tinNumber,
                         paymentType,
-                        purchaseDate,
                         paymentTerm,
                       ],
                     ),
@@ -226,15 +359,32 @@ class _InvoiceFormState extends State<InvoiceForm> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        purchaseDate,
                         remarks,
-                        const SizedBox(
-                          width: 200,
-                        ),
                         const SizedBox(
                           width: 200,
                         ),
                       ],
                     ),
+                    Offstage(
+                      offstage: !isProforma,
+                      child: Column(
+                        children: [
+                          const Divider(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              deliveredBy,
+                              contactPerson,
+                              shippingMethod,
+                              dueDate,
+                              deliveryDate,
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
                   ],
                 ),
                 StreamBuilder<List<InvoiceItem>>(
@@ -243,7 +393,7 @@ class _InvoiceFormState extends State<InvoiceForm> {
                     builder: (context, snapshot) {
                       return SizedBox(
                         width: 1000,
-                        height: 350,
+                        height: 370,
                         child: Column(
                           children: [
                             InvoiceItemDataGrid(
@@ -258,33 +408,32 @@ class _InvoiceFormState extends State<InvoiceForm> {
                               addInvoiceItem: _addItem,
                               deleteInvoiceItem: _deleteItem,
                             ),
+                            downpayment,
                           ],
                         ),
                       );
                     }),
-                Row(
-                  children: [
-                    StreamBuilder<bool>(
-                        stream: BlocProvider.of<SaveInvoiceCubit>(context)
-                            .buttonValid,
-                        builder: (context, snapshot) {
-                          return SizedBox(
-                            height: 50,
-                            width: 150,
-                            child: CustomElevatedButton(
-                              onPressed: snapshot.hasData
-                                  ? () {
-                                      _openInvoiceDialog();
-                                    }
-                                  : null,
-                              child: const Text("REVIEW",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15)),
-                            ),
-                          );
-                        }),
-                  ],
+                Align(
+                  alignment: Alignment.topRight,
+                  child: StreamBuilder<bool>(
+                      stream: BlocProvider.of<SaveInvoiceCubit>(context)
+                          .buttonValid,
+                      builder: (context, snapshot) {
+                        return SizedBox(
+                          height: 50,
+                          width: 150,
+                          child: CustomElevatedButton(
+                            onPressed: snapshot.hasData
+                                ? () {
+                                    _openInvoiceDialog();
+                                  }
+                                : null,
+                            child: const Text("REVIEW",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15)),
+                          ),
+                        );
+                      }),
                 )
               ],
             ),
@@ -295,8 +444,7 @@ class _InvoiceFormState extends State<InvoiceForm> {
   }
 
   void _openInvoiceDialog() {
-    Invoice invoice =
-        BlocProvider.of<SaveInvoiceCubit>(context).getInvoice(null);
+    Invoice invoice = BlocProvider.of<SaveInvoiceCubit>(context).getInvoice();
     BlocProvider.of<SaveInvoiceCubit>(context).clearError();
     showDialog(
         context: context,
@@ -309,6 +457,7 @@ class _InvoiceFormState extends State<InvoiceForm> {
             child: InvoiceDialog(
               invoice: invoice,
               flgAddInvoice: true,
+              isProforma: isProforma,
             ),
           );
         });

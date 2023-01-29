@@ -18,15 +18,17 @@ Invoice _$InvoiceFromJson(Map<String, dynamic> json) => Invoice(
       paymentType: json['paymentType'] as String,
       paymentTerm: json['paymentTerm'] as String,
       tinNumber: json['tinNumber'] as String,
-      delivery: json['delivery'] == null
+      proforma: json['proforma'] == null
           ? null
-          : Delivery.fromJson(json['delivery'] as Map<String, dynamic>),
+          : Proforma.fromJson(json['proforma'] as Map<String, dynamic>),
       remarks: json['remarks'] as String?,
       invoiceItems: (json['invoiceItems'] as List<dynamic>)
           .map((e) => InvoiceItem.fromJson(e as Map<String, dynamic>))
           .toList(),
       totalAmount: (json['totalAmount'] as num).toDouble(),
+      downPayment: (json['downPayment'] as num?)?.toDouble(),
       trxnStatus: json['trxnStatus'] as String?,
+      invoiceType: json['invoiceType'] as String?,
     );
 
 Map<String, dynamic> _$InvoiceToJson(Invoice instance) {
@@ -49,10 +51,12 @@ Map<String, dynamic> _$InvoiceToJson(Invoice instance) {
   val['paymentType'] = instance.paymentType;
   val['paymentTerm'] = instance.paymentTerm;
   val['tinNumber'] = instance.tinNumber;
-  writeNotNull('delivery', instance.delivery?.toJson());
+  writeNotNull('proforma', instance.proforma?.toJson());
   writeNotNull('remarks', instance.remarks);
   val['invoiceItems'] = instance.invoiceItems.map((e) => e.toJson()).toList();
   val['totalAmount'] = instance.totalAmount;
+  writeNotNull('downPayment', instance.downPayment);
   writeNotNull('trxnStatus', instance.trxnStatus);
+  writeNotNull('invoiceType', instance.invoiceType);
   return val;
 }

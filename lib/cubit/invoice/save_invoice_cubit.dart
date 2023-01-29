@@ -3,6 +3,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:edar_app/common/mixins/error_message_mixin.dart';
 import 'package:edar_app/common/mixins/mixin_validations.dart';
+import 'package:edar_app/cubit/invoice/proforma_field_mixin.dart';
 import 'package:edar_app/cubit/invoice/invoice_field_mixin.dart';
 import 'package:edar_app/cubit/invoice/invoice_item_field_mixin.dart';
 import 'package:edar_app/data/model/invoice/invoice.dart';
@@ -15,6 +16,7 @@ class SaveInvoiceCubit extends Cubit<SaveInvoiceState>
     with
         ValidationMixin,
         InvoiceItemFieldMixin,
+        ProformaFieldMixin,
         InvoiceFieldMixin,
         ErrorMessageMixin {
   final InvoiceRepository invoiceRepository = InvoiceRepository();
@@ -34,7 +36,7 @@ class SaveInvoiceCubit extends Cubit<SaveInvoiceState>
 
   void addInvoice() {
     emit(InvoiceSaving());
-    Map<String, dynamic> invoiceObj = getInvoice(null).toJson();
+    Map<String, dynamic> invoiceObj = getInvoice().toJson();
     invoiceRepository.addInvoice(invoiceObj).then((returnMap) {
       emit(InvoiceSaved(
           invoiceNo: returnMap["invoiceNo"], poNumber: returnMap["poNumber"]));
@@ -51,6 +53,23 @@ class SaveInvoiceCubit extends Cubit<SaveInvoiceState>
     invoiceRepository.voidInvoice(invoiceId).then((isVoided) {
       if (isVoided) {
         emit(InvoiceVoided());
+      } else {
+        emit(InvoiceSavingError());
+        updateError(null, null);
+      }
+    }).onError(
+      (error, stackTrace) {
+        emit(InvoiceSavingError());
+        updateError('$error', stackTrace);
+      },
+    );
+  }
+
+  void finalizeInvoice(int invoiceId) {
+    emit(InvoiceSaving());
+    invoiceRepository.finalizeInvoice(invoiceId).then((isFinalized) {
+      if (isFinalized) {
+        emit(InvoiceSaved());
       } else {
         emit(InvoiceSavingError());
         updateError(null, null);

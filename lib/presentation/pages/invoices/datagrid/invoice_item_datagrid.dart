@@ -18,6 +18,7 @@ class InvoiceItemDataGrid extends StatelessWidget {
   final Function(InvoiceItem)? deleteInvoiceItem;
   final Function(InvoiceItem)? addInvoiceItem;
   final bool editable;
+  final bool isProforma;
 
   const InvoiceItemDataGrid({
     required this.invoiceSfKey,
@@ -25,6 +26,7 @@ class InvoiceItemDataGrid extends StatelessWidget {
     this.summaryTotal = 0.00,
     this.stackHeaderRows,
     this.editable = true,
+    this.isProforma = false,
     this.deleteInvoiceItem,
     this.addInvoiceItem,
     super.key,
@@ -40,57 +42,54 @@ class InvoiceItemDataGrid extends StatelessWidget {
 
     var footer = Container(
         color: Colors.grey[100],
-        child: Padding(
-          padding: const EdgeInsets.only(left: 10, right: 10),
-          child: Center(
-              child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              editable
-                  ? SizedBox(
-                      width: 100,
-                      child: CustomElevatedButton(
-                        child: const Icon(
-                          Icons.add_box_outlined,
-                          color: Colors.white,
-                          size: 25,
-                        ),
-                        onPressed: () {
-                          showDialog(
-                              // barrierDismissible: false,
-                              context: context,
-                              builder: (_) {
-                                return MultiBlocProvider(
-                                  providers: [
-                                    BlocProvider.value(
-                                        value: context.read<ProductsCubit>()),
-                                    BlocProvider.value(
-                                        value:
-                                            context.read<SaveInvoiceCubit>()),
-                                  ],
-                                  child: InvoiceAddItemDialog(
-                                      addInvoiceItem: addInvoiceItem!),
-                                );
-                              });
-                        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            editable
+                ? SizedBox(
+                    width: 100,
+                    child: CustomElevatedButton(
+                      child: const Icon(
+                        Icons.add_box_outlined,
+                        color: Colors.white,
+                        size: 25,
                       ),
-                    )
-                  : const SizedBox(
-                      width: 0,
+                      onPressed: () {
+                        showDialog(
+                            // barrierDismissible: false,
+                            context: context,
+                            builder: (_) {
+                              return MultiBlocProvider(
+                                providers: [
+                                  BlocProvider.value(
+                                      value: context.read<ProductsCubit>()),
+                                  BlocProvider.value(
+                                      value: context.read<SaveInvoiceCubit>()),
+                                ],
+                                child: InvoiceAddItemDialog(
+                                    addInvoiceItem: addInvoiceItem!),
+                              );
+                            });
+                      },
                     ),
-              RichText(
-                  text: TextSpan(
-                      text: 'TOTAL : ',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                      children: [
-                    TextSpan(
-                        text:
-                            'PHP ${Util.convertToCurrency(summaryTotal).toString()}',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.red)),
-                  ])),
-            ],
-          )),
+                  )
+                : const SizedBox(
+                    width: 0,
+                  ),
+            RichText(
+              text: TextSpan(
+                text: 'TOTAL : ',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+                children: [
+                  TextSpan(
+                      text:
+                          'PHP ${Util.convertToCurrency(summaryTotal).toString()}',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.red)),
+                ],
+              ),
+            ),
+          ],
         ));
 
     return CustomSfDataGrid(

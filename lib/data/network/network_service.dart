@@ -167,4 +167,23 @@ class NetworkService {
     }
     throw Exception(respObj['message']);
   }
+
+  Future<bool> finalizeInvoice(int id, String serviceName) async {
+    print("Finalizing item");
+    String url = "$BASE_URL$serviceName/finalize/$id";
+
+    // await Future.delayed(Duration(seconds: 2));
+    final response = await patch(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': "Bearer ${await LocalStorage.read("jwt")}",
+      },
+    );
+    dynamic respObj = jsonDecode(response.body);
+    if (respObj['code'] == '000') {
+      return true;
+    }
+    throw Exception(respObj['message']);
+  }
 }

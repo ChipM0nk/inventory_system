@@ -48,17 +48,6 @@ class InvoiceAddItemDialog extends StatelessWidget {
                   currStockController.text = snapshot.hasData
                       ? snapshot.data!.currentStock.toString()
                       : "";
-
-                  // var productCategory = Column(
-                  //   children: [
-                  //     CustomTextField(
-                  //       labelText: "Category",
-                  //       controller: categoryController,
-                  //       enabled: false,
-                  //     ),
-                  //   ],
-                  // );
-
                   var currentStock = Column(
                     children: [
                       CustomTextField(

@@ -31,12 +31,4 @@ class PurchaseItem {
 
   /// Connect the generated [_$PurchaseToJson] function to the `toJson` method.
   Map<String, dynamic> toJson() => _$PurchaseItemToJson(this);
-
-  @override
-  bool operator ==(Object other) {
-    return other is PurchaseItem && other.purchaseItemId == purchaseItemId;
-  }
-
-  @override
-  int get hashCode => purchaseItemId.hashCode;
 }

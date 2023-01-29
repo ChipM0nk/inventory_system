@@ -18,3 +18,8 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+# TO RUN
+flutter run -d chrome --web-port 8081
+
+# Run below command if there is model update
+flutter pub run build_runner build

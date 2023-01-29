@@ -16,7 +16,7 @@ class CustomSfDataGrid extends StatelessWidget {
       required this.source,
       required this.columns,
       this.footer,
-      this.stackedHeaderRowHeight = 180,
+      this.stackedHeaderRowHeight = 220,
       this.rowHeight = 30,
       required this.stackedHeaderRows});
 

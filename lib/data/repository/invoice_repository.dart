@@ -17,11 +17,13 @@ class InvoiceRepository {
 
   Future<List<Invoice>> fetchAll() async {
     final objRaw = await networkService.fetchAll(InvoicesService);
+    print(objRaw);
     return objRaw.map((e) => Invoice.fromJson(e)).toList();
   }
 
   Future<Map<String, dynamic>> addInvoice(
       Map<String, dynamic> invoiceObj) async {
+    print(invoiceObj);
     dynamic invoiceRetObj =
         await networkService.addandReturnItem(invoiceObj, InvoicesService);
 
@@ -32,6 +34,13 @@ class InvoiceRepository {
     final isVoided = await networkService.voidItem(invoiceId, InvoicesService);
 
     return isVoided;
+  }
+
+  Future<bool> finalizeInvoice(int invoiceId) async {
+    final isFinalized =
+        await networkService.finalizeInvoice(invoiceId, InvoicesService);
+
+    return isFinalized;
   }
 
   Future<bool> udpateInvoice(

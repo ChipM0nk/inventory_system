@@ -10,10 +10,11 @@ class InvoicePdf {
 
   // InvoicePdf({required this.invoice});
 
-  static makePdf(
-      {required final Invoice invoice,
-      String? invoiceNo,
-      String? poNumber}) async {
+  static makePdf({
+    required final Invoice invoice,
+    String? invoiceNo,
+    String? poNumber,
+  }) async {
     String docuInvoiceNo = invoice.invoiceNo ?? invoiceNo!;
     String docuPoNumber = invoice.poNumber ?? poNumber!;
     final imageLogo = MemoryImage(

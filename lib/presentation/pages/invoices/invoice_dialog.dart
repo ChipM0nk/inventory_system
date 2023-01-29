@@ -2,34 +2,74 @@ import 'package:edar_app/cubit/invoice/invoice_cubit.dart';
 import 'package:edar_app/cubit/invoice/save_invoice_cubit.dart';
 import 'package:edar_app/data/model/invoice/invoice.dart';
 import 'package:edar_app/presentation/pages/invoices/datagrid/invoice_item_datagrid.dart';
-import 'package:edar_app/presentation/pages/invoices/datagrid/invoice_pdf.dart';
-import 'package:edar_app/presentation/pages/invoices/datagrid/sf_datagrid_invoice_export_pdf.dart';
+import 'package:edar_app/reports/invoice_pdf.dart';
+import 'package:edar_app/presentation/utils/util.dart';
 import 'package:edar_app/presentation/widgets/custom_elevated_action_button.dart';
 import 'package:edar_app/presentation/widgets/custom_inline_label.dart';
 import 'package:edar_app/presentation/widgets/fields/error_message_field.dart';
+import 'package:edar_app/reports/proforma_pdf.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:printing/printing.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:syncfusion_flutter_pdf/pdf.dart' as sf_pdf;
-import 'package:syncfusion_flutter_datagrid_export/export.dart';
+import 'dart:math' as math;
 
 class InvoiceDialog extends StatelessWidget {
   final Invoice invoice;
   final int? fontSize;
   final bool flgAddInvoice;
-  const InvoiceDialog(
-      {required this.invoice,
-      this.fontSize = 10,
-      this.flgAddInvoice = false,
-      super.key});
+  final bool isProforma;
+  const InvoiceDialog({
+    required this.invoice,
+    this.fontSize = 10,
+    this.flgAddInvoice = false,
+    this.isProforma = false,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<SfDataGridState> invoiceSfKey =
-        GlobalKey<SfDataGridState>();
+    double buttonFooterWidth =
+        170 + (!flgAddInvoice ? 180 : 0) + (isProforma ? 180 : 0);
 
+    List<Widget> proformaHeaders = [
+      'CONTACT PERSON',
+      'SHIPPING METHOD',
+      'DELIVERY DATE',
+      'DELIVERY NO',
+      'DELIVERED BY',
+      'DUE DATE'
+    ]
+        .map(
+          (e) => Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Text(
+              e,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+            ),
+          ),
+        )
+        .toList();
+
+    List<Widget> proformaDetails = [
+      invoice.proforma?.contactPerson ?? "",
+      invoice.proforma?.shippingMethod ?? "",
+      invoice.proforma?.deliveryDate ?? "",
+      invoice.proforma?.deliveryNo ?? "",
+      invoice.proforma?.deliveredBy ?? "",
+      invoice.proforma?.dueDate ?? "",
+    ]
+        .map(
+          (e) => Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Text(
+              e,
+              textAlign: TextAlign.left,
+              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+            ),
+          ),
+        )
+        .toList();
     var stackHeaderRows = <StackedHeaderRow>[
       StackedHeaderRow(
         cells: [
@@ -86,16 +126,47 @@ class InvoiceDialog extends StatelessWidget {
                           CustomInlineLabel(
                               label: "Invoice Date: ",
                               value: invoice.purchaseDate),
-                          CustomInlineLabel(
-                              label: "Due Date: ",
-                              value: ""), //TODO Update later
+                          isProforma
+                              ? CustomInlineLabel(
+                                  label: "Down Payment: ",
+                                  value:
+                                      'PHP ${Util.convertToCurrency(invoice.downPayment ?? 0.00).toString()}')
+                              : const SizedBox(width: 0),
                         ]),
                         Row(children: [
                           CustomInlineLabel(
                               width: 600,
                               label: "Remarks: ",
                               value: invoice.remarks),
-                        ])
+                        ]),
+                        isProforma
+                            ? Table(
+                                border: TableBorder.all(
+                                  color: Colors.grey,
+                                  style: BorderStyle.solid,
+                                  width: 1,
+                                ),
+                                columnWidths: const {
+                                  0: FixedColumnWidth(190),
+                                  1: FixedColumnWidth(190),
+                                  2: FixedColumnWidth(150),
+                                  3: FixedColumnWidth(150),
+                                  4: FixedColumnWidth(150),
+                                  5: FixedColumnWidth(150),
+                                },
+                                children: [
+                                  TableRow(
+                                    decoration: BoxDecoration(
+                                      color: Colors.green.shade100,
+                                    ),
+                                    children: proformaHeaders,
+                                  ),
+                                  TableRow(children: proformaDetails)
+                                ],
+                              )
+                            : const SizedBox(
+                                height: 0,
+                              ),
                       ],
                     )
                   ],
@@ -103,19 +174,6 @@ class InvoiceDialog extends StatelessWidget {
               ),
             ),
           ),
-          // StackedHeaderCell(
-          //   columnNames: [
-          //     'Product Code',
-          //     'Product Name',
-          //     'Product Description',
-          //     'Price',
-          //     'QTY',
-          //     'Total'
-          //   ],
-          //   child: Container(
-          //     child: Text("Hello"),
-          //   ),
-          // )
         ],
       ),
     ];
@@ -163,103 +221,116 @@ class InvoiceDialog extends StatelessWidget {
         // }
 
         return AlertDialog(
-          title: const Text("Invoice Details"),
-          content: Column(
+          title: Text("Invoice Details${isProforma ? " (PROFORMA)" : ""}"),
+          content: Stack(
             children: [
-              SizedBox(
-                width: 1000,
-                height: 540,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 500,
-                      child: InvoiceItemDataGrid(
-                        invoiceSfKey: invoiceSfKey,
-                        invoiceItems: invoice.invoiceItems,
-                        summaryTotal: invoice.totalAmount,
-                        stackHeaderRows: stackHeaderRows,
-                        editable: false,
-                      ),
+              Column(
+                children: [
+                  SizedBox(
+                    width: 1000,
+                    height: 540,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 500,
+                          child: InvoiceItemDataGrid(
+                            invoiceSfKey: invoiceSfKey,
+                            invoiceItems: invoice.invoiceItems,
+                            summaryTotal: invoice.totalAmount,
+                            stackHeaderRows: stackHeaderRows,
+                            editable: false,
+                          ),
+                        ),
+                        serviceErrorMessage,
+                      ],
                     ),
-                    serviceErrorMessage,
-                  ],
-                ),
+                  ),
+                ],
               ),
+              if (invoice.trxnStatus == 'VOID')
+                Center(
+                  child: Transform.rotate(
+                    angle: -math.pi / 4,
+                    child: Text(
+                      "VOID",
+                      style:
+                          TextStyle(fontSize: 120, color: Colors.red.shade300),
+                    ),
+                  ),
+                ),
             ],
           ),
           actionsPadding: const EdgeInsets.only(bottom: 40),
           actions: [
             Center(
               child: SizedBox(
-                width: flgAddInvoice ? 170 : 350,
+                width: buttonFooterWidth,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(
-                      width: 170,
-                      height: 70,
-                      child: CustomElevatedActionButton(
-                        onPressed: flgAddInvoice
-                            ? () async {
-                                BlocProvider.of<SaveInvoiceCubit>(context)
-                                    .addInvoice();
-                              }
-                            : () async {
-                                await InvoicePdf.makePdf(invoice: invoice);
-                              },
-                        text: Text(
-                          flgAddInvoice ? "SUBMIT" : "PRINT",
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
+                    if (invoice.trxnStatus != 'VOID')
+                      SizedBox(
+                        width: 170,
+                        height: 70,
+                        child: CustomElevatedActionButton(
+                          onPressed: flgAddInvoice
+                              ? () async {
+                                  BlocProvider.of<SaveInvoiceCubit>(context)
+                                      .addInvoice();
+                                }
+                              : () async {
+                                  await InvoicePdf.makePdf(invoice: invoice);
+                                },
+                          text: Text(
+                            flgAddInvoice ? "SUBMIT" : "PRINT",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                          icon: Icon(flgAddInvoice ? Icons.save : Icons.print),
+                          isLoading: isSaving,
                         ),
-                        icon: const Icon(Icons.save),
-                        isLoading: isSaving,
                       ),
-                    ),
-                    if (!flgAddInvoice)
+                    if (isProforma && invoice.trxnStatus != 'VOID')
+                      SizedBox(
+                        width: 170,
+                        height: 70,
+                        child: CustomElevatedActionButton(
+                          color: Colors.blue.shade600,
+                          onPressed: invoice.trxnStatus == 'PROFORMA'
+                              ? () {
+                                  BlocProvider.of<SaveInvoiceCubit>(context)
+                                      .finalizeInvoice(invoice.invoiceId!);
+                                }
+                              : () async {
+                                  await ProformaPdf.makePdf(invoice: invoice);
+                                },
+                          isLoading: isVoiding,
+                          text: Text(
+                            invoice.trxnStatus == 'PROFORMA'
+                                ? "FINALIZE"
+                                : "PRINT PF",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                          icon: Icon(
+                            invoice.trxnStatus == 'PROFORMA'
+                                ? Icons.done_all_outlined
+                                : Icons.close,
+                            size: 25,
+                          ),
+                        ),
+                      ),
+                    if (!flgAddInvoice && invoice.trxnStatus != 'VOID')
                       SizedBox(
                         width: 170,
                         height: 70,
                         child: CustomElevatedActionButton(
                           color: Colors.red.shade600,
-                          onPressed: invoice.trxnStatus == 'FINAL'
+                          onPressed: invoice.trxnStatus != 'VOID'
                               ? () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (_) {
-                                        return BlocProvider.value(
-                                          value:
-                                              context.read<SaveInvoiceCubit>(),
-                                          child: AlertDialog(
-                                            title: const Text("Void Invoice"),
-                                            content: const Text(
-                                                "Are you sure you want to void this invoice?"),
-                                            actions: [
-                                              ElevatedButton(
-                                                  child: const Text("Yes"),
-                                                  onPressed: () {
-                                                    BlocProvider.of<
-                                                                SaveInvoiceCubit>(
-                                                            context)
-                                                        .voidInvoice(
-                                                            invoice.invoiceId!);
-                                                    Navigator.of(context,
-                                                            rootNavigator: true)
-                                                        .pop();
-                                                  }),
-                                              ElevatedButton(
-                                                  child: const Text("No"),
-                                                  onPressed: () {
-                                                    Navigator.of(context,
-                                                            rootNavigator: true)
-                                                        .pop();
-                                                  }),
-                                            ],
-                                          ),
-                                        );
-                                      });
+                                  voidInvoice(context);
                                 }
                               : null,
                           isLoading: isVoiding,
@@ -282,5 +353,34 @@ class InvoiceDialog extends StatelessWidget {
         );
       },
     );
+  }
+
+  void voidInvoice(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (_) {
+          return BlocProvider.value(
+            value: context.read<SaveInvoiceCubit>(),
+            child: AlertDialog(
+              title: const Text("Void Invoice"),
+              content:
+                  const Text("Are you sure you want to void this invoice?"),
+              actions: [
+                ElevatedButton(
+                    child: const Text("Yes"),
+                    onPressed: () {
+                      BlocProvider.of<SaveInvoiceCubit>(context)
+                          .voidInvoice(invoice.invoiceId!);
+                      Navigator.of(context, rootNavigator: true).pop();
+                    }),
+                ElevatedButton(
+                    child: const Text("No"),
+                    onPressed: () {
+                      Navigator.of(context, rootNavigator: true).pop();
+                    }),
+              ],
+            ),
+          );
+        });
   }
 }
