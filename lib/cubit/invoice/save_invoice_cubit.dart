@@ -66,10 +66,10 @@ class SaveInvoiceCubit extends Cubit<SaveInvoiceState>
   }
 
   void finalizeInvoice(int invoiceId) {
-    emit(InvoiceSaving());
+    emit(InvoiceFinalizing());
     invoiceRepository.finalizeInvoice(invoiceId).then((isFinalized) {
       if (isFinalized) {
-        emit(InvoiceSaved());
+        emit(InvoiceFinalized());
       } else {
         emit(InvoiceSavingError());
         updateError(null, null);

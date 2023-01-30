@@ -197,8 +197,11 @@ class InvoiceDialog extends StatelessWidget {
       builder: (context, state) {
         bool isSaving = state is InvoiceSaving;
         bool isVoiding = state is InvoiceVoiding;
-        if (state is InvoiceVoided || state is InvoiceSaved) {
+        if (state is InvoiceVoided ||
+            state is InvoiceSaved ||
+            state is InvoiceFinalized) {
           Future.delayed(Duration.zero, () {
+            print("State is $state");
             if (state is InvoiceVoided) {
               BlocProvider.of<InvoiceCubit>(context).fetchInvoices();
             } else if (state is InvoiceSaved) {
@@ -206,6 +209,9 @@ class InvoiceDialog extends StatelessWidget {
               String poNumber = state.poNumber!;
               InvoicePdf.makePdf(
                   invoice: invoice, invoiceNo: invoiceNo, poNumber: poNumber);
+            } else {
+              BlocProvider.of<InvoiceCubit>(context).fetchInvoices();
+              InvoicePdf.makePdf(invoice: invoice);
             }
             Navigator.of(context, rootNavigator: true).pop();
           });
@@ -292,7 +298,9 @@ class InvoiceDialog extends StatelessWidget {
                           isLoading: isSaving,
                         ),
                       ),
-                    if (isProforma && invoice.trxnStatus != 'VOID')
+                    if (isProforma &&
+                        invoice.trxnStatus != 'VOID' &&
+                        !flgAddInvoice)
                       SizedBox(
                         width: 170,
                         height: 70,
@@ -300,13 +308,12 @@ class InvoiceDialog extends StatelessWidget {
                           color: Colors.blue.shade600,
                           onPressed: invoice.trxnStatus == 'PROFORMA'
                               ? () {
-                                  BlocProvider.of<SaveInvoiceCubit>(context)
-                                      .finalizeInvoice(invoice.invoiceId!);
+                                  finalizeInvoice(context);
                                 }
                               : () async {
                                   await ProformaPdf.makePdf(invoice: invoice);
                                 },
-                          isLoading: isVoiding,
+                          isLoading: isSaving,
                           text: Text(
                             invoice.trxnStatus == 'PROFORMA'
                                 ? "FINALIZE"
@@ -371,6 +378,35 @@ class InvoiceDialog extends StatelessWidget {
                     onPressed: () {
                       BlocProvider.of<SaveInvoiceCubit>(context)
                           .voidInvoice(invoice.invoiceId!);
+                      Navigator.of(context, rootNavigator: true).pop();
+                    }),
+                ElevatedButton(
+                    child: const Text("No"),
+                    onPressed: () {
+                      Navigator.of(context, rootNavigator: true).pop();
+                    }),
+              ],
+            ),
+          );
+        });
+  }
+
+  void finalizeInvoice(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (_) {
+          return BlocProvider.value(
+            value: context.read<SaveInvoiceCubit>(),
+            child: AlertDialog(
+              title: const Text("Finalize Invoice"),
+              content:
+                  const Text("Are you sure you want to finalize this invoice?"),
+              actions: [
+                ElevatedButton(
+                    child: const Text("Yes"),
+                    onPressed: () {
+                      BlocProvider.of<SaveInvoiceCubit>(context)
+                          .finalizeInvoice(invoice.invoiceId!);
                       Navigator.of(context, rootNavigator: true).pop();
                     }),
                 ElevatedButton(

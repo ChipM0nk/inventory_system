@@ -15,6 +15,10 @@ class InvoiceSaved extends SaveInvoiceState {
   InvoiceSaved({this.invoice, this.invoiceNo, this.poNumber});
 }
 
+class InvoiceFinalizing extends SaveInvoiceState {}
+
+class InvoiceFinalized extends SaveInvoiceState {}
+
 class InvoiceSavingError extends SaveInvoiceState {}
 
 class InvoiceVoiding extends SaveInvoiceState {}
